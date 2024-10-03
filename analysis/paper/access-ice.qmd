@@ -1,6 +1,6 @@
 ---
 title: "Untitled"
-format: html
+format: pdf
 execute: 
   echo: false
   warning: false
