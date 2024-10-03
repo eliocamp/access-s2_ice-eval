@@ -77,7 +77,7 @@ get_part <- memoise::memoise(function(file, first_time, last_time) {
             enddate = as.character(last_time)
         ) |>
         cdo_execute(options = "-L", output = outfile)
-}, cache = cachem::cache_disk("data/teim/cache"))
+}, cache = cachem::cache_disk("data/temp/cache"))
 
 compute_metrics <- function(forecast_time, member, version, obs_dataset) {
     # message(i)
