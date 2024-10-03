@@ -1,0 +1,276 @@
+---
+title: "Untitled"
+format: html
+execute: 
+  echo: false
+  warning: false
+  message: false
+filters:
+  - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
+  - ../../_extensions/mloubout/critic-markup/critic-markup.lua
+---
+
+```{r setup, include=FALSE}
+library(lubridate)
+library(ggplot2)
+library(data.table)
+library(metR)
+library(rcdo)
+
+cdo_options_set("-L")
+source(here::here("R/functions.R"))
+source(here::here("R/datasets.R"))
+source(here::here("R/ggplot.R"))
+```
+
+
+# Abstract
+
+balbalbal
+
+# Introduction
+
+{==**Antarctic sea ice general description**. Seasonality, trends.==}
+
+{==**Importance**. Impacts on life. Potential impacts on weather. Impacts on climate. Impacts on ocean circulation.(Justify why it's important to study and understand)==}
+
+{==**Prediction systems.** Why is it important: operations {\>\>Discuss with Phil\<\<}; science needs (we need good models). What is available. Discussion on S1 {\>\>Can we discuss previous S1 results? Laura's paper is not public.\<\<}==}
+
+{==**Objective.** Evaluate S2.==}
+
+# Data and methods
+
+All datasets are regrided using bilinear interpolation to a common grid, which is a polar sterographic grid with approximatedly equal area of 25km².
+
+## Description of the model
+
+ACCESS-S2 is the next seasonal prediction system after ACCESS-S1. It uses virtually the same exact model configuration except for some model versions being different. The main difference are the initial conditions. While S1 used initial conditions from the UK Met Office, S2 uses the Bureau's own system. {== Description of the system ==}{\>\>Atmosphere and ocean. Highlight no ice data assimilation\<\<}
+
+For evaluation we use hindcast for the period 1981--2023{\>\>Check\<\<}. Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis.
+
+## Verification datasets
+
+There is not a lot of data on sea ice properties, especially for things like thickness, age, etc. However there are relativelly reliable satellite-derived estimates of sea ice concentration, which esetimates the proportion of each grid area that is covered with ice. These products are not perfect and there still exists a fair bit of observation al uncertainty. To account for this uncertanty we use multiple datasets.
+
+### Bootstrap
+
+{\>\>From https://nsidc.org/data/nsidc-0079/versions/4\<\<} This sea ice concentration data set was derived using measurements from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites. Measurements from the Special Sensor Microwave Imager/Sounder (SSMIS) aboard DMSP-F17 are also included. The data set has been generated using the Advanced Microwave Scanning Radiometer - Earth Observing System (AMSR-E) Bootstrap Algorithm with daily varying tie-points. Daily (every other day prior to July 1987) and monthly data are available for both the north and south polar regions. Data are gridded on the SSM/I polar stereographic grid (25 x 25 km) and provided in two-byte integer format. Data coverage began on 01 November 1978 and is ongoing through the most current processing, with updated data processed several times annually.
+
+Comiso, J.C., Gersten, R.A. 2023. Bootstrap Sea Ice Concentrations from Nimbus-7 SMMR and DMSP SSM/I-SSMIS, Version 4. \[Indicate subset used\]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. https://doi.org/10.5067/X5LG68MH013O. \[Date Accessed\] {\>\>Add to zotero\<\<}
+
+### NASA Team
+
+{==missing==}
+
+### CDR
+
+NOAA/NSIDC's Climate Data Record V4 combines the Bootstrap and NASA Team estimates in an attempt to overcome each algorithm's weaknesses. {\>\>More detail on how are they combined and their properties.\<\<} As such, it is is not a trully independend dataset.
+
+Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021. NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice Concentration, Version 4. \[Indicate subset used\]. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center https://doi.org/10.7265/efmz-2t65. \[Date Accessed\] {\>\>Add to zotero\<\<}
+
+### ERA5
+
+{==From the CDS websiste:==} ERA5 is the fifth generation ECMWF reanalysis for the global climate and weather for the past 8 decades. Data is available from 1940 onwards. ERA5 replaces the ERA-Interim reanalysis.
+
+This parameter is the fraction of a grid box which is covered by sea ice. Sea ice can only occur in a grid box which includes ocean or inland water according to the land-sea mask and lake cover, at the resolution being used. This parameter can be known as sea-ice (area) fraction, sea-ice concentration and more generally as sea-ice cover. In ERA5, sea-ice cover is given by two external providers. Before 1979 the HadISST2 dataset is used. From 1979 to August 2007 the OSI SAF (409a) dataset is used and from September 2007 the OSI SAF oper dataset is used. Sea ice is frozen sea water which floats on the surface of the ocean. Sea ice does not include ice which forms on land such as glaciers, icebergs and ice-sheets. It also excludes ice shelves which are anchored on land, but protrude out over the surface of the ocean. These phenomena are not modelled by the IFS. Long-term monitoring of sea ice is important for understanding climate change. Sea ice also affects shipping routes through the polar regions.
+
+{>>Why is ERA5 better or worse than satellites?<<}
+
+## Error measures
+
+FOr evaluation purposes, we use a series of measures.
+
+### Sea ice extent
+
+Sea Ice Extent is defined as the area of ocean covered with at least 15% ice. This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for low sea ice conditions.
+
+Sea Ice Extent is a rough global measure, but a model could have relatively accurate extent of ice but with different distributions. We use two other measures to account for these errors.
+
+We compute Root Mean Square Error of sea ice concentration anomalies.
+
+We also compute the Integrated Ice Edge Error (IIEE) {\>\>CITE\<\<}. This is defined as the area in which the model misspredicts the presence of more than 15% ice. That is, dichotomise sea ice concentration into areas with more and less than 15% sea ice both in the forecast and observations; the IIEE is the area in which forecast and observations differ.
+
+# Results and discussion
+
+## Reanalysis
+
+### Bias
+
+```{r datasets}
+datasets <- list(cdr = CDR(),
+                 bt = BT(),
+                 era5 = ERA5(),
+                 access = S2_reanalysis()
+                )
+```
+```{r extent_daily}
+extent_daily <- datasets |>
+    lapply(extent) |>
+    lapply(\(x) ReadNetCDF(x, "aice")) |>
+    rbindlist(idcol = "model") |>
+    _[, let(lon = NULL, lat = NULL)]
+
+```
+
+
+```{r fig-mean-extent}
+#| fig-cap: Median and 95% coverage sea ice extent for ACCESS-S2 reanalysis (black) and NSIDC (blue).
+
+extent_daily |>  
+  copy() |>
+  _[aice == 0, aice := NA] |> 
+  # _[, daice := c(diff(aice), 0)] |>
+  # _[, daice := daice - median(daice, na.rm = TRUE), by = .(model, yday(time))] |>
+  # _[abs(daice) > 5e11 & model == "nsidc",
+  #   let(daice = NA,
+  #       aice = NA)] |>
+  # _[, aice := frollmean(aice, 10, align = "center", na.rm = TRUE), by = model] |>
+  _[!(month(time) == 2 & mday(time) == 29)] |> 
+  _[, time := update(time, year = 2001)] |> 
+  _[, median_ci(aice), by = .(time, model)]  |> 
+  ggplot(aes(time, mid)) +
+  geom_ribbon(data = \(x) x[model == "access"],
+    aes(ymin = low, ymax = high, 
+                  color = model, fill = model), alpha = 0.3) +
+  geom_line(aes(color = model), linewidth = 1) +
+#   scale_color_models +
+#   scale_fill_models +
+  scale_y_continuous("Extent",
+                     labels = labels_extent) +
+  scale_x_datetime(NULL, date_labels = "%b", date_breaks = "1 month")
+```
+
+
+```{r climatology}
+climatologies <- datasets[c("cdr", "access")] |>
+    lapply(\(x) climatology(x)  |> cdo_ymonmean()  |> cdo_execute()) |>
+    lapply(\(x) ReadNetCDF(x, "aice")) |>
+    rbindlist(idcol = "model") |>
+    dcast(time + xgrid + ygrid ~ model, value.var = "aice")
+```
+
+```{r fig-bias}
+#| fig-width: 9
+#| fig-height: 6
+#| fig-cap: ACCESS-S2 reanalysis sea ice concentration bias compared with NSIDC sea ice concentration.
+
+climatologies |> 
+  ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(aes(z = access - cdr, fill = after_stat(level)), 
+                    breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
+  scale_fill_divergent_discretised("ACCESS-S2 bias") +
+  geomcoord_antarctica +
+  geom_antarctica_fill +
+  facet_wrap(~ lubridate::month(time, label = TRUE)) +
+  wide_legend
+```
+
+### Extent
+
+
+```{r fig-extent-anom}
+#| fig-cap: Sea ice extent anomalies for ACCESS-S2 (black) and NSIDC (blue). Straight lines show a piecewise linear fit with nodes at 2005 and 2012.
+
+extent_daily |>
+    copy() |>
+    _[aice == 0, aice := NA]  |> 
+    _[, .(aice = mean(aice)), by = .(model, time = as.Date(round_date(time, "month")))] |>
+  
+  _[, aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE), 
+    by = .(month(time), model)] |> 
+  ggplot(aes(time, aice)) +
+  geom_line(aes(color = model)) +
+  geom_smooth(aes(color = model), method = "lm",
+              formula = y ~ x +
+                I(pmax(x - as.numeric(as.Date("2005-12-01")), 0)) +
+                I(pmax(x - as.numeric(as.Date("2012-12-01")), 0)),
+              n = 100
+  ) +
+  scale_y_continuous("Extent",
+                     labels = labels_extent) +
+  scale_x_date(NULL, expand = c(0, 0)) 
+#   scale_color_models
+
+```
+
+{>>Add reginoal extents?<<}
+
+
+## Hindcast
+
+
+```{r errors}
+errors <- rbind(
+    readRDS(here::here("data/derived/rmse.Rds")) |>
+        _[version != "S1"], 
+    readRDS(here::here("data/derived/iiee.Rds"))
+    ) |>
+  _[value < 0.01, value := NA] |> 
+  _[value > 3e13, value := NA] |> 
+  _[, time := as.Date(time)] |> 
+  _[, lag := as.numeric(time - time_forecast)] 
+
+```
+
+
+
+```{r fig-rmse}
+#| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
+
+errors |> 
+    _[measure == "rmse"] |>
+    _[obs_dataset == "cdr"] |>
+  _[lag > 0] |> 
+  _[, median_ci(value), 
+    by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
+  ggplot(aes(lag, mid)) +
+  geom_ribbon(aes(ymin = low, 
+                  ymax = high, 
+                  color = version, 
+                  fill = version,
+                  group = interaction(obs_dataset, version)),
+                   alpha = 0.1) +
+  geom_line(aes(color = version, group = interaction(obs_dataset, version)), linewidth = 1) +
+  labs(y = "RMSE", 
+       x = "Lag") +
+#   scale_color_models +
+#   scale_fill_models +
+  facet_wrap(~ month, labeller = labeller(month = labels_month))
+```
+
+{==Regional?==}
+
+-   Mean extent forecast \<\>
+    -   Panantarctic
+    -   Regional \<\>
+
+
+### Comparison with S1
+
+
+```{r fig-iiee}
+#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for ACCESS-S1 and ACCESS-S2 hindcasts. 
+
+errors |> 
+    _[measure == "iiee"] |>
+    _[obs_dataset == "cdr"] |>
+  _[lag > 0] |> 
+  _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
+  _[!(month == "Jan" & member == "07")] |> 
+  _[, median_ci(value), 
+    by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
+  ggplot(aes(lag, mid)) +
+  geom_ribbon(aes(ymin = low, 
+                  ymax = high, 
+                  color = version, 
+                  fill = version), alpha = 0.1) +
+  geom_line(aes(color = version), linewidth = 1) +
+  scale_y_continuous(labels = labels_extent) +
+  labs(y = "Integrated Ice Edge Error", 
+       x = "Lag") +
+#   scale_color_models +
+#   scale_fill_models +
+  facet_wrap(~ month, labeller = labeller(month = labels_month))
+```
+
+## Conclusions
