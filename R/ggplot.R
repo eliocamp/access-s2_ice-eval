@@ -1,10 +1,27 @@
+element_text_first_line <- function(...) {
+  el <- ggplot2::element_text(...)
+  class(el) <- union("element_text_first_line", class(el))
+  el
+}
+
+# Thanks to the wizard Teun van den Brand 
+# https://fosstodon.org/@teunbrand/113248074175175782
+element_grob.element_text_first_line <- 
+  function(element, label, x = NULL, y = NULL, ...) {
+    twolines <- grepl("\n", label)
+    y <- y - grid::unit(twolines * 0.5, "lines")
+    NextMethod()
+  }
+
+
 ggplot2::theme_set(ggplot2::theme_minimal() +
             ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#fafafa", color = NA),
                   legend.position = "bottom",
                   legend.title.position = "top", 
                   legend.title = ggplot2::element_text(hjust = 0.5),
                   legend.frame = ggplot2::element_rect(color = "black", linewidth = 0.4),
-                  legend.key.height = grid::unit(0.75, "lines")
+                  legend.key.height = grid::unit(0.75, "lines"),
+                  axis.text.y = element_text_first_line()
             ))
 wide_legend <- ggplot2::theme(legend.key.width = grid::unit(1, 'null'))
 
@@ -41,6 +58,7 @@ labels_extent <- function(x) {
   x[m] <- paste0(x[m], "\nM km²")
   x
 }
+
 
 labels_month <- setNames(month.abb, 1:12)
 
