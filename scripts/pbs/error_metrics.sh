@@ -11,7 +11,7 @@
 
 # Load module, always specify version number.
 module load R/4.3.1
-module load cdo/2.0.5
+module load cdo/2.4.3
 
 # Must include `#PBS -l storage=scratch/ab12+gdata/yz98` if the job
 # needs access to `/scratch/ab12/` and `/g/data/yz98/`. Details on:
