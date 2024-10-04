@@ -189,6 +189,16 @@
       ],
       "Hash": "cd9a672193789068eb5a2aad65a0dedf"
     },
+    "cetcolor": {
+      "Package": "cetcolor",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "7ce578b42e7ab7f15a730247c224ed33"
+    },
     "checkmate": {
       "Package": "checkmate",
       "Version": "2.3.1",
