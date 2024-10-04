@@ -20,7 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="access-ice_files/libs/clipboard/clipboard.min.js"></script>
@@ -39,10 +59,11 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../../access-ice.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -70,7 +91,6 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>&lt;&gt; : Missing</p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p><mark><strong>Antarctic sea ice general description</strong>. Seasonality, trends.</mark></p>
@@ -92,6 +112,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="bootstrap" class="level3">
 <h3 class="anchored" data-anchor-id="bootstrap">Bootstrap</h3>
 <p><span class="critic comment">From https://nsidc.org/data/nsidc-0079/versions/4</span> This sea ice concentration data set was derived using measurements from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program’s (DMSP) -F8, -F11, and -F13 satellites. Measurements from the Special Sensor Microwave Imager/Sounder (SSMIS) aboard DMSP-F17 are also included. The data set has been generated using the Advanced Microwave Scanning Radiometer - Earth Observing System (AMSR-E) Bootstrap Algorithm with daily varying tie-points. Daily (every other day prior to July 1987) and monthly data are available for both the north and south polar regions. Data are gridded on the SSM/I polar stereographic grid (25 x 25 km) and provided in two-byte integer format. Data coverage began on 01 November 1978 and is ongoing through the most current processing, with updated data processed several times annually.</p>
+<p><span class="citation" data-cites="comiso2023">(<a href="#ref-comiso2023" role="doc-biblioref">Comiso and Gersten 2023</a>)</span></p>
 <p>Comiso, J.C., Gersten, R.A. 2023. Bootstrap Sea Ice Concentrations from Nimbus-7 SMMR and DMSP SSM/I-SSMIS, Version 4. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. https://doi.org/10.5067/X5LG68MH013O. [Date Accessed] <span class="critic comment">Add to zotero</span></p>
 </section>
 <section id="nasa-team" class="level3">
@@ -180,6 +201,15 @@ Figure&nbsp;3: Sea ice extent anomalies for ACCESS-S2 (black) and NSIDC (blue). 
 <h2 class="anchored" data-anchor-id="hindcast">Hindcast</h2>
 <div class="cell">
 <div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="access-ice_files/figure-html/hindcast-extent-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
 <div id="fig-rmse" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -221,6 +251,14 @@ Figure&nbsp;5: Median and 95% coverage of Integrated Ice Edge Error as a functio
 <section id="conclusions" class="level2">
 <h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
 </section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-comiso2023" class="csl-entry" role="listitem">
+Comiso, J. C., and R. A. Gersten. 2023. <span>“Bootstrap Sea Ice Concentrations from Nimbus-7 SMMR and DMSP SSM/i-SSMIS, Version 4.”</span> NASA National Snow; Ice Data Center Distributed Active Archive Center. <a href="https://doi.org/10.5067/X5LG68MH013O">https://doi.org/10.5067/X5LG68MH013O</a>.
+</div>
+</div>
 </section>
 
 </main>
