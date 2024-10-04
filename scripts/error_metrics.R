@@ -151,22 +151,9 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
 }
 
 
-get_forecast_times <- function(dir) {
-    years <- list.files(file.path(dir, "e01")) |>
-        strcapture(
-            pattern = "di_a?ice_(\\d{4})\\d{4}_e01.nc",
-            proto = list(time = numeric(1))
-        ) |>
-        range()
+forecast_times_s1 <- get_forecast_times("S1")
 
-    seq(as.Date(paste0(years[1], "-01-01")),
-        as.Date(paste0(years[2], "-01-01")),
-        by = "month"
-    )
-}
-forecast_times_s1 <- get_forecast_times("/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/")
-
-forecast_times_s2 <- get_forecast_times("/g/data/ux62/access-s2/hindcast/raw_model/ice/aice/daily/")
+forecast_times_s2 <- get_forecast_times("S2")
 
 all_files <- data.table::CJ(
     forecast_time = forecast_times_s1,

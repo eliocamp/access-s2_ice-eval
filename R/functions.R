@@ -12,6 +12,27 @@ ncview <- function(file) {
     system2("ncview", args = c(file), wait = FALSE)
 }
 
+get_forecast_times <- function(model) {
+  
+  dir <- switch(model,
+    S1 =  "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/",
+    S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/aice/daily/",
+    stop("Model needs to be S1 or S2")
+  )
+  
+  years <- list.files(file.path(dir, "e01")) |>
+    strcapture(
+      pattern = "di_a?ice_(\\d{4})\\d{4}_e01.nc",
+      proto = list(time = numeric(1))
+    ) |>
+    range()
+  
+  seq(as.Date(paste0(years[1], "-01-01")),
+      as.Date(paste0(years[2], "-01-01")),
+      by = "month"
+  )
+}
+
 compute_climatology <- function(dataset,
                                 output,
                                 climatology = 1981:2011,
