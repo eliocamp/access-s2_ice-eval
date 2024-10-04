@@ -5,10 +5,15 @@ execute:
   echo: false
   warning: false
   message: false
-  cache: true
+  cache: false
 filters:
   - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
   - ../../_extensions/mloubout/critic-markup/critic-markup.lua
+  - ../../_extensions/ute/search-replace/search-replace.lua
+search-replace:
+  +S2: ACCESS-S2
+  +S1: ACCESS-S1
+  +CDR: CDR
 bibliography: references.bib
 ---
 
@@ -18,6 +23,7 @@ library(ggplot2)
 library(data.table)
 library(metR)
 library(rcdo)
+library(tagger)
 
 cdo_options_set("-L")
 source(here::here("R/functions.R"))
@@ -45,9 +51,9 @@ All datasets are regrided using bilinear interpolation to a common grid, which i
 
 ## Description of the model
 
-ACCESS-S2 is the next seasonal prediction system after ACCESS-S1. It uses virtually the same exact model configuration except for some model versions being different. The main difference are the initial conditions. While S1 used initial conditions from the UK Met Office, S2 uses the Bureau's own system. {== Description of the system ==}{\>\>Atmosphere and ocean. Highlight no ice data assimilation\<\<}
++S2 is the next saeasonal prediction system after ACCESS-S1. It uses virtually the same exact model configuration except for some model versions being different. The main difference are the initial conditions. While S1 used initial conditions from the UK Met Office, S2 uses the Bureau's own system. {== Description of the system ==}{>>Atmosphere and ocean. Highlight no ice data assimilation. Highligh that the hope is that ice will respond to SST/atmosphere DA<<}
 
-For evaluation we use hindcast for the period 1981--2023{\>\>Check\<\<}. Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis.
+For evaluation we use hindcst for the period 1981--2023{\>\>Check\<\<}. Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis.
 
 ## Verification datasets
 
@@ -99,21 +105,21 @@ We also compute the Integrated Ice Edge Error (IIEE) {\>\>CITE\<\<}. This is def
 
 ### Bias
 
+
+
 ```{r datasets}
 datasets <- list(cdr = CDR(),
                  bt = BT(),
-                 era5 = ERA5(),
-                 access = S2_reanalysis()
-                )
+                 era5 = ERA5()
+)
 ```
 
 ```{r extent_daily}
 extent_daily <- datasets |>
-    lapply(extent) |>
-    lapply(\(x) ReadNetCDF(x, "aice")) |>
-    rbindlist(idcol = "model") |>
-    _[, let(lon = NULL, lat = NULL)]
-
+  lapply(extent) |>
+  lapply(\(x) ReadNetCDF(x, "aice")) |>
+  rbindlist(idcol = "dataset") |>
+  _[, let(lon = NULL, lat = NULL)]
 ```
 
 ```{r}
@@ -122,115 +128,187 @@ extent_climatology <- extent_daily |>
   _[aice == 0, aice := NA] |> 
   _[!(month(time) == 2 & mday(time) == 29)] |> 
   _[, time := update(time, year = 2001)] |> 
-  _[, median_ci(aice), by = .(time, model)] 
+  _[, median_ci(aice), by = .(time, dataset)] 
 
 ```
 
-```{r fig-mean-extent}
-#| fig-cap: Median and 95% coverage sea ice extent for ACCESS-S2 reanalysis (black) and NSIDC (blue).
+```{r hindcast_extent}
+hindcast_extent <- rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_extent.Rds")),
+                         S2 = readRDS(here::here("data/derived/S2_hindcast_extent.Rds")), 
+                         idcol = "model") |>
+  _[, model := relevel(factor(model), "S2")] |> 
+  _[, lag := as.numeric(as.Date(time) - forecast_time)] |> 
+  _[lag > 0]
+```
 
-extent_climatology |>
+
+```{r fig-hindcast-extent}
+#| fig-cap: Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the 
+hindcast_extent |> 
+  _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
+                              lag = as.numeric(as.Date(time) - forecast_time),
+                              model)] |>
+  _[, time := forecast_time + lag] |>
+  _[, time2 := update(time, year = 2001)] |>
+  _[, month := lubridate::month(forecast_time, label = TRUE)] |>
+  # _[]
+  ggplot(aes(time2, mid)) +
+  geom_line(data = extent_climatology, 
+            aes(x = as.Date(time),
+                group = dataset)) +    
+  geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
+  
+  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], by = .(forecast_time, model)], 
+             aes(fill = month), 
+             shape = 24, size = 2.2) +
+  
+  geom_point(data = \(x) x[lag == 1], aes(fill = month), 
+             shape = 21, size = 2) +
+  
+  scale_x_date(NULL, date_breaks = "1 month", 
+               date_labels = "%b", expand = c(0, 0)) +
+  scale_y_continuous(NULL, labels = labels_extent) +
+  scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"), 
+                     aesthetics = c("fill", "color"), guide = "none") +
+  facet_wrap(~ model, ncol = 1) +
+  tag_facets() 
+```
+
+@fig-hindcast-extent a shows the seasonal cycle of Sea Ice Extent for the +S2 hindcast and `r length(datasets)-1` observational datasets. 
++S2 shows a severe low extent bias, especially in the late summer-early autumn. 
+This is due primarily to a faster and longer melt season between January and March and slower growth during March and April 
+This is then balanced with faster growth between May and July ([Fig. @fig-mean-growth]).
+This bias is common in climate models [ref!] and it's been linked to xxxx?? 
+
+Comparing +S2 with +S1, the latter has a smaller bias, especially at low lags ([Fig. @fig-hindcast-extent b]) even though the typical growth rates are very similar between both models ([Fig. @fig-mean-growth]).
+At larger lags, +S1's bias in summer and autumn is very similar to +S2`s.
+This suggests that this lower sea ice state is closer to the models' equilibrium, indicating that it is an issue with model formulation that was being corrected by the data assimilation system in +S1. 
+
+At long lags, sea ice extent loses most of the initial condition memory and reverts to the model's preferred equilibrium state.
+Therefore we can estimate the latter using the hindcasts with the largest possible lag, which is shown in triangles in @fig-hindcast-extent for the same dates as the initial conditions. 
+The difference between the two is the effect of the data assimilation. 
+
+The equilibrium of +S1 and +S2 is very similar (comparing the triangles in each panel in [Fig. @fig-hindcast-extent]), owing to both having the same model formulation.
+From June to October, in +S2 circles move away from triangles and towards observations, indicating that the information from the ocean and atmosphere data assimilation is getting to sea ice and affecting the initial conditions. 
+The rest of the year, there is little if any difference between circles and triangles in +S2, indicating that almost no data assimilation is taking place and the sea ice component of the model is virtually free-running. 
+
+
+```{r fig-mean-growth}
+#| fig-cap: Median daily sea ice extent growth of +S1 and +S2 hindcasts and observations. Values are smoothed with a 2-degree loess smooth with a 30 day window. 
+
+dif_hindcast <- hindcast_extent |> 
+  copy() |> 
+  _[order(time)] |> 
+  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(model, forecast_time, member)] |> 
+  _[, median_ci(dif), by = .(model, time = update(time, year = 2000))] 
+
+
+extent_daily |> 
+  _[order(time)] |> 
+  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(dataset)] |> 
+  _[, median_ci(dif), by = .(dataset, time = update(time, year = 2000))] |> 
   ggplot(aes(time, mid)) +
-  geom_ribbon(data = \(x) x[model == "access"],
-              aes(ymin = low, ymax = high, 
-                  color = model, fill = model), alpha = 0.3) +
-  geom_line(aes(color = model), linewidth = 1) +
-#   scale_color_models +
-#   scale_fill_models +
-  scale_y_continuous("Extent",
-                     labels = labels_extent) +
-  scale_x_datetime(NULL, date_labels = "%b", date_breaks = "1 month")
+  geom_hline(yintercept = 0, color = "gray50", linewidth = 0.2) +
+  geom_smooth(aes(group = dataset), span = 30/366, linewidth = 0.5, color = "black", se = FALSE, n = 366)  +
+  geom_smooth(data = dif_hindcast, aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
+  scale_x_datetime(NULL, date_breaks = "1 month", 
+                   date_labels = "%b", expand = c(0, 0)) +
+  scale_y_continuous(NULL, labels = labels_extent)
 ```
 
 ```{r climatology}
-climatologies <- datasets[c("cdr", "access")] |>
-    lapply(\(x) climatology(x)  |> cdo_ymonmean()  |> cdo_execute()) |>
-    lapply(\(x) ReadNetCDF(x, "aice")) |>
-    rbindlist(idcol = "model") |>
-    dcast(time + xgrid + ygrid ~ model, value.var = "aice")
+climatologies <- list(cdr = datasets[["cdr"]],
+                      S2 = S2_reanalysis()) |>
+  lapply(\(x) climatology(x) |>
+           cdo_ymonmean() |> 
+           cdo_execute()
+  ) |>
+  lapply(\(x) ReadNetCDF(x, "aice")) |>
+  rbindlist(idcol = "model") |>
+  dcast(time + xgrid + ygrid ~ model, value.var = "aice")
 ```
 
 ```{r fig-bias}
 #| fig-width: 9
 #| fig-height: 6
-#| fig-cap: ACCESS-S2 reanalysis sea ice concentration bias compared with NSIDC sea ice concentration.
+#| fig-cap: +S2 reanalysis sea ice concentration bias compared with NSIDC sea ice concentration.
 
 climatologies |> 
   ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = access - cdr, fill = after_stat(level)), 
+  geom_contour_fill(aes(z = S2 - cdr, fill = after_stat(level)), 
                     breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
   scale_fill_divergent_discretised("ACCESS-S2 bias") +
   geomcoord_antarctica +
   geom_antarctica_fill +
   facet_wrap(~ lubridate::month(time, label = TRUE)) +
-  wide_legend
+  wide_legend +
+  tag_facets()
 ```
+@fig-bias shows the difference in monthly mean sea ice concentrations between +CDR and +S2 reanalysis. 
+From October to May, the model underestimates sea ice concentrations pretty much everywhere there is ice except for the deep Weddell Sea in April and May, where sea ice concentrations saturate to 1. 
+In winter, the differences are mostly on the sea ice edge, with slight positive bias in XXX and negative bias around the Indian Ocean sector. 
 
-### Extent
+### Anomalies
+
+{==intro connecting subsections==}
+
 
 ```{r fig-extent-anom}
-#| fig-cap: Sea ice extent anomalies for ACCESS-S2 (black) and NSIDC (blue). Straight lines show a piecewise linear fit with nodes at 2005 and 2012.
+#| fig-cap: Sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue). 
 
-extent_daily |>
-    copy() |>
-    _[aice == 0, aice := NA]  |> 
-    _[, .(aice = mean(aice)), by = .(model, time = as.Date(round_date(time, "month")))] |>
-  
+months_difference <- function(x, y) {
+  lubridate::interval(y, x) %/% months(1)
+}
+
+monthly_extent <- extent_daily |> 
+  _[aice == 0, aice := NA]  |> 
+  _[, .(aice = mean(aice)), by = .(dataset, time = as.Date(round_date(time, "month")))] |>
   _[, aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE), 
-    by = .(month(time), model)] |> 
-  ggplot(aes(time, aice)) +
-  geom_line(aes(color = model)) +
-  geom_smooth(aes(color = model), method = "lm",
-              formula = y ~ x +
-                I(pmax(x - as.numeric(as.Date("2005-12-01")), 0)) +
-                I(pmax(x - as.numeric(as.Date("2012-12-01")), 0)),
-              n = 100
-  ) +
-  scale_y_continuous("Extent",
-                     labels = labels_extent) +
-  scale_x_date(NULL, expand = c(0, 0)) 
-#   scale_color_models
+    by = .(month(time), dataset)] 
 
+N <- uniqueN(monthly_extent$time)
+
+hindcast_extent |> 
+  copy() |> 
+  # _[model == "S2"] |> 
+  _[, aice := aice - mean(aice[year(time) %between% c(1981, 2011)]), 
+    by = .(lag, model, time = update(time, year = 2000))] |> 
+  _[, .(aice = mean(aice)), by = .(model, forecast_time, time = as.Date(round_date(time, "month")))] |> 
+  _[, lag := months_difference(time, forecast_time) + 1] |> 
+  _[lag %in% c(1, 3, 5, 7)] |> 
+  ggplot(aes(time, aice)) +
+  geom_line(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))][dataset == "cdr"], 
+            aes(group = dataset),
+            color = "#1a5fb4") +
+  geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))][dataset == "cdr"], 
+              aes(group = dataset), color = "#1a5fb4", se = FALSE, span = 10*12/N, n = 366) +
+  geom_line()  +
+  geom_smooth(se = FALSE, span = 10*12/N, n = 366, color = "black") +
+  scale_y_continuous(NULL,
+                     labels = labels_extent) +
+  scale_x_date(NULL, expand = c(0, 0)) +
+  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Lag: ", x)))
 ```
+
+
+@fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lags. 
+The anomalies in this case were computed with respect of the climatology of each lag, which is a way of bias-correction.
+Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skillful even at lag 3. 
++S2 shows much bigger variability than observations, with dramatic lows between 1995 and 2007 and highs between 2007 and 2015. 
+
 
 {\>\>Add reginoal extents?\<\<}
 
 ## Hindcast
 
 
-```{r hindcast-extent}
-rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_extent.Rds")),
-      S2 = readRDS(here::here("data/derived/S2_hindcast_extent.Rds")), 
-      idcol = "model") |>
-    _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
-                                lag = as.numeric(as.Date(time) - forecast_time),
-                                model)] |>
-    _[, time := forecast_time + lag] |>
-    _[, time2 := update(time, year = 2001)] |>
-    _[, month := lubridate::month(forecast_time, label = TRUE)] |>
-    # _[]
-    ggplot(aes(time2, mid)) +
-    geom_line(data = extent_climatology[model == "cdr"][, model := NULL], 
-              aes(x = as.Date(time))) +    
-    geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
-    geom_point(data = \(x) x[lag == 1], aes(fill = month), 
-               shape = 21, size = 3) +
-
-    scale_x_date(NULL, date_breaks = "1 month", 
-                 date_labels = "%b", expand = c(0, 0)) +
-    scale_y_continuous(labels = labels_extent) +
-    scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"), 
-                       aesthetics = c("fill", "color"), guide = "none") +
-    facet_wrap(~ model, ncol = 1)
-```
-
 
 ```{r errors}
 errors <- rbind(
-    readRDS(here::here("data/derived/rmse.Rds")) |>
-        _[version != "S1"], 
-    readRDS(here::here("data/derived/iiee.Rds"))
-    ) |>
+  readRDS(here::here("data/derived/rmse.Rds")) |>
+    _[version != "S1"], 
+  readRDS(here::here("data/derived/iiee.Rds"))
+) |>
   _[value < 0.01, value := NA] |> 
   _[value > 3e13, value := NA] |> 
   _[, time := as.Date(time)] |> 
@@ -242,8 +320,8 @@ errors <- rbind(
 #| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
 
 errors |> 
-    _[measure == "rmse"] |>
-    _[obs_dataset == "cdr"] |>
+  _[measure == "rmse"] |>
+  _[obs_dataset == "cdr"] |>
   _[lag > 0] |> 
   _[, median_ci(value), 
     by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
@@ -253,20 +331,20 @@ errors |>
                   color = version, 
                   fill = version,
                   group = interaction(obs_dataset, version)),
-                   alpha = 0.1) +
+              alpha = 0.1) +
   geom_line(aes(color = version, group = interaction(obs_dataset, version)), linewidth = 1) +
   labs(y = "RMSE", 
        x = "Lag") +
-#   scale_color_models +
-#   scale_fill_models +
+  #   scale_color_models +
+  #   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month))
 ```
 
 {==Regional?==}
 
 -   Mean extent forecast \<\>
-    -   Panantarctic
-    -   Regional \<\>
+-   Panantarctic
+-   Regional \<\>
 
 ### Comparison with S1
 
@@ -274,8 +352,8 @@ errors |>
 #| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for ACCESS-S1 and ACCESS-S2 hindcasts. 
 
 errors |> 
-    _[measure == "iiee"] |>
-    _[obs_dataset == "cdr"] |>
+  _[measure == "iiee"] |>
+  _[obs_dataset == "cdr"] |>
   _[lag > 0] |> 
   _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
   _[!(month == "Jan" & member == "07")] |> 
@@ -290,8 +368,8 @@ errors |>
   scale_y_continuous(labels = labels_extent) +
   labs(y = "Integrated Ice Edge Error", 
        x = "Lag") +
-#   scale_color_models +
-#   scale_fill_models +
+  #   scale_color_models +
+  #   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month))
 ```
 
