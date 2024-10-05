@@ -1,6 +1,6 @@
 ---
 title: "Untitled"
-format: pdf
+format: gfm
 execute: 
   echo: false
   warning: false
@@ -24,6 +24,7 @@ library(data.table)
 library(metR)
 library(rcdo)
 library(tagger)
+library(patchwork)
 
 cdo_options_set("-L")
 source(here::here("R/functions.R"))
@@ -53,7 +54,8 @@ All datasets are regrided using bilinear interpolation to a common grid, which i
 
 +S2 is the next saeasonal prediction system after ACCESS-S1. It uses virtually the same exact model configuration except for some model versions being different. The main difference are the initial conditions. While S1 used initial conditions from the UK Met Office, S2 uses the Bureau's own system. {== Description of the system ==}{>>Atmosphere and ocean. Highlight no ice data assimilation. Highligh that the hope is that ice will respond to SST/atmosphere DA<<}
 
-For evaluation we use hindcst for the period 1981--2023{\>\>Check\<\<}. Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis.
+For evaluation we use hindcst for the period 1981--2023{\>\>Check\<\<}. Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis. 
+Climatology is smoothed with a 11 day running mean. 
 
 ## Verification datasets
 
@@ -299,8 +301,9 @@ Compared with +S1, +S2 anomaly forecast is relatively poor even in the first mon
 
 {\>\>Add reginoal extents?\<\<}
 
-## Hindcast
+### RMSE
 
+To study +S2 forecasts quantitatively, we compute error measures for all hindcasts started on the 1st of every month. 
 
 
 ```{r errors}
@@ -312,7 +315,9 @@ errors <- rbind(
   _[value < 0.01, value := NA] |> 
   _[value > 3e13, value := NA] |> 
   _[, time := as.Date(time)] |> 
-  _[, lag := as.numeric(time - time_forecast)] 
+  _[, lag := as.numeric(time - time_forecast)] |> 
+  _[lag > 0] |> 
+  _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]  # This member is wrong
 
 ```
 
@@ -322,7 +327,6 @@ errors <- rbind(
 errors |> 
   _[measure == "rmse"] |>
   _[obs_dataset == "cdr"] |>
-  _[lag > 0] |> 
   _[, median_ci(value), 
     by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
   ggplot(aes(lag, mid)) +
@@ -340,11 +344,13 @@ errors |>
   facet_wrap(~ month, labeller = labeller(month = labels_month))
 ```
 
-{==Regional?==}
+@fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence. 
+This figure uses +CDR data, but the results are nearly identical compared with ERA5 or Bootstrap. 
+Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, at which time is statistically useful {==I've got this from CC at the ICTP summer school and makes sense, but it would be great to have a referece?==}.
+Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model doesn't have skill at any lag and in any month. 
+The only exception is the RMSE around Febraury forecasted from June onwards. 
 
--   Mean extent forecast \<\>
--   Panantarctic
--   Regional \<\>
+{==Add regional?==}
 
 ### Comparison with S1
 
@@ -354,9 +360,7 @@ errors |>
 errors |> 
   _[measure == "iiee"] |>
   _[obs_dataset == "cdr"] |>
-  _[lag > 0] |> 
   _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
-  _[!(month == "Jan" & member == "07")] |> 
   _[, median_ci(value), 
     by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
   ggplot(aes(lag, mid)) +
@@ -366,15 +370,58 @@ errors |>
                   fill = version), alpha = 0.1) +
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous(labels = labels_extent) +
-  labs(y = "Integrated Ice Edge Error", 
+  labs(y = NULL, 
        x = "Lag") +
   #   scale_color_models +
   #   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month))
 ```
 
+To compare +S2 with +S1, we computed the IIEE for both models. 
+This error measure is shown in @fig-iiee for all lags and forecasts initialised at the first of every month. +S1 has lower error at short lags at all months, with the errors converging as the forecast goes on.
+The time to convergence depends on the month and it can be as fas as a few days in July to as large as several months for forecasts initiated in February and March. 
+Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the the memory of sea ice to initial conditions; at least from October to March when the data assimilated form the other components has little to no influence on sea ice. 
 
+Also evident in @fig-iiee is the difference in the error spread at short lags between +S2 and +S1. 
+In all month +S1 shows a small error spread at lag 1, indicating that the error in the initial conditions not only is small, but also fairly constant. 
+This spread then grows towards a climatological spread as errors accumulate differently in different forecasts.
+For +S2, this is true only only between July and October, approximately. 
+For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it's not constant. 
 
+```{r fig-iiee-variance}
+#| fig-cap: Mean spread of IIEE at different lags for different models. 
+
+rbind(mean_variance = errors |>
+        _[measure == "iiee"] |>
+        _[obs_dataset == "cdr"] |>
+        _[, sd(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
+        _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
+
+      variance_of_mean = errors |>
+        _[measure == "iiee"] |>
+        _[obs_dataset == "cdr"] |>
+        _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
+        _[, .(value = sd(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
+      idcol = "component") |> 
+
+  ggplot(aes(lag, value)) +
+  geom_line(aes(color = version, linetype = component), linewidth = 1) +
+  scale_y_continuous("Variance", 
+                     labels = labels_extent) +
+  # scale_color_models +
+  scale_x_continuous("Lag") +
+  facet_wrap(~ month, labeller = labeller(month = labels_month))
+```
+The large initial error spread could be due either to large spread of ensemble members or due to a large spread of individual forecasts. 
+@fig-iiee-variance splits the IIEE variance for each lag into the mean variance of each individual forecast and the variance of the mean error of each individual forecast, which adds up to the total variance. 
+The average variance of each forecast is almost identical between forecast systems in all months. 
+This shows that the ensemble spread of individual forecasts evolves identically, which, again, it's not unexpected because both systems share the same model formulation.
+This also shows that the perturbation scheme in +S2 is comparable to the one in +S1.
+
+On the other hand, the spread of the mean error is always larger in +S2 than +S1. 
+The difference is particularly large at short lags in some months, which coindice with the ones in which the data assimlation scheme is not influencing sea ice initial conditions. 
+
+{==This figure is pretty hard to read, so it needs tweaking. Maybe splitting it into two figures, or showing the percentage of varinace explained by one of the components==}
 
 ## Conclusions
 
