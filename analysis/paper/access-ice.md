@@ -1,6 +1,5 @@
 # Untitled
 
-
 \IfFileExists{pdfcomment.sty}
 {
   \usepackage{pdfcomment}
@@ -51,7 +50,8 @@ DA\<\<}
 
 For evaluation we use hindcst for the period 1981–2023{\>\>Check\<\<}.
 Anomalies will be taken with respect to the 1981–2011 climatology
-computed from the reanalysis.
+computed from the reanalysis. Climatology is smoothed with a 11 day
+running mean.
 
 ## Verification datasets
 
@@ -161,40 +161,37 @@ differ.
 
 ### Bias
 
-![](access-ice_files/figure-commonmark/fig-hindcast-extent-1.png)
+<img src="access-ice_files/figure-commonmark/fig-hindcast-extent-1.png"
+id="fig-hindcast-extent"
+alt="Figure 1: Median sea ice extent for al hindcasts initialised the first of the month for ACCESS-S2 and ACCESS-S1 in colours representing the start month. In black, the" />
 
-<a href="#fig-hindcast-extent" class="quarto-xref">Figure 1</a> a shows
-the seasonal cycle of Sea Ice Extent for the ACCESS-S2 hindcast and 2
-observational datasets. ACCESS-S2 shows a severe low extent bias,
-especially in the late summer-early autumn. This is due primarily to a
-faster and longer melt season between January and March and slower
-growth during March and April This is then balanced with faster growth
-between May and July
-(<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). This bias
-is common in climate models \[ref!\] and it’s been linked to xxxx??
+[Figure 1](#fig-hindcast-extent) a shows the seasonal cycle of Sea Ice
+Extent for the ACCESS-S2 hindcast and 2 observational datasets.
+ACCESS-S2 shows a severe low extent bias, especially in the late
+summer-early autumn. This is due primarily to a faster and longer melt
+season between January and March and slower growth during March and
+April This is then balanced with faster growth between May and July
+([Fig. 2](#fig-mean-growth)). This bias is common in climate models
+\[ref!\] and it’s been linked to xxxx??
 
 Comparing ACCESS-S2 with ACCESS-S1, the latter has a smaller bias,
-especially at low lags
-(<a href="#fig-hindcast-extent" class="quarto-xref">Fig. 1</a>) even
-though the typical growth rates are very similar between both models
-(<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). At larger
-lags, ACCESS-S1’s bias in summer and autumn is very similar to
-ACCESS-S2\`s. This suggests that this lower sea ice state is closer to
-the models’ equilibrium, indicating that it is an issue with model
-formulation that was being corrected by the data assimilation system in
-ACCESS-S1.
+especially at low lags ([Fig. 1](#fig-hindcast-extent)) even though the
+typical growth rates are very similar between both models
+([Fig. 2](#fig-mean-growth)). At larger lags, ACCESS-S1’s bias in summer
+and autumn is very similar to ACCESS-S2\`s. This suggests that this
+lower sea ice state is closer to the models’ equilibrium, indicating
+that it is an issue with model formulation that was being corrected by
+the data assimilation system in ACCESS-S1.
 
 At long lags, sea ice extent loses most of the initial condition memory
 and reverts to the model’s preferred equilibrium state. Therefore we can
 estimate the latter using the hindcasts with the largest possible lag,
-which is shown in triangles in
-<a href="#fig-hindcast-extent" class="quarto-xref">Figure 1</a> for the
+which is shown in triangles in [Figure 1](#fig-hindcast-extent) for the
 same dates as the initial conditions. The difference between the two is
 the effect of the data assimilation.
 
 The equilibrium of ACCESS-S1 and ACCESS-S2 is very similar (comparing
-the triangles in each panel in
-<a href="#fig-hindcast-extent" class="quarto-xref">Fig. 1</a>), owing to
+the triangles in each panel in [Fig. 1](#fig-hindcast-extent)), owing to
 both having the same model formulation. From June to October, in
 ACCESS-S2 circles move away from triangles and towards observations,
 indicating that the information from the ocean and atmosphere data
@@ -204,56 +201,125 @@ and triangles in ACCESS-S2, indicating that almost no data assimilation
 is taking place and the sea ice component of the model is virtually
 free-running.
 
-![](access-ice_files/figure-commonmark/fig-mean-growth-1.png)
+<img src="access-ice_files/figure-commonmark/fig-mean-growth-1.png"
+id="fig-mean-growth"
+alt="Figure 2: Median daily sea ice extent growth of ACCESS-S1 and ACCESS-S2 hindcasts and observations. Values are smoothed with a 2-degree loess smooth with a 30 day window." />
 
-![](access-ice_files/figure-commonmark/fig-bias-1.png)
+<img src="access-ice_files/figure-commonmark/fig-bias-1.png"
+id="fig-bias"
+alt="Figure 3: ACCESS-S2 reanalysis sea ice concentration bias compared with NSIDC sea ice concentration." />
 
-<a href="#fig-bias" class="quarto-xref">Figure 3</a> shows the
-difference in monthly mean sea ice concentrations between CDR and
-ACCESS-S2 reanalysis. From October to May, the model underestimates sea
-ice concentrations pretty much everywhere there is ice except for the
-deep Weddell Sea in April and May, where sea ice concentrations saturate
-to 1. In winter, the differences are mostly on the sea ice edge, with
-slight positive bias in XXX and negative bias around the Indian Ocean
-sector.
+[Figure 3](#fig-bias) shows the difference in monthly mean sea ice
+concentrations between CDR and ACCESS-S2 reanalysis. From October to
+May, the model underestimates sea ice concentrations pretty much
+everywhere there is ice except for the deep Weddell Sea in April and
+May, where sea ice concentrations saturate to 1. In winter, the
+differences are mostly on the sea ice edge, with slight positive bias in
+XXX and negative bias around the Indian Ocean sector.
 
 ### Anomalies
 
 {==intro connecting subsections==}
 
-![](access-ice_files/figure-commonmark/fig-extent-anom-1.png)
+<img src="access-ice_files/figure-commonmark/fig-extent-anom-1.png"
+id="fig-extent-anom"
+alt="Figure 4: Sea ice extent anomalies for ACCESS-S1 and ACCESS-S2 (black) and CDR (blue)." />
 
-<a href="#fig-extent-anom" class="quarto-xref">Figure 4</a> shows
-monthly sea ice extent anomalies forecasted at selected lags. The
-anomalies in this case were computed with respect of the climatology of
-each lag, which is a way of bias-correction. Compared with ACCESS-S1,
-ACCESS-S2 anomaly forecast is relatively poor even in the first month,
-which stays relatively skillful even at lag 3. ACCESS-S2 shows much
-bigger variability than observations, with dramatic lows between 1995
-and 2007 and highs between 2007 and 2015.
+[Figure 4](#fig-extent-anom) shows monthly sea ice extent anomalies
+forecasted at selected lags. The anomalies in this case were computed
+with respect of the climatology of each lag, which is a way of
+bias-correction. Compared with ACCESS-S1, ACCESS-S2 anomaly forecast is
+relatively poor even in the first month, which stays relatively skillful
+even at lag 3. ACCESS-S2 shows much bigger variability than
+observations, with dramatic lows between 1995 and 2007 and highs between
+2007 and 2015.
 
 {\>\>Add reginoal extents?\<\<}
 
-## Hindcast
+### RMSE
 
-![](access-ice_files/figure-commonmark/fig-rmse-1.png)
+To study ACCESS-S2 forecasts quantitatively, we compute error measures
+for all hindcasts started on the 1st of every month.
 
-{==Regional?==}
+<img src="access-ice_files/figure-commonmark/fig-rmse-1.png"
+id="fig-rmse"
+alt="Figure 5: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies." />
 
-- Mean extent forecast \<\>
-- Panantarctic
-- Regional \<\>
+[Figure 5](#fig-rmse) shows the median and 95% range of RMSE of sea ice
+concentration anomalies for ACCESS-S2 forecasts compared with a
+benchmark of persistence. This figure uses CDR data, but the results are
+nearly identical compared with ERA5 or Bootstrap. Due to errors in the
+initial conditions, it is expected that a persistence forecast would be
+better than the model forecast at very short lags, but that the
+persistence forecast errors would grow faster and eventually surpass the
+mode forecast, at which time is statistically useful {==I’ve got this
+from CC at the ICTP summer school and makes sense, but it would be great
+to have a referece?==}. Here the persistence errors are almost always
+lower than the ACCESS-S2 forecast, indicating that the model doesn’t
+have skill at any lag and in any month. The only exception is the RMSE
+around Febraury forecasted from June onwards.
+
+{==Add regional?==}
 
 ### Comparison with S1
 
-![](access-ice_files/figure-commonmark/fig-iiee-1.png)
+<img src="access-ice_files/figure-commonmark/fig-iiee-1.png"
+id="fig-iiee"
+alt="Figure 6: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for ACCESS-S1 and ACCESS-S2 hindcasts." />
+
+To compare ACCESS-S2 with ACCESS-S1, we computed the IIEE for both
+models. This error measure is shown in [Figure 6](#fig-iiee) for all
+lags and forecasts initialised at the first of every month. ACCESS-S1
+has lower error at short lags at all months, with the errors converging
+as the forecast goes on. The time to convergence depends on the month
+and it can be as fas as a few days in July to as large as several months
+for forecasts initiated in February and March. Since the only difference
+between these forecasts are the initial conditions, this timescale is an
+indication of the the memory of sea ice to initial conditions; at least
+from October to March when the data assimilated form the other
+components has little to no influence on sea ice.
+
+Also evident in [Figure 6](#fig-iiee) is the difference in the error
+spread at short lags between ACCESS-S2 and ACCESS-S1. In all month
+ACCESS-S1 shows a small error spread at lag 1, indicating that the error
+in the initial conditions not only is small, but also fairly constant.
+This spread then grows towards a climatological spread as errors
+accumulate differently in different forecasts. For ACCESS-S2, this is
+true only only between July and October, approximately. For all other
+months, the error spread is more or less stable throughout the forecast
+window, indicating that not only the initial error is high, but it’s not
+constant.
+
+<img src="access-ice_files/figure-commonmark/fig-iiee-variance-1.png"
+id="fig-iiee-variance"
+alt="Figure 7: Mean spread of IIEE at different lags for different models." />
+
+The large initial error spread could be due either to large spread of
+ensemble members or due to a large spread of individual forecasts.
+[Figure 7](#fig-iiee-variance) splits the IIEE variance for each lag
+into the mean variance of each individual forecast and the variance of
+the mean error of each individual forecast, which adds up to the total
+variance. The average variance of each forecast is almost identical
+between forecast systems in all months. This shows that the ensemble
+spread of individual forecasts evolves identically, which, again, it’s
+not unexpected because both systems share the same model formulation.
+This also shows that the perturbation scheme in ACCESS-S2 is comparable
+to the one in ACCESS-S1.
+
+On the other hand, the spread of the mean error is always larger in
+ACCESS-S2 than ACCESS-S1. The difference is particularly large at short
+lags in some months, which coindice with the ones in which the data
+assimlation scheme is not influencing sea ice initial conditions.
+
+{==This figure is pretty hard to read, so it needs tweaking. Maybe
+splitting it into two figures, or showing the percentage of varinace
+explained by one of the components==}
 
 ## Conclusions
 
 # References
 
-<div id="refs" class="references csl-bib-body hanging-indent"
-entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-comiso2023" class="csl-entry">
 
