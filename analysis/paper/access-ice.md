@@ -223,11 +223,11 @@ monthly sea ice extent anomalies forecasted at selected lags. The
 anomalies in this case were computed with respect of the climatology of
 each lag, which is a way of bias-correction. Compared with ACCESS-S1,
 ACCESS-S2 anomaly forecast is relatively poor even in the first month,
-which stays relatively skillful even at lag 3. ACCESS-S2 shows much
+which stays relatively skilful even at lag 3. ACCESS-S2 shows much
 bigger variability than observations, with dramatic lows between 1995
 and 2007 and highs between 2007 and 2015.
 
-{\>\>Add reginoal extents?\< \<}
+{\>\>Add regional extents?\< \<}
 
 ### RMSE
 
@@ -325,6 +325,10 @@ Letters* 43 (4): 1642–50. <https://doi.org/10.1002/2015GL067232>.
 </div>
 
 </div>
+
+# Suplementary figures
+
+## ERA5
 
 ![](access-ice_files/figure-commonmark/unnamed-chunk-2-1.png)
 
