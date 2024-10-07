@@ -5,7 +5,7 @@ execute:
   echo: false
   warning: false
   message: false
-  cache: false
+  cache: true
 filters:
   - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
   - ../../_extensions/mloubout/critic-markup/critic-markup.lua
