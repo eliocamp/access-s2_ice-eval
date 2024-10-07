@@ -1,0 +1,578 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\IfFileExists{pdfcomment.sty}
+{
+  \usepackage{pdfcomment}
+  \newcommand{\criticmarkupadd}[1]{\pdfmarkupcomment[markup=Highlight,color={0.838431  0.913725  0.734902}]{##1}{}}
+  \newcommand{\criticmarkuprm}[1]{\pdfmarkupcomment[markup=Highlight,color={0.887059  0.673725  0.673725}]{##1}{}}
+  \newcommand{\criticmarkupmark}[1]{\pdfmarkupcomment[markup=Highlight,color={1  0.99216  0.21961}]{##1}{}}
+  \newcommand{\criticmarkupcomm}[1]{\pdfcomment[icon=Comment, color={0.89804  0.69020  0}]{##1}}
+}{
+
+  \newcommand{\criticmarkupadd}[1]{\{++{##1}++\}}
+  \newcommand{\criticmarkuprm}[1]{\{-{}-{##1}-{}-\}}
+  \newcommand{\criticmarkupmark}[1]{\{=={##1}==\}}
+  \newcommand{\criticmarkupcomm}[1]{\{>{}>{##1}<{}<\}}
+}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Untitled},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Untitled}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+balbalbal
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+
+\criticmarkupmark{\textbf{Antarctic sea ice general description}.
+Seasonality, trends.}
+
+\criticmarkupmark{\textbf{Importance}. Impacts on life. Potential
+impacts on weather. Impacts on climate. Impacts on ocean
+circulation.(Justify why it's important to study and understand)}
+
+\criticmarkupmark{\textbf{Prediction systems.} Why is it important:
+operations \criticmarkupcomm{Discuss with Phil}; science needs (we need
+good models). What is available. Discussion on S1 \criticmarkupcomm{Can
+we discuss previous S1 results? Laura's paper is not public.}}
+
+\criticmarkupmark{\textbf{Objective.} Evaluate S2.}
+
+\section{Data and methods}\label{data-and-methods}
+
+All datasets are regrided using bilinear interpolation to a common grid,
+which is a polar sterographic grid with approximatedly equal area of
+25km².
+
+\subsection{Description of the model}\label{description-of-the-model}
+
+ACCESS-S2 is the next saeasonal prediction system after ACCESS-S1. It
+uses virtually the same exact model configuration except for some model
+versions being different. The main difference are the initial
+conditions. While S1 used initial conditions from the UK Met Office, S2
+uses the Bureau's own system. \criticmarkupmark{ Description of the
+system }\criticmarkupcomm{Atmosphere and ocean. Highlight no ice data
+assimilation. Highligh that the hope is that ice will respond to
+SST/atmosphere DA}
+
+For evaluation we use hindcst for the period
+1981--2023\criticmarkupcomm{Check}. Anomalies will be taken with respect
+to the 1981--2011 climatology computed from the reanalysis. Climatology
+is smoothed with a 11 day running mean.
+
+\subsection{Verification datasets}\label{verification-datasets}
+
+There is not a lot of data on sea ice properties, especially for things
+like thickness, age, etc. However there are relatively reliable
+satellite-derived estimates of sea ice concentration, which estimates
+the proportion of each grid area that is covered with ice. These
+products are not perfect and there still exists a fair bit of
+observation al uncertainty. To account for this uncertainty we use
+multiple datasets.
+
+\subsubsection{Bootstrap}\label{bootstrap}
+
+\criticmarkupcomm{From https://nsidc.org/data/nsidc-0079/versions/4}
+This sea ice concentration data set was derived using measurements from
+the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7
+satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors
+on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and
+-F13 satellites. Measurements from the Special Sensor Microwave
+Imager/Sounder (SSMIS) aboard DMSP-F17 are also included. The data set
+has been generated using the Advanced Microwave Scanning Radiometer -
+Earth Observing System (AMSR-E) Bootstrap Algorithm with daily varying
+tie-points. Daily (every other day prior to July 1987) and monthly data
+are available for both the north and south polar regions. Data are
+gridded on the SSM/I polar stereographic grid (25 x 25 km) and provided
+in two-byte integer format. Data coverage began on 01 November 1978 and
+is ongoing through the most current processing, with updated data
+processed several times annually.
+
+(Comiso 2023)
+
+\subsubsection{NASA Team}\label{nasa-team}
+
+\criticmarkupmark{missing}
+
+\subsubsection{CDR}\label{cdr}
+
+NOAA/NSIDC's Climate Data Record V4 combines the Bootstrap and NASA Team
+estimates in an attempt to overcome each algorithm's weaknesses.
+\criticmarkupcomm{More detail on how are they combined and their
+properties.} As such, it is is not a truly independent dataset.
+
+Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021.
+NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice
+Concentration, Version 4. {[}Indicate subset used{]}. Boulder, Colorado
+USA. NSIDC: National Snow and Ice Data Center
+https://doi.org/10.7265/efmz-2t65. {[}Date Accessed{]}
+\criticmarkupcomm{Add to zotero}
+
+\subsubsection{ERA5}\label{era5}
+
+\criticmarkupmark{From the CDS websiste:} ERA5 is the fifth generation
+ECMWF reanalysis for the global climate and weather for the past 8
+decades. Data is available from 1940 onwards. ERA5 replaces the
+ERA-Interim reanalysis.
+
+This parameter is the fraction of a grid box which is covered by sea
+ice. Sea ice can only occur in a grid box which includes ocean or inland
+water according to the land-sea mask and lake cover, at the resolution
+being used. This parameter can be known as sea-ice (area) fraction,
+sea-ice concentration and more generally as sea-ice cover. In ERA5,
+sea-ice cover is given by two external providers. Before 1979 the
+HadISST2 dataset is used. From 1979 to August 2007 the OSI SAF (409a)
+dataset is used and from September 2007 the OSI SAF oper dataset is
+used. Sea ice is frozen sea water which floats on the surface of the
+ocean. Sea ice does not include ice which forms on land such as
+glaciers, icebergs and ice-sheets. It also excludes ice shelves which
+are anchored on land, but protrude out over the surface of the ocean.
+These phenomena are not modelled by the IFS. Long-term monitoring of sea
+ice is important for understanding climate change. Sea ice also affects
+shipping routes through the polar regions.
+
+\criticmarkupcomm{Why is ERA5 better or worse than
+satellites?\textless{} \textless\}
+
+\subsection{Error measures}\label{error-measures}
+
+For evaluation purposes, we use a series of measures.
+
+\subsubsection{Sea ice extent}\label{sea-ice-extent}
+
+Sea Ice Extent is defined as the area of ocean covered with at least
+15\% ice. This threshold is motivated by the limitations in satellite
+retrieval, which is increasingly unreliable for low sea ice conditions.
+
+Sea Ice Extent is a rough global measure, but a model could have
+relatively accurate extent of ice but with different distributions. We
+use two other measures to account for these errors.
+
+We compute Root Mean Square Error of sea ice concentration anomalies.
+
+We also compute the Integrated Ice Edge Error (IIEE) (Goessling et al.
+2016). This is defined as the area in which the model misspredicts sea
+ice concentration being above or belog 15\% ice. That is, dichotomise
+sea ice concentration into areas with more and less than 15\% sea ice
+both in the forecast and observations; the IIEE is the area in which
+forecast and observations differ.
+
+\section{Results and discussion}\label{results-and-discussion}
+
+\subsection{Reanalysis}\label{reanalysis}
+
+\subsubsection{Bias}\label{bias}
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-hindcast-extent-1.pdf}
+
+}
+
+\caption{\label{fig-hindcast-extent}Median sea ice extent for al
+hindcasts initialised the first of the month for ACCESS-S2 and ACCESS-S1
+in colours representing the start month. In black, the}
+
+\end{figure}%
+
+Figure~\ref{fig-hindcast-extent} a shows the seasonal cycle of Sea Ice
+Extent for the ACCESS-S2 hindcast and 2 observational datasets.
+ACCESS-S2 shows a severe low extent bias, especially in the late
+summer-early autumn. This is due primarily to a faster and longer melt
+season between January and March and slower growth during March and
+April This is then balanced with faster growth between May and July
+(Fig.~\ref{fig-mean-growth}). This bias is common in climate models
+{[}ref!{]} and it's been linked to xxxx??
+
+Comparing ACCESS-S2 with ACCESS-S1, the latter has a smaller bias,
+especially at low lags (Fig.~\ref{fig-hindcast-extent}) even though the
+typical growth rates are very similar between both models
+(Fig.~\ref{fig-mean-growth}). At larger lags, ACCESS-S1's bias in summer
+and autumn is very similar to ACCESS-S2`s. This suggests that this lower
+sea ice state is closer to the models' equilibrium, indicating that it
+is an issue with model formulation that was being corrected by the data
+assimilation system in ACCESS-S1.
+
+At long lags, sea ice extent loses most of the initial condition memory
+and reverts to the model's preferred equilibrium state. Therefore we can
+estimate the latter using the hindcasts with the largest possible lag,
+which is shown in triangles in Figure~\ref{fig-hindcast-extent} for the
+same dates as the initial conditions. The difference between the two is
+the effect of the data assimilation.
+
+The equilibrium of ACCESS-S1 and ACCESS-S2 is very similar (comparing
+the triangles in each panel in Fig.~\ref{fig-hindcast-extent}), owing to
+both having the same model formulation. From June to October, in
+ACCESS-S2 circles move away from triangles and towards observations,
+indicating that the information from the ocean and atmosphere data
+assimilation is getting to sea ice and affecting the initial conditions.
+The rest of the year, there is little if any difference between circles
+and triangles in ACCESS-S2, indicating that almost no data assimilation
+is taking place and the sea ice component of the model is virtually
+free-running.
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-mean-growth-1.pdf}
+
+}
+
+\caption{\label{fig-mean-growth}Median daily sea ice extent growth of
+ACCESS-S1 and ACCESS-S2 hindcasts and observations. Values are smoothed
+with a 2-degree loess smooth with a 30 day window.}
+
+\end{figure}%
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-bias-1.pdf}
+
+}
+
+\caption{\label{fig-bias}ACCESS-S2 reanalysis sea ice concentration bias
+compared with NSIDC sea ice concentration.}
+
+\end{figure}%
+
+Figure~\ref{fig-bias} shows the difference in monthly mean sea ice
+concentrations between CDR and ACCESS-S2 reanalysis. From October to
+May, the model underestimates sea ice concentrations pretty much
+everywhere there is ice except for the deep Weddell Sea in April and
+May, where sea ice concentrations saturate to 1. In winter, the
+differences are mostly on the sea ice edge, with slight positive bias in
+XXX and negative bias around the Indian Ocean sector.
+
+\subsubsection{Anomalies}\label{anomalies}
+
+\criticmarkupmark{intro connecting subsections}
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-extent-anom-1.pdf}
+
+}
+
+\caption{\label{fig-extent-anom}Sea ice extent anomalies for ACCESS-S1
+and ACCESS-S2 (black) and CDR (blue).}
+
+\end{figure}%
+
+Figure~\ref{fig-extent-anom} shows monthly sea ice extent anomalies
+forecasted at selected lags. The anomalies in this case were computed
+with respect of the climatology of each lag, which is a way of
+bias-correction. Compared with ACCESS-S1, ACCESS-S2 anomaly forecast is
+relatively poor even in the first month, which stays relatively skillful
+even at lag 3. ACCESS-S2 shows much bigger variability than
+observations, with dramatic lows between 1995 and 2007 and highs between
+2007 and 2015.
+
+\criticmarkupcomm{Add reginoal extents?\textless{} \textless\}
+
+\subsubsection{RMSE}\label{rmse}
+
+To study ACCESS-S2 forecasts quantitatively, we compute error measures
+for all hindcasts started on the 1st of every month.
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-rmse-1.pdf}
+
+}
+
+\caption{\label{fig-rmse}Median and 95\% coverage of sea ice
+concentration anomalies RMSE as a function of forecast lag for all
+forecast initialised on the first of each month compared with a
+reference forecast of persistence of anomalies.}
+
+\end{figure}%
+
+Figure~\ref{fig-rmse} shows the median and 95\% range of RMSE of sea ice
+concentration anomalies for ACCESS-S2 forecasts compared with a
+benchmark of persistence. This figure uses CDR data, but the results are
+nearly identical compared with ERA5 or Bootstrap. Due to errors in the
+initial conditions, it is expected that a persistence forecast would be
+better than the model forecast at very short lags, but that the
+persistence forecast errors would grow faster and eventually surpass the
+mode forecast, at which time is statistically useful
+\criticmarkupmark{I've got this from CC at the ICTP summer school and
+makes sense, but it would be great to have a referece?= =\}. Here the
+persistence errors are almost always lower than the ACCESS-S2 forecast,
+indicating that the model doesn't have skill at any lag and in any
+month. The only exception is the RMSE around Febraury forecasted from
+June onwards.
+
+\criticmarkupmark{Add regional?= =\}
+
+\subsubsection{Comparison with S1}\label{comparison-with-s1}
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-iiee-1.pdf}
+
+}
+
+\caption{\label{fig-iiee}Median and 95\% coverage of Integrated Ice Edge
+Error as a function of forecast lag for all forecast initialised on the
+first of each month for ACCESS-S1 and ACCESS-S2 hindcasts.}
+
+\end{figure}%
+
+To compare ACCESS-S2 with ACCESS-S1, we computed the IIEE for both
+models. This error measure is shown in Figure~\ref{fig-iiee} for all
+lags and forecasts initialised at the first of every month. ACCESS-S1
+has lower error at short lags at all months, with the errors converging
+as the forecast goes on. The time to convergence depends on the month
+and it can be as fas as a few days in July to as large as several months
+for forecasts initiated in February and March. Since the only difference
+between these forecasts are the initial conditions, this timescale is an
+indication of the the memory of sea ice to initial conditions; at least
+from October to March when the data assimilated form the other
+components has little to no influence on sea ice.
+
+Also evident in Figure~\ref{fig-iiee} is the difference in the error
+spread at short lags between ACCESS-S2 and ACCESS-S1. In all month
+ACCESS-S1 shows a small error spread at lag 1, indicating that the error
+in the initial conditions not only is small, but also fairly constant.
+This spread then grows towards a climatological spread as errors
+accumulate differently in different forecasts. For ACCESS-S2, this is
+true only only between July and October, approximately. For all other
+months, the error spread is more or less stable throughout the forecast
+window, indicating that not only the initial error is high, but it's not
+constant.
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{access-ice_files/figure-pdf/fig-iiee-variance-1.pdf}
+
+}
+
+\caption{\label{fig-iiee-variance}Mean spread of IIEE at different lags
+for different models.}
+
+\end{figure}%
+
+The large initial error spread could be due either to large spread of
+ensemble members or due to a large spread of individual forecasts.
+Figure~\ref{fig-iiee-variance} splits the IIEE variance for each lag
+into the mean variance of each individual forecast and the variance of
+the mean error of each individual forecast, which adds up to the total
+variance. The average variance of each forecast is almost identical
+between forecast systems in all months. This shows that the ensemble
+spread of individual forecasts evolves identically, which, again, it's
+not unexpected because both systems share the same model formulation.
+This also shows that the perturbation scheme in ACCESS-S2 is comparable
+to the one in ACCESS-S1.
+
+On the other hand, the spread of the mean error is always larger in
+ACCESS-S2 than ACCESS-S1. The difference is particularly large at short
+lags in some months, which coindice with the ones in which the data
+assimilation scheme is not influencing sea ice initial conditions.
+
+\subsection{Conclusions}\label{conclusions}
+
+\section{References}\label{references}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-comiso2023}
+Comiso, J. 2023. {``Bootstrap {Sea Ice Concentrations} from {Nimbus-7
+SMMR} and {DMSP SSM}/{I-SSMIS}. ({NSIDC-0079}, {Version} 4).''} Boulder,
+Colorado USA.: {NASA National Snow and Ice Data Center Distributed
+Active Archive Center.} \url{https://doi.org/10.5067/X5LG68MH013O}.
+
+\bibitem[\citeproctext]{ref-goessling2016}
+Goessling, H. F., S. Tietsche, J. J. Day, E. Hawkins, and T. Jung. 2016.
+{``Predictability of the {Arctic} Sea Ice Edge.''} \emph{Geophysical
+Research Letters} 43 (4): 1642--50.
+\url{https://doi.org/10.1002/2015GL067232}.
+
+\end{CSLReferences}
+
+
+
+\end{document}
