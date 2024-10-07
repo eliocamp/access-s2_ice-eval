@@ -160,6 +160,7 @@ datasets <- list(cdr = CDR(),
                  bt = BT(),
                  era5 = ERA5()
 )
+which_dataset <- "cdr"
 ```
 
 ```{r extent_daily}
@@ -200,9 +201,9 @@ hindcast_extent |>
   _[, month := lubridate::month(forecast_time, label = TRUE)] |>
   # _[]
   ggplot(aes(time2, mid)) +
-  geom_line(data = extent_climatology, 
+  geom_line(data = extent_climatology[dataset == which_dataset], 
             aes(x = as.Date(time),
-                group = dataset)) +    
+                group = dataset)) + 
   geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
   
   geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], by = .(forecast_time, model)], 
@@ -253,25 +254,29 @@ extent_daily |>
   _[order(time)] |> 
   _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(dataset)] |> 
   _[, median_ci(dif), by = .(dataset, time = update(time, year = 2000))] |> 
+  _[dataset == which_dataset] |> 
   ggplot(aes(time, mid)) +
   geom_hline(yintercept = 0, color = "gray50", linewidth = 0.2) +
-  geom_smooth(aes(group = dataset), span = 30/366, linewidth = 0.5, color = "black", se = FALSE, n = 366)  +
-  geom_smooth(data = dif_hindcast, aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
+  geom_smooth(aes(group = dataset, color = dataset),
+              span = 30/366, linewidth = 0.5, se = FALSE, n = 366)  +
+  geom_smooth(data = dif_hindcast,
+              aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
   scale_x_datetime(NULL, date_breaks = "1 month", 
                    date_labels = "%b", expand = c(0, 0)) +
-  scale_y_continuous(NULL, labels = labels_extent)
+  scale_y_continuous(NULL, labels = labels_extent) +
+  scale_color_models
+
 ```
 
 ```{r climatology}
-climatologies <- list(cdr = datasets[["cdr"]],
-                      S2 = S2_reanalysis()) |>
+climatologies <- c(datasets,
+                   S2 = S2_reanalysis()) |>
   lapply(\(x) climatology(x) |>
            cdo_ymonmean() |> 
            cdo_execute()
   ) |>
   lapply(\(x) ReadNetCDF(x, "aice")) |>
-  rbindlist(idcol = "model") |>
-  dcast(time + xgrid + ygrid ~ model, value.var = "aice")
+  rbindlist(idcol = "model") 
 ```
 
 ```{r fig-bias}
@@ -280,8 +285,11 @@ climatologies <- list(cdr = datasets[["cdr"]],
 #| fig-cap: +S2 reanalysis sea ice concentration bias compared with NSIDC sea ice concentration.
 
 climatologies |> 
+  _[model %in% c("S2", which_dataset)] |> 
+  dcast(time + xgrid + ygrid ~ model, value.var = "aice") |> 
+  setnames(which_dataset, "obs") |> 
   ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = S2 - cdr, fill = after_stat(level)), 
+  geom_contour_fill(aes(z = S2 - obs, fill = after_stat(level)), 
                     breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
   scale_fill_divergent_discretised("ACCESS-S2 bias") +
   geomcoord_antarctica +
@@ -323,17 +331,20 @@ hindcast_extent |>
   _[, lag := months_difference(time, forecast_time) + 1] |> 
   _[lag %in% c(1, 3, 5, 7)] |> 
   ggplot(aes(time, aice)) +
-  geom_line(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))][dataset == "cdr"], 
-            aes(group = dataset),
-            color = "#1a5fb4") +
-  geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))][dataset == "cdr"], 
-              aes(group = dataset), color = "#1a5fb4", se = FALSE, span = 10*12/N, n = 366) +
-  geom_line()  +
-  geom_smooth(se = FALSE, span = 10*12/N, n = 366, color = "black") +
+  geom_line(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
+              _[dataset == which_dataset],
+            aes(group = dataset, color = dataset)) +
+  geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
+                _[dataset == "cdr"], 
+              aes(group = dataset, color = dataset),
+              se = FALSE, span = 10*12/N, n = 366) +
+  geom_line(aes(color = model))  +
+  geom_smooth(aes(color = model), se = FALSE, span = 10*12/N, n = 366) +
   scale_y_continuous(NULL,
                      labels = labels_extent) +
   scale_x_date(NULL, expand = c(0, 0)) +
-  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Lag: ", x)))
+  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Lag: ", x))) +
+  scale_color_models
 ```
 
 @fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lags.
@@ -368,9 +379,10 @@ errors <- rbind(
 
 errors |> 
   _[measure == "rmse"] |>
-  _[obs_dataset == "cdr"] |>
+  _[obs_dataset == which_dataset] |>
   _[, median_ci(value), 
     by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
+  _[version == "persistence", version := obs_dataset] |> 
   ggplot(aes(lag, mid)) +
   geom_ribbon(aes(ymin = low, 
                   ymax = high, 
@@ -383,7 +395,9 @@ errors |>
        x = "Lag") +
   #   scale_color_models +
   #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month))
+  facet_wrap(~ month, labeller = labeller(month = labels_month)) +
+  scale_color_models +
+  scale_fill_models
 ```
 
 @fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence.
@@ -403,7 +417,7 @@ The only exception is the RMSE around Febraury forecasted from June onwards.
 
 errors |> 
   _[measure == "iiee"] |>
-  _[obs_dataset == "cdr"] |>
+  _[obs_dataset == which_dataset] |>
   _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
   _[, median_ci(value), 
     by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
@@ -414,11 +428,13 @@ errors |>
                   fill = version), alpha = 0.1) +
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous(labels = labels_extent) +
+  scale_color_models +
+  scale_fill_models +
   labs(y = NULL, 
        x = "Lag") +
   #   scale_color_models +
   #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month))
+  facet_wrap(~ month, labeller = labeller(month = labels_month)) 
 ```
 
 To compare +S2 with +S1, we computed the IIEE for both models.
@@ -446,13 +462,13 @@ labels_extent_2 <- function(x) {
 
 rbind(mean_variance = errors |>
         _[measure == "iiee"] |>
-        _[obs_dataset == "cdr"] |>
+        _[obs_dataset == which_dataset] |>
         _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
         _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
       
       variance_of_mean = errors |>
         _[measure == "iiee"] |>
-        _[obs_dataset == "cdr"] |>
+        _[obs_dataset == which_dataset] |>
         _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
         _[, .(value = var(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
       idcol = "component") |> 
@@ -463,6 +479,7 @@ rbind(mean_variance = errors |>
                      labels = labels_extent_2) +
   # scale_color_models +
   scale_x_continuous("Lag") +
+  scale_color_models +
   facet_grid(month ~ component, 
              labeller = labeller(month = labels_month, 
                                  component = c(mean_variance = "Mean variance",
@@ -484,3 +501,38 @@ The difference is particularly large at short lags in some months, which coindic
 
 ::: {#refs}
 :::
+
+
+```{r dataset_era}
+which_dataset <- "era5"
+```
+
+```{r}
+<<fig-hindcast-extent>>
+```
+
+```{r}
+<<fig-mean-growth>>
+```
+
+```{r}
+<<fig-bias>>
+```
+
+```{r}
+<<<fig-extent-anom>>
+```
+
+
+```{r}
+<<fig-rmse>>
+```
+
+```{r}
+<<fig-iiee>>
+```
+
+```{r}
+<<fig-iiee-variance>>
+```
+
