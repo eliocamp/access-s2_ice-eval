@@ -390,28 +390,40 @@ For all other months, the error spread is more or less stable throughout the for
 
 ```{r fig-iiee-variance}
 #| fig-cap: Mean spread of IIEE at different lags for different models. 
+#| fig.height: 9
+#| fig.width: 4
+labels_extent_2 <- function(x) {
+  m <- which.max(x)
+  x <- scales::label_number(scale = (1e-12)^2)(x)
+  x[m] <- paste0(x[m], "\nM km⁴")
+  x
+}
 
 rbind(mean_variance = errors |>
         _[measure == "iiee"] |>
         _[obs_dataset == "cdr"] |>
-        _[, sd(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
+        _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
         _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-
+      
       variance_of_mean = errors |>
         _[measure == "iiee"] |>
         _[obs_dataset == "cdr"] |>
         _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-        _[, .(value = sd(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
+        _[, .(value = var(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
       idcol = "component") |> 
-
+  
   ggplot(aes(lag, value)) +
-  geom_line(aes(color = version, linetype = component), linewidth = 1) +
+  geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous("Variance", 
-                     labels = labels_extent) +
+                     labels = labels_extent_2) +
   # scale_color_models +
   scale_x_continuous("Lag") +
-  facet_wrap(~ month, labeller = labeller(month = labels_month))
+  facet_grid(month ~ component, 
+             labeller = labeller(month = labels_month, 
+                                 component = c(mean_variance = "Mean variance",
+                                               variance_of_mean = "Variance of mean"))) 
 ```
+
 The large initial error spread could be due either to large spread of ensemble members or due to a large spread of individual forecasts. 
 @fig-iiee-variance splits the IIEE variance for each lag into the mean variance of each individual forecast and the variance of the mean error of each individual forecast, which adds up to the total variance. 
 The average variance of each forecast is almost identical between forecast systems in all months. 
@@ -419,9 +431,8 @@ This shows that the ensemble spread of individual forecasts evolves identically,
 This also shows that the perturbation scheme in +S2 is comparable to the one in +S1.
 
 On the other hand, the spread of the mean error is always larger in +S2 than +S1. 
-The difference is particularly large at short lags in some months, which coindice with the ones in which the data assimlation scheme is not influencing sea ice initial conditions. 
+The difference is particularly large at short lags in some months, which coindice with the ones in which the data assimilation scheme is not influencing sea ice initial conditions. 
 
-{==This figure is pretty hard to read, so it needs tweaking. Maybe splitting it into two figures, or showing the percentage of varinace explained by one of the components==}
 
 ## Conclusions
 
