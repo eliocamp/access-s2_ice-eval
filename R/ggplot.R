@@ -25,21 +25,20 @@ ggplot2::theme_set(ggplot2::theme_minimal() +
             ))
 wide_legend <- ggplot2::theme(legend.key.width = grid::unit(1, 'null'))
 
-
 colours_models <- c(
   S2 = "black",
   S1 = "#a51d2d",
-  forecast = "black",
-  persistence = "#1a5fb4",
-  nsidc = "#1a5fb4"
+  cdr = "#1a5fb4",
+  bt = "#1a5fb4",
+  era5 = "#1a5fb4"
 )
 
 labels_models <- c(
   S2 = "ACCESS-S2",
   S1 = "ACCESS-S1",
-  forecast = "Forecast",
-  persistence = "Persistence",
-  nsidc = "NSIDC CDRV4"
+  cdr = "CDR",
+  bt = "Bootstrap",
+  era5 = "ERA5"
 )
 
 scale_color_models <- ggplot2::scale_color_manual(NULL,
@@ -94,15 +93,3 @@ geomcoord_antarctica <- list(
     geom_antarctica_path
 )
 
-scale_color_models <- ggplot2::scale_color_manual(NULL,
-    values = c(
-        access = "black",
-        hadisst = "#3584e4",
-        nsidc = "#e66100"
-    ),
-    labels = c(
-        access = "ACCESS-S2",
-        hadisst = "HadISST",
-        nsidc = "NSIDC CDRV4"
-    )
-)
