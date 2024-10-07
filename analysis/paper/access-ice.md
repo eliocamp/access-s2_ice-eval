@@ -325,3 +325,15 @@ Letters* 43 (4): 1642–50. <https://doi.org/10.1002/2015GL067232>.
 </div>
 
 </div>
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-2-1.png)
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-6-1.png)
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-7-1.png)
+
+![](access-ice_files/figure-commonmark/unnamed-chunk-8-1.png)
