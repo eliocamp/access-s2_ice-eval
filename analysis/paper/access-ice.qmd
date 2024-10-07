@@ -5,7 +5,7 @@ execute:
   echo: false
   warning: false
   message: false
-  cache: true
+  cache: false
 filters:
   - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
   - ../../_extensions/mloubout/critic-markup/critic-markup.lua
@@ -517,11 +517,24 @@ rbind(mean_variance = errors |>
       idcol = "component") |> 
   
   ggplot(aes(lag, value)) +
+  
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = "gray50", linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous("Variance", 
                      labels = labels_extent_2) +
   # scale_color_models +
-  scale_x_continuous("Lag") +
+  scale_x_continuous("Lag", breaks = NULL) +
   scale_color_models +
   facet_grid(month ~ component, 
              labeller = labeller(month = labels_month, 
