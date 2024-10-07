@@ -265,7 +265,6 @@ extent_daily |>
                    date_labels = "%b", expand = c(0, 0)) +
   scale_y_continuous(NULL, labels = labels_extent) +
   scale_color_models
-
 ```
 
 ```{r climatology}
@@ -291,13 +290,15 @@ climatologies |>
   ggplot(aes(xgrid, ygrid)) +
   geom_contour_fill(aes(z = S2 - obs, fill = after_stat(level)), 
                     breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
-  scale_fill_divergent_discretised("ACCESS-S2 bias") +
+  scale_fill_divergent_discretised(paste0("Bias with respect to ", labels_models[which_dataset])) +
   geomcoord_antarctica +
   geom_antarctica_fill +
   facet_wrap(~ lubridate::month(time, label = TRUE)) +
   wide_legend +
   tag_facets()
 ```
+
+
 
 @fig-bias shows the difference in monthly mean sea ice concentrations between +CDR and +S2 reanalysis.
 From October to May, the model underestimates sea ice concentrations pretty much everywhere there is ice except for the deep Weddell Sea in April and May, where sea ice concentrations saturate to 1.
@@ -334,12 +335,12 @@ hindcast_extent |>
   geom_line(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
               _[dataset == which_dataset],
             aes(group = dataset, color = dataset)) +
-  geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
-                _[dataset == "cdr"], 
-              aes(group = dataset, color = dataset),
-              se = FALSE, span = 10*12/N, n = 366) +
+  # geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
+  #               _[dataset == "cdr"], 
+  #             aes(group = dataset, color = dataset),
+  #             se = FALSE, span = 10*12/N, n = 366) +
   geom_line(aes(color = model))  +
-  geom_smooth(aes(color = model), se = FALSE, span = 10*12/N, n = 366) +
+  # geom_smooth(aes(color = model), se = FALSE, span = 10*12/N, n = 366) +
   scale_y_continuous(NULL,
                      labels = labels_extent) +
   scale_x_date(NULL, expand = c(0, 0)) +
@@ -349,10 +350,10 @@ hindcast_extent |>
 
 @fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lags.
 The anomalies in this case were computed with respect of the climatology of each lag, which is a way of bias-correction.
-Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skillful even at lag 3.
+Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skilful even at lag 3.
 +S2 shows much bigger variability than observations, with dramatic lows between 1995 and 2007 and highs between 2007 and 2015.
 
-{\>\>Add reginoal extents?\<
+{\>\>Add regional extents?\<
 \<}
 
 ### RMSE
@@ -376,6 +377,20 @@ errors <- rbind(
 
 ```{r fig-rmse}
 #| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
+#| fig.height: 5
+#| fig.width: 9
+
+month_from_lag <- function(day = 1, step = 2) {
+  force(day)
+  force(step)
+  function(x) {
+    unique(x[, .(lag, month)])[, time := make_date(month = month, day = 1) + lag] |> 
+      _[mday(time) == day, .(lag, month, 
+                             month2 = lubridate::month(time, label = TRUE)
+      )] |> 
+      _[, .SD[((seq_len(.N) + 1) %% step) == 0], by = month]
+  }
+}
 
 errors |> 
   _[measure == "rmse"] |>
@@ -384,6 +399,19 @@ errors |>
     by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
   _[version == "persistence", version := obs_dataset] |> 
   ggplot(aes(lag, mid)) +
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = "gray50", linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 1), aes(y = Inf, label = month2), 
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 1), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
+  
   geom_ribbon(aes(ymin = low, 
                   ymax = high, 
                   color = version, 
@@ -391,13 +419,14 @@ errors |>
                   group = interaction(obs_dataset, version)),
               alpha = 0.1) +
   geom_line(aes(color = version, group = interaction(obs_dataset, version)), linewidth = 1) +
+  scale_x_continuous(breaks = NULL) +
   labs(y = "RMSE", 
        x = "Lag") +
+  scale_color_models +
+  scale_fill_models +
   #   scale_color_models +
   #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month)) +
-  scale_color_models +
-  scale_fill_models
+  facet_wrap(~ month, labeller = labeller(month = labels_month)) 
 ```
 
 @fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence.
@@ -422,12 +451,26 @@ errors |>
   _[, median_ci(value), 
     by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
   ggplot(aes(lag, mid)) +
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = "gray50", linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
+  
   geom_ribbon(aes(ymin = low, 
                   ymax = high, 
                   color = version, 
                   fill = version), alpha = 0.1) +
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous(labels = labels_extent) +
+  scale_x_continuous(breaks = NULL) +
   scale_color_models +
   scale_fill_models +
   labs(y = NULL, 
@@ -502,6 +545,9 @@ The difference is particularly large at short lags in some months, which coindic
 ::: {#refs}
 :::
 
+# Suplementary figures
+
+## ERA5
 
 ```{r dataset_era}
 which_dataset <- "era5"
@@ -522,7 +568,6 @@ which_dataset <- "era5"
 ```{r}
 <<<fig-extent-anom>>
 ```
-
 
 ```{r}
 <<fig-rmse>>
