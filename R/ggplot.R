@@ -30,7 +30,8 @@ colours_models <- c(
   S1 = "#a51d2d",
   cdr = "#1a5fb4",
   bt = "#1a5fb4",
-  era5 = "#1a5fb4"
+  era5 = "#1a5fb4",
+  osi = "#1a5fb4"
 )
 
 labels_models <- c(
@@ -38,7 +39,8 @@ labels_models <- c(
   S1 = "ACCESS-S1",
   cdr = "CDR",
   bt = "Bootstrap",
-  era5 = "ERA5"
+  era5 = "ERA5",
+  osi = "OSI"
 )
 
 scale_color_models <- ggplot2::scale_color_manual(NULL,
