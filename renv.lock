@@ -1013,17 +1013,17 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "rcdo",
       "RemoteUsername": "eliocamp",
-      "RemotePkgRef": "eliocamp/rcdo",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "249f5c420c94bfb708aa94b7355fe37cd1c00f6b",
+      "RemoteRepo": "rcdo",
+      "RemoteRef": "main",
+      "RemoteSha": "ba1881e5dd4b3669236a8229756b88acdfbc3caf",
       "Requirements": [
         "R",
+        "R6",
         "cli",
         "rlang"
       ],
-      "Hash": "d7e6150f19b7f9bd88d3ddf4154e700f"
+      "Hash": "d1d3a0a192071104e8bdd7e6ae97eaed"
     },
     "renv": {
       "Package": "renv",

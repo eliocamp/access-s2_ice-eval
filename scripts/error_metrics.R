@@ -20,19 +20,17 @@ obs <- list(
         bootstrap = BT() |>
             force(),
         era5 = ERA5() |>
+            force(),
+        osi = OSI() |>
             force()
     )
 )
 
-climatologies <- list(
-    cdr = CDR(),
-    bootstrap = BT(),
-    era5 = ERA5()
-) |>
+climatologies <- obs$data |>
     furrr::future_map(climatology)
 
 obs$anomalies <- furrr::future_map(names(climatologies), \(n) {
-    get_anomalies(obs$data[[n]], climatologies[[n]])
+    anomalies(obs$data[[n]], climatologies[[n]])
 }) |>
     setNames(names(climatologies))
 
@@ -68,8 +66,9 @@ cdo_persist <- function(file, file2, init_time) {
 
 
 get_part <- memoise::memoise(function(file, first_time, last_time) {
-    outfile <- tempfile(tmpdir = "data/temp/part/")
-    dir.create("data/temp/part", showWarnings = FALSE, recursive = TRUE)
+    outfile <- tempfile(tmpdir = here::here("data/temp/part", 
+                                            tools::file_path_sans_ext(basename(file))))
+    dir.create(dirname(outfile), showWarnings = FALSE, recursive = TRUE)
 
     file |>
         cdo_seldate(
@@ -77,7 +76,7 @@ get_part <- memoise::memoise(function(file, first_time, last_time) {
             enddate = as.character(last_time)
         ) |>
         cdo_execute(options = "-L", output = outfile)
-}, cache = cachem::cache_disk("data/temp/cache"))
+}, cache = cachem::cache_disk(here::here("data/temp/cache")))
 
 compute_metrics <- function(forecast_time, member, version, obs_dataset) {
     # message(i)
@@ -117,12 +116,14 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
     observation_part_anomaly <- get_part(obs$anomalies[[obs_dataset]], first_time, last_time)
 
     nc <- ncdf4::nc_open(observation_part)
-    times_obs <- metR:::.parse_time(time = nc$dim$time$vals, units = nc$dim$time$units, calendar = nc$dim$time$calendar)
+    times_obs <- metR:::.parse_time(time = nc$dim$time$vals, 
+                                    units = nc$dim$time$units, 
+                                    calendar = nc$dim$time$calendar)
     ncdf4::nc_close(nc)
 
     if (!file.exists(rmse_out)) {
         file |>
-            cdo_ydaysub(S2 |> climatology()) |>
+            cdo_ydaysub(S2_reanalysis() |> climatology()) |>
             cdo_rmse(observation_part_anomaly) |>
             cdo_execute(output = rmse_out)
     }
@@ -138,7 +139,9 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
         )
 
         nc <- ncdf4::nc_open(persistence)
-        times_persistence <- metR:::.parse_time(time = nc$dim$time$vals, units = nc$dim$time$units, calendar = nc$dim$time$calendar)
+        times_persistence <- metR:::.parse_time(time = nc$dim$time$vals, 
+                                                units = nc$dim$time$units, 
+                                                calendar = nc$dim$time$calendar)
         ncdf4::nc_close(nc)
 
         if (length(times_persistence) != length(times_obs)) {
@@ -170,6 +173,10 @@ all_files <- data.table::CJ(
         )
     ) |>
     as.data.frame()
+forecast_time <- forecast_times_s2[1]
+obs_dataset  <-  "osi"
+version  <-  "S2"
+member  <-  1
 
 
 furrr::future_pwalk(all_files, compute_metrics, .options = furrr::furrr_options(seed = NULL))

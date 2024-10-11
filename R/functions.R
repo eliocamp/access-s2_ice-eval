@@ -77,6 +77,20 @@ climatology <- function(dataset) {
     return(file)
 }
 
+
+anomalies <- function(dataset, climatology) {
+  file  <- here::here("data/derived/anomalies", name_from_dataset(dataset))
+  dir.create(dirname(file), FALSE, TRUE)
+
+  if (file.exists(file)) {
+    return(file)
+  }
+  cdo_ydaysub(cdo_del29feb(dataset), cdo_del29feb(climatology)) |>
+    cdo_execute(output = file, options = "-L")
+}
+
+
+
 name_from_dataset <- function(dataset) {
     infohash <- digest::digest(file.info(dataset)[c("size", "mtime")])
     paste0(tools::file_path_sans_ext(basename(dataset)), "_", infohash, ".nc")
