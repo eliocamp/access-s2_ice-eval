@@ -13,7 +13,7 @@ filters:
 search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
-  +CDR: CDR
+  +CDR: NOAA/NSIDC CDRV4
 bibliography: references.bib
 editor: 
   markdown: 
@@ -43,16 +43,46 @@ balbalbal
 {==**Antarctic sea ice general description**.
 Seasonality, trends.==}
 
+.....
+
+Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice had a slightly increasing trend that models systematically failed to reproduce and puzzled researchers \cite{hobbs2016}. 
+Then, in 2016 Antarctic sea ice extent dropped precipitously and has been at low and record low levels since, highlighting even more our lack of understanding of Antarctic sea ice variability and change. [ref: that CESM run with forced winds]. 
+
 {==**Importance**.
 Impacts on life.
 Potential impacts on weather.
 Impacts on climate.
 Impacts on ocean circulation.(Justify why it's important to study and understand)==}
 
-{==**Prediction systems.** Why is it important: operations {\>\>Discuss with Phil\<\<}; science needs (we need good models).
+Antarctic sea ice is in a remote location but the potential impacts of its variability and trends extend far into the lower latitudes, affecting ocean and atmospheric circulation, ocean carbon uptake and biological processes. 
+It's likely that a reduction in sea ice extent would reduce the temperature gradient between high and low latitudes (and vice versa), which in turn influences the strength and location of the jet, which is a crucial component of weather events. 
+For the northern hemisphere, it has been hypothesised that the reduction in sea ice in the northern hemisphere has lead to a weaker, wavier jet, increasing the frequency of extreme events [refs].
+Less is known about the effects of Antarctic sea ice variability {==is this true? It feels that way from the (lack of) literature. Is there a reference to substantiate this claim?==} on weather timescales. 
+On climate scales, it is thought that the signal of a reduction in Antarctic sea ice is like a "mini global warming" and experiments also predict a weakening and northerly shift of the jet [@ayres2022; @england2020]. 
+
+
+{==Relevant papers to read: 
+
+\cite{ayres2019}
+\cite{england2018}
+\cite{raphael2011}
+\cite{raphael2003a}
+
+==}
+
+{==**Prediction systems.** Why is it important: operations {\>\>Discuss with Phil\<\<}; science needs (we need good models).\cite{desilva2020}\cite{wagner2020}
 What is available.
 Discussion on S1 {\>\>Can we discuss previous S1 results?
 Laura's paper is not public.\<\<}==}
+
+Correctly modelling Antarctic sea ice is not only necessary for process understanding and climate projections to inform adaptation strategies, but accurate seasonal to subseasonal forecast are crucial for operations in and around the Antarctic continent [@desilva2020 @wagner2020]. 
+However, Antarctic sea ice forecasts have been challenging both due to model deficiencies and observational uncertainty [@zampieri2019]{==check if this is true, hehe.==}. 
+Dynamical seasonal forecasts of Summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023], which also underscores the need for better understanding of sea ice dynamics. 
+
+
+{==**S2** Introduce S2==}
+
+
 
 {==**Objective.** Evaluate S2.==}
 
@@ -81,107 +111,6 @@ Climatology is smoothed with a 11 day running mean.
 
 ## Verification datasets
 
-There is not a lot of data on sea ice properties, especially for things like thickness, age, etc.
-However there are relatively reliable satellite-derived estimates of sea ice concentration, which estimates the proportion of each grid area that is covered with ice.
-
-We use NOAA/NSIDC's Climate Data Record V4 as the primary verification dataset. 
-Its sea ice concentration data are estimated taking the maximum value of the NASA Team [ref] and NASA Bootstrap [ref] algorithms to reduce their low concentration bias [@meier2014; @meier2021].
-Both algorithms use data from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites. 
-The data has a resolution of 25 by 25km and daily from 1978 onwards. 
-
-These data are not perfect, there still exists a fair bit of observational uncertainty.
-We include other sources of data to take into acount the observational uncertainty. 
-
-
-
-However, we find that the spread among the different datasets is minimal compared with the difference with the +S2 and +S1 forecasts, so the conclusions are independent of the dataset used.
-Nevertheless, we provide figures using ERA5
-
-The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility (OSI SAF) [ref] is another satellite-derived sea ice concentration product based on mostly the same sensors as the NOA CDR. 
-We also use 
-
-Copernicus Climate Change Service (C3S) (2020): Sea ice concentration daily gridded data from 1978 to present derived from satellite observations. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.3cd8b812 (Accessed on DD-MMM-YYYY)
-
-
-{==From the CDS websiste:==} ERA5 is the fifth generation ECMWF reanalysis for the global climate and weather for the past 8 decades.
-Data is available from 1940 onwards.
-ERA5 replaces the ERA-Interim reanalysis.
-
-This parameter is the fraction of a grid box which is covered by sea ice.
-Sea ice can only occur in a grid box which includes ocean or inland water according to the land-sea mask and lake cover, at the resolution being used.
-This parameter can be known as sea-ice (area) fraction, sea-ice concentration and more generally as sea-ice cover.
-In ERA5, sea-ice cover is given by two external providers.
-Before 1979 the HadISST2 dataset is used.
-From 1979 to August 2007 the OSI SAF (409a) dataset is used and from September 2007 the OSI SAF oper dataset is used.
-Sea ice is frozen sea water which floats on the surface of the ocean.
-Sea ice does not include ice which forms on land such as glaciers, icebergs and ice-sheets.
-It also excludes ice shelves which are anchored on land, but protrude out over the surface of the ocean.
-These phenomena are not modelled by the IFS.
-Long-term monitoring of sea ice is important for understanding climate change.
-Sea ice also affects shipping routes through the polar regions.
-
-{\>\>Why is ERA5 better or worse than satellites?\<
-\<}
-
-### Bootstrap
-
-{\>\>From https://nsidc.org/data/nsidc-0079/versions/4\<\<} This sea ice concentration data set was derived using measurements from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites.
-Measurements from the Special Sensor Microwave Imager/Sounder (SSMIS) aboard DMSP-F17 are also included.
-The data set has been generated using the Advanced Microwave Scanning Radiometer - Earth Observing System (AMSR-E) Bootstrap Algorithm with daily varying tie-points.
-Daily (every other day prior to July 1987) and monthly data are available for both the north and south polar regions.
-Data are gridded on the SSM/I polar stereographic grid (25 x 25 km) and provided in two-byte integer format.
-Data coverage began on 01 November 1978 and is ongoing through the most current processing, with updated data processed several times annually.
-
-
-
-
-[@comiso2023]
-
-### NASA Team
-
-{==missing==}
-
-### CDR
-
-NOAA/NSIDC's Climate Data Record V4 combines the Bootstrap and NASA Team estimates in an attempt to overcome each algorithm's weaknesses.
-{\>\>More detail on how are they combined and their properties.\<\<} As such, it is is not a truly independent dataset.
-
-Meier, W. N., F. Fetterer, A. K. Windnagel, and S.
-Stewart.
-2021.
-NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice Concentration, Version 4.
-\[Indicate subset used\].
-Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center https://doi.org/10.7265/efmz-2t65.
-\[Date Accessed\] {\>\>Add to zotero\<\<}
-
-### ERA5
-
-All datasets are regrided using bilinear interpolation to a common grid, which is a polar stereographic grid with approximately equal area of 25km².
-
-## Error measures
-
-For evaluation purposes, we use a series of measures.
-
-### Sea ice extent
-
-Sea Ice Extent is defined as the area of ocean covered with at least 15% ice.
-This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for low sea ice conditions.
-
-Sea Ice Extent is a rough global measure, but a model could have relatively accurate extent of ice but with different distributions.
-We use two other measures to account for these errors.
-
-We compute Root Mean Square Error of sea ice concentration anomalies.
-
-We also compute the Integrated Ice Edge Error (IIEE) [@goessling2016].
-This is defined as the area in which the model misspredicts sea ice concentration being above or belog 15% ice.
-That is, dichotomise sea ice concentration into areas with more and less than 15% sea ice both in the forecast and observations; the IIEE is the area in which forecast and observations differ.
-
-# Results and discussion
-
-## Reanalysis
-
-### Bias
-
 ```{r datasets}
 datasets <- list(cdr = CDR(),
                  bt = BT(),
@@ -190,6 +119,51 @@ datasets <- list(cdr = CDR(),
 )
 which_dataset <- "cdr"
 ```
+
+There is not a lot of data on sea ice properties, especially for things like thickness, age, etc.
+However there are relatively reliable satellite-derived estimates of sea ice concentration, which estimates the proportion of each grid area that is covered with ice.
+
+These data are not perfect. \cite{meier2019}
+Sensor sensitivity and resolution. 
+Weather filtering.
+Land 
+To account for observational uncertainty we performed the verification on other data sources. 
+We find that the spread among the different datasets is minimal compared with the difference with the +S2 and +S1 forecasts, so the conclusions are independent of the dataset used.
+
+We use NOAA/NSIDC's Climate Data Record V4 [CDR; @meier2014] as the primary verification dataset. 
+Its sea ice concentration data are estimated taking the maximum value of the NASA Team [ref] and NASA Bootstrap [@comiso2023] algorithms to reduce their low concentration bias [@meier2014; @meier2021].
+Both algorithms use data from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites. 
+The data has a resolution of 25 by 25km and daily from 1978 onwards. 
+
+Results based on two other different datasets are provided as supplementary material:
+
+1. The NASA Bootstrap [@comiso2023] product is... it is not an independent dataset from NOAA/NSIDC CDRV4.
+
+1. The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility (OSI SAF) [ref] is another satellite-derived sea ice concentration product based on mostly the same sensors as the NOA CDR but computed independently using different algorithms. 
+
+## Error measures
+
+For evaluation purposes, we use a series of measures.
+
+### Sea ice extent
+
+Sea Ice Extent is defined as the area of ocean covered with at least 15% ice.
+This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for lower sea ice conditions.
+
+Sea Ice Extent is a rough global measure, but a model could have relatively accurate extent of ice but with different distributions.
+We use two other measures to account for these errors.
+
+We compute Root Mean Square Error of sea ice concentration anomalies.
+
+We also compute the Integrated Ice Edge Error (IIEE) [@goessling2016].
+This is defined as the area in which the model misspredicts sea ice concentration being above or belong 15% ice.
+That is, dichotomise sea ice concentration into areas with more and less than 15% sea ice both in the forecast and observations; the IIEE is the area in which forecast and observations differ.
+
+# Results and discussion
+
+## Reanalysis
+
+### Bias
 
 ```{r extent_daily}
 extent_daily <- datasets |>
@@ -219,7 +193,7 @@ hindcast_extent <- rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_exten
 ```
 
 ```{r fig-hindcast-extent}
-#| fig-cap: Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the 
+#| fig-cap: Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the median sea ice extent of +CDR. 
 hindcast_extent |> 
   _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
                               lag = as.numeric(as.Date(time) - forecast_time),
@@ -250,14 +224,16 @@ hindcast_extent |>
   tag_facets() 
 ```
 
-@fig-hindcast-extent a shows the seasonal cycle of Sea Ice Extent for the +S2 hindcast and `r length(datasets)-1` observational datasets.
+@fig-hindcast-extent a shows the seasonal cycle of Sea Ice Extent for the +S2 hindcast and +CDR
 +S2 shows a severe low extent bias, especially in the late summer-early autumn.
 This is due primarily to a faster and longer melt season between January and March and slower growth during March and April This is then balanced with faster growth between May and July ([Fig. @fig-mean-growth]).
 This bias is common in climate models \[ref!\]
 and it's been linked to xxxx??
 
+Melt overestimation during the melt season is very common in models [@massonnet2023]. 
+
 Comparing +S2 with +S1, the latter has a smaller bias, especially at low lags ([Fig. @fig-hindcast-extent b]) even though the typical growth rates are very similar between both models ([Fig. @fig-mean-growth]).
-At larger lags, +S1's bias in summer and autumn is very similar to +S2\`s.
+At larger lags, +S1's bias in summer and autumn is very similar to +S2's.
 This suggests that this lower sea ice state is closer to the models' equilibrium, indicating that it is an issue with model formulation that was being corrected by the data assimilation system in +S1.
 
 At long lags, sea ice extent loses most of the initial condition memory and reverts to the model's preferred equilibrium state.
@@ -381,8 +357,6 @@ The anomalies in this case were computed with respect of the climatology of each
 Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skilful even at lag 3.
 +S2 shows much bigger variability than observations, with dramatic lows between 1995 and 2007 and highs between 2007 and 2015.
 
-{\>\>Add regional extents?\<
-\<}
 
 ### RMSE
 
@@ -462,20 +436,48 @@ This figure uses +CDR data, but the results are nearly identical compared with E
 Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, at which time is statistically useful {==I've got this from CC at the ICTP summer school and makes sense, but it would be great to have a referece?=
 =}.
 Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model doesn't have skill at any lag and in any month.
-The only exception is the RMSE around Febraury forecasted from June onwards.
-
-{==Add regional?=
-=}
+The only exception is the RMSE around February forecasted from June onwards.
 
 ### Comparison with S1
 
+```{r}
+t_test <- function(x, y, ...) {
+  
+  test <- t.test(x, y, ...)
+  
+  list(low = test[["conf.int"]][1],
+       high = test[["conf.int"]][2], 
+       estimate = -diff(test$estimate), 
+       p.value = test[["p.value"]]
+  )
+}
+
+max_lag <- errors[version == "S1", max(lag)]
+
+dif <- errors |> 
+  na.omit() |> 
+  _[obs_dataset == which_dataset] |>
+  _[measure == "iiee"] |> 
+  _[version != "persistence"] |> 
+  _[lag <= max_lag] |> 
+  dcast(time + time_forecast + member + lag ~ version, value.var = "value") |> 
+  _[, t_test(na.omit(S1), na.omit(S2)), 
+    by = .(lag, month(time_forecast))] |> 
+  _[p.value > 0.01] |> 
+  _[, .SD[which.min(lag)], by = month] |> 
+  _[order(month), .(month, lag)]
+
+labels_month_significant <- setNames(paste0(month.abb, " (", dif$lag, ")"),
+                                     1:12)
+```
+
 ```{r fig-iiee}
-#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for ACCESS-S1 and ACCESS-S2 hindcasts. 
+#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lag at which the the mean error of each model is not statistically significant at a 1% level using a two-sisded t-test. 
 
 errors |> 
   _[measure == "iiee"] |>
   _[obs_dataset == which_dataset] |>
-  _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
+  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
   _[, median_ci(value), 
     by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
   ggplot(aes(lag, mid)) +
@@ -491,12 +493,21 @@ errors |>
             size = 2.5,
             vjust = 0) +
   
-  
   geom_ribbon(aes(ymin = low, 
                   ymax = high, 
                   color = version, 
                   fill = version), alpha = 0.1) +
   geom_line(aes(color = version), linewidth = 1) +
+  
+  
+  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == "S1"], 
+  #              aes(x = lag, 
+  #                  ymin = mid - (high - low), ymax = mid + (high - low))) +
+  
+  # geom_point(data = \(x) x[dif, on = .NATURAL][version == "S1"],
+  # aes(lag, mid), size = 3, shape = 21) +
+  
+  
   scale_y_continuous(labels = labels_extent) +
   scale_x_continuous(breaks = NULL) +
   scale_color_models +
@@ -505,13 +516,13 @@ errors |>
        x = "Lag") +
   #   scale_color_models +
   #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month)) 
+  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) 
 ```
 
 To compare +S2 with +S1, we computed the IIEE for both models.
 This error measure is shown in @fig-iiee for all lags and forecasts initialised at the first of every month.
 +S1 has lower error at short lags at all months, with the errors converging as the forecast goes on.
-The time to convergence depends on the month and it can be as fas as a few days in July to as large as several months for forecasts initiated in February and March.
+The time to convergence depends on the month and it can be as fas as two weeks June and July to as large as 160 days for forecasts initialised in February. 
 Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the the memory of sea ice to initial conditions; at least from October to March when the data assimilated form the other components has little to no influence on sea ice.
 
 Also evident in @fig-iiee is the difference in the error spread at short lags between +S2 and +S1.
@@ -519,6 +530,10 @@ In all month +S1 shows a small error spread at lag 1, indicating that the error 
 This spread then grows towards a climatological spread as errors accumulate differently in different forecasts.
 For +S2, this is true only only between July and October, approximately.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it's not constant.
+
+
+
+
 
 ```{r fig-iiee-variance}
 #| fig-cap: Mean spread of IIEE at different lags for different models. 
