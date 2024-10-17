@@ -21,14 +21,59 @@
 
 {==**Antarctic sea ice general description**. Seasonality, trends.==}
 
+…..
+
+Unlike Arctic sea ice, which has been steadily retreating at least since
+the start of satellite records in the early 80s, Antarctic sea ice had a
+slightly increasing trend that models systematically failed to reproduce
+and puzzled researchers . Then, in 2016 Antarctic sea ice extent dropped
+precipitously and has been at low and record low levels since,
+highlighting even more our lack of understanding of Antarctic sea ice
+variability and change. \[ref: that CESM run with forced winds\].
+
 {==**Importance**. Impacts on life. Potential impacts on weather.
 Impacts on climate. Impacts on ocean circulation.(Justify why it’s
 important to study and understand)==}
+
+Antarctic sea ice is in a remote location but the potential impacts of
+its variability and trends extend far into the lower latitudes,
+affecting ocean and atmospheric circulation, ocean carbon uptake and
+biological processes. It’s likely that a reduction in sea ice extent
+would reduce the temperature gradient between high and low latitudes
+(and vice versa), which in turn influences the strength and location of
+the jet, which is a crucial component of weather events. For the
+northern hemisphere, it has been hypothesised that the reduction in sea
+ice in the northern hemisphere has lead to a weaker, wavier jet,
+increasing the frequency of extreme events \[refs\]. Less is known about
+the effects of Antarctic sea ice variability {==is this true? It feels
+that way from the (lack of) literature. Is there a reference to
+substantiate this claim?==} on weather timescales. On climate scales, it
+is thought that the signal of a reduction in Antarctic sea ice is like a
+“mini global warming” and experiments also predict a weakening and
+northerly shift of the jet (Ayres et al. 2022; England et al. 2020).
+
+{==Relevant papers to read:
+
+==}
 
 {==**Prediction systems.** Why is it important: operations {\>\>Discuss
 with Phil\<\<}; science needs (we need good models). What is available.
 Discussion on S1 {\>\>Can we discuss previous S1 results? Laura’s paper
 is not public.\<\<}==}
+
+Correctly modelling Antarctic sea ice is not only necessary for process
+understanding and climate projections to inform adaptation strategies,
+but accurate seasonal to subseasonal forecast are crucial for operations
+in and around the Antarctic continent Wagner et al. (2020). However,
+Antarctic sea ice forecasts have been challenging both due to model
+deficiencies and observational uncertainty (Zampieri, Goessling, and
+Jung 2019){==check if this is true, hehe.==}. Dynamical seasonal
+forecasts of Summer Antarctic sea ice have been shown to perform worse
+than relatively simple statistical methods (Massonnet et al. 2023),
+which also underscores the need for better understanding of sea ice
+dynamics.
+
+{==**S2** Introduce S2==}
 
 {==**Objective.** Evaluate S2.==}
 
@@ -83,101 +128,35 @@ like thickness, age, etc. However there are relatively reliable
 satellite-derived estimates of sea ice concentration, which estimates
 the proportion of each grid area that is covered with ice.
 
-We use NOAA/NSIDC’s Climate Data Record V4 as the primary verification
-dataset. Its sea ice concentration data are estimated taking the maximum
-value of the NASA Team \[ref\] and NASA Bootstrap \[ref\] algorithms to
-reduce their low concentration bias (Meier et al. 2014; Meier et al.
-2021). Both algorithms use data from the Scanning Multichannel Microwave
-Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor
-Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite
-Program’s (DMSP) -F8, -F11, and -F13 satellites. The data has a
-resolution of 25 by 25km and daily from 1978 onwards.
+These data are not perfect. Sensor sensitivity and resolution. Weather
+filtering. Land To account for observational uncertainty we performed
+the verification on other data sources. We find that the spread among
+the different datasets is minimal compared with the difference with the
+ACCESS-S2 and ACCESS-S1 forecasts, so the conclusions are independent of
+the dataset used.
 
-These data are not perfect, there still exists a fair bit of
-observational uncertainty. We include other sources of data to take into
-acount the observational uncertainty.
+We use NOAA/NSIDC’s Climate Data Record V4 \[CDR; Meier et al. (2014)\]
+as the primary verification dataset. Its sea ice concentration data are
+estimated taking the maximum value of the NASA Team \[ref\] and NASA
+Bootstrap (Comiso 2023) algorithms to reduce their low concentration
+bias (Meier et al. 2014; Meier et al. 2021). Both algorithms use data
+from the Scanning Multichannel Microwave Radiometer (SMMR) on the
+Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I)
+sensors on the Defense Meteorological Satellite Program’s (DMSP) -F8,
+-F11, and -F13 satellites. The data has a resolution of 25 by 25km and
+daily from 1978 onwards.
 
-However, we find that the spread among the different datasets is minimal
-compared with the difference with the ACCESS-S2 and ACCESS-S1 forecasts,
-so the conclusions are independent of the dataset used. Nevertheless, we
-provide figures using ERA5
+Results based on two other different datasets are provided as
+supplementary material:
 
-The European Organisation for the Exploitation of Meteorological
-Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility
-(OSI SAF) \[ref\] is another satellite-derived sea ice concentration
-product based on mostly the same sensors as the NOA CDR. We also use
+1.  The NASA Bootstrap (Comiso 2023) product is… it is not an
+    independent dataset from NOAA/NSIDC CDRV4.
 
-Copernicus Climate Change Service (C3S) (2020): Sea ice concentration
-daily gridded data from 1978 to present derived from satellite
-observations. Copernicus Climate Change Service (C3S) Climate Data Store
-(CDS). DOI: 10.24381/cds.3cd8b812 (Accessed on DD-MMM-YYYY)
-
-{==From the CDS websiste:==} ERA5 is the fifth generation ECMWF
-reanalysis for the global climate and weather for the past 8 decades.
-Data is available from 1940 onwards. ERA5 replaces the ERA-Interim
-reanalysis.
-
-This parameter is the fraction of a grid box which is covered by sea
-ice. Sea ice can only occur in a grid box which includes ocean or inland
-water according to the land-sea mask and lake cover, at the resolution
-being used. This parameter can be known as sea-ice (area) fraction,
-sea-ice concentration and more generally as sea-ice cover. In ERA5,
-sea-ice cover is given by two external providers. Before 1979 the
-HadISST2 dataset is used. From 1979 to August 2007 the OSI SAF (409a)
-dataset is used and from September 2007 the OSI SAF oper dataset is
-used. Sea ice is frozen sea water which floats on the surface of the
-ocean. Sea ice does not include ice which forms on land such as
-glaciers, icebergs and ice-sheets. It also excludes ice shelves which
-are anchored on land, but protrude out over the surface of the ocean.
-These phenomena are not modelled by the IFS. Long-term monitoring of sea
-ice is important for understanding climate change. Sea ice also affects
-shipping routes through the polar regions.
-
-{\>\>Why is ERA5 better or worse than satellites?\< \<}
-
-### Bootstrap
-
-{\>\>From https://nsidc.org/data/nsidc-0079/versions/4\<\<} This sea ice
-concentration data set was derived using measurements from the Scanning
-Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and
-from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense
-Meteorological Satellite Program’s (DMSP) -F8, -F11, and -F13
-satellites. Measurements from the Special Sensor Microwave
-Imager/Sounder (SSMIS) aboard DMSP-F17 are also included. The data set
-has been generated using the Advanced Microwave Scanning Radiometer -
-Earth Observing System (AMSR-E) Bootstrap Algorithm with daily varying
-tie-points. Daily (every other day prior to July 1987) and monthly data
-are available for both the north and south polar regions. Data are
-gridded on the SSM/I polar stereographic grid (25 x 25 km) and provided
-in two-byte integer format. Data coverage began on 01 November 1978 and
-is ongoing through the most current processing, with updated data
-processed several times annually.
-
-(Comiso 2023)
-
-### NASA Team
-
-{==missing==}
-
-### CDR
-
-NOAA/NSIDC’s Climate Data Record V4 combines the Bootstrap and NASA Team
-estimates in an attempt to overcome each algorithm’s weaknesses.
-{\>\>More detail on how are they combined and their properties.\<\<} As
-such, it is is not a truly independent dataset.
-
-Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021.
-NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice
-Concentration, Version 4. \[Indicate subset used\]. Boulder, Colorado
-USA. NSIDC: National Snow and Ice Data Center
-https://doi.org/10.7265/efmz-2t65. \[Date Accessed\] {\>\>Add to
-zotero\<\<}
-
-### ERA5
-
-All datasets are regrided using bilinear interpolation to a common grid,
-which is a polar stereographic grid with approximately equal area of
-25km².
+2.  The European Organisation for the Exploitation of Meteorological
+    Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application
+    Facility (OSI SAF) \[ref\] is another satellite-derived sea ice
+    concentration product based on mostly the same sensors as the NOA
+    CDR but computed independently using different algorithms.
 
 ## Error measures
 
@@ -187,7 +166,8 @@ For evaluation purposes, we use a series of measures.
 
 Sea Ice Extent is defined as the area of ocean covered with at least 15%
 ice. This threshold is motivated by the limitations in satellite
-retrieval, which is increasingly unreliable for low sea ice conditions.
+retrieval, which is increasingly unreliable for lower sea ice
+conditions.
 
 Sea Ice Extent is a rough global measure, but a model could have
 relatively accurate extent of ice but with different distributions. We
@@ -197,10 +177,10 @@ We compute Root Mean Square Error of sea ice concentration anomalies.
 
 We also compute the Integrated Ice Edge Error (IIEE) (Goessling et al.
 2016). This is defined as the area in which the model misspredicts sea
-ice concentration being above or belog 15% ice. That is, dichotomise sea
-ice concentration into areas with more and less than 15% sea ice both in
-the forecast and observations; the IIEE is the area in which forecast
-and observations differ.
+ice concentration being above or belong 15% ice. That is, dichotomise
+sea ice concentration into areas with more and less than 15% sea ice
+both in the forecast and observations; the IIEE is the area in which
+forecast and observations differ.
 
 # Results and discussion
 
@@ -211,14 +191,16 @@ and observations differ.
 ![](access-ice_files/figure-commonmark/fig-hindcast-extent-1.png)
 
 <a href="#fig-hindcast-extent" class="quarto-xref">Figure 1</a> a shows
-the seasonal cycle of Sea Ice Extent for the ACCESS-S2 hindcast and 3
-observational datasets. ACCESS-S2 shows a severe low extent bias,
-especially in the late summer-early autumn. This is due primarily to a
-faster and longer melt season between January and March and slower
-growth during March and April This is then balanced with faster growth
-between May and July
-(<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). This bias
-is common in climate models \[ref!\] and it’s been linked to xxxx??
+the seasonal cycle of Sea Ice Extent for the ACCESS-S2 hindcast and
+NOAA/NSIDC CDRV4 ACCESS-S2 shows a severe low extent bias, especially in
+the late summer-early autumn. This is due primarily to a faster and
+longer melt season between January and March and slower growth during
+March and April This is then balanced with faster growth between May and
+July (<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). This
+bias is common in climate models \[ref!\] and it’s been linked to xxxx??
+
+Melt overestimation during the melt season is very common in models
+(Massonnet et al. 2023).
 
 Comparing ACCESS-S2 with ACCESS-S1, the latter has a smaller bias,
 especially at low lags
@@ -226,7 +208,7 @@ especially at low lags
 though the typical growth rates are very similar between both models
 (<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). At larger
 lags, ACCESS-S1’s bias in summer and autumn is very similar to
-ACCESS-S2\`s. This suggests that this lower sea ice state is closer to
+ACCESS-S2’s. This suggests that this lower sea ice state is closer to
 the models’ equilibrium, indicating that it is an issue with model
 formulation that was being corrected by the data assimilation system in
 ACCESS-S1.
@@ -256,13 +238,13 @@ free-running.
 ![](access-ice_files/figure-commonmark/fig-bias-1.png)
 
 <a href="#fig-bias" class="quarto-xref">Figure 3</a> shows the
-difference in monthly mean sea ice concentrations between CDR and
-ACCESS-S2 reanalysis. From October to May, the model underestimates sea
-ice concentrations pretty much everywhere there is ice except for the
-deep Weddell Sea in April and May, where sea ice concentrations saturate
-to 1. In winter, the differences are mostly on the sea ice edge, with
-slight positive bias in XXX and negative bias around the Indian Ocean
-sector.
+difference in monthly mean sea ice concentrations between NOAA/NSIDC
+CDRV4 and ACCESS-S2 reanalysis. From October to May, the model
+underestimates sea ice concentrations pretty much everywhere there is
+ice except for the deep Weddell Sea in April and May, where sea ice
+concentrations saturate to 1. In winter, the differences are mostly on
+the sea ice edge, with slight positive bias in XXX and negative bias
+around the Indian Ocean sector.
 
 ### Anomalies
 
@@ -279,8 +261,6 @@ which stays relatively skilful even at lag 3. ACCESS-S2 shows much
 bigger variability than observations, with dramatic lows between 1995
 and 2007 and highs between 2007 and 2015.
 
-{\>\>Add regional extents?\< \<}
-
 ### RMSE
 
 To study ACCESS-S2 forecasts quantitatively, we compute error measures
@@ -290,20 +270,18 @@ for all hindcasts started on the 1st of every month.
 
 <a href="#fig-rmse" class="quarto-xref">Figure 5</a> shows the median
 and 95% range of RMSE of sea ice concentration anomalies for ACCESS-S2
-forecasts compared with a benchmark of persistence. This figure uses CDR
-data, but the results are nearly identical compared with ERA5 or
-Bootstrap. Due to errors in the initial conditions, it is expected that
-a persistence forecast would be better than the model forecast at very
-short lags, but that the persistence forecast errors would grow faster
-and eventually surpass the mode forecast, at which time is statistically
-useful {==I’ve got this from CC at the ICTP summer school and makes
-sense, but it would be great to have a referece?= =}. Here the
-persistence errors are almost always lower than the ACCESS-S2 forecast,
-indicating that the model doesn’t have skill at any lag and in any
-month. The only exception is the RMSE around Febraury forecasted from
-June onwards.
-
-{==Add regional?= =}
+forecasts compared with a benchmark of persistence. This figure uses
+NOAA/NSIDC CDRV4 data, but the results are nearly identical compared
+with ERA5 or Bootstrap. Due to errors in the initial conditions, it is
+expected that a persistence forecast would be better than the model
+forecast at very short lags, but that the persistence forecast errors
+would grow faster and eventually surpass the mode forecast, at which
+time is statistically useful {==I’ve got this from CC at the ICTP summer
+school and makes sense, but it would be great to have a referece?= =}.
+Here the persistence errors are almost always lower than the ACCESS-S2
+forecast, indicating that the model doesn’t have skill at any lag and in
+any month. The only exception is the RMSE around February forecasted
+from June onwards.
 
 ### Comparison with S1
 
@@ -315,9 +293,9 @@ models. This error measure is shown in
 forecasts initialised at the first of every month. ACCESS-S1 has lower
 error at short lags at all months, with the errors converging as the
 forecast goes on. The time to convergence depends on the month and it
-can be as fas as a few days in July to as large as several months for
-forecasts initiated in February and March. Since the only difference
-between these forecasts are the initial conditions, this timescale is an
+can be as fas as two weeks June and July to as large as 160 days for
+forecasts initialised in February. Since the only difference between
+these forecasts are the initial conditions, this timescale is an
 indication of the the memory of sea ice to initial conditions; at least
 from October to March when the data assimilated form the other
 components has little to no influence on sea ice.
@@ -359,6 +337,15 @@ assimilation scheme is not influencing sea ice initial conditions.
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
 
+<div id="ref-ayres2022" class="csl-entry">
+
+Ayres, Holly C., James A. Screen, Edward W. Blockley, and Thomas J.
+Bracegirdle. 2022. “The Coupled Atmosphere–Ocean Response to Antarctic
+Sea Ice Loss.” *Journal of Climate* 35 (14): 4665–85.
+<https://doi.org/10.1175/JCLI-D-21-0918.1>.
+
+</div>
+
 <div id="ref-best2011" class="csl-entry">
 
 Best, M. J., M. Pryor, D. B. Clark, G. G. Rooney, R. L. H. Essery, C. B.
@@ -378,6 +365,16 @@ Center. <https://doi.org/10.5067/X5LG68MH013O>.
 
 </div>
 
+<div id="ref-desilva2020" class="csl-entry">
+
+De Silva, Liyanarachchi Waruna Arampath, Jun Inoue, Hajime Yamaguchi,
+and Takeshi Terui. 2020. “Medium Range Sea Ice Prediction in Support of
+Japanese Research Vessel MIRAI’s Expedition Cruise in 2018.” *Polar
+Geography* 43 (2-3): 223–39.
+<https://doi.org/10.1080/1088937X.2019.1707317>.
+
+</div>
+
 <div id="ref-dee2011" class="csl-entry">
 
 Dee, D. P., S. M. Uppala, A. J. Simmons, P. Berrisford, P. Poli, S.
@@ -385,6 +382,15 @@ Kobayashi, U. Andrae, et al. 2011. “The ERA-Interim Reanalysis:
 Configuration and Performance of the Data Assimilation System.”
 *Quarterly Journal of the Royal Meteorological Society* 137 (656):
 553–97. <https://doi.org/10.1002/qj.828>.
+
+</div>
+
+<div id="ref-england2020" class="csl-entry">
+
+England, Mark R., Lorenzo M. Polvani, Lantao Sun, and Clara Deser. 2020.
+“Tropical Climate Responses to Projected Arctic and Antarctic Sea-Ice
+Loss.” *Nature Geoscience* 13 (4): 275–81.
+<https://doi.org/10.1038/s41561-020-0546-9>.
 
 </div>
 
@@ -421,6 +427,16 @@ Southern Hemisphere Earth Systems Science* 67 (3): 132–59.
 Madec, Gurvan, Romain Bourdallé-Badie, Pierre-Antoine Bouttier, Clément
 Bricaud, Diego Bruciaferri, Daley Calvert, Jérôme Chanut, et al. 2013.
 “NEMO Ocean Engine,” February. <https://doi.org/10.5281/zenodo.1475234>.
+
+</div>
+
+<div id="ref-massonnet2023" class="csl-entry">
+
+Massonnet, François, Sandra Barreira, Antoine Barthélemy, Roberto
+Bilbao, Edward Blanchard-Wrigglesworth, Ed Blockley, David H. Bromwich,
+et al. 2023. “SIPN South: Six Years of Coordinated Seasonal Antarctic
+Sea Ice Predictions.” *Frontiers in Marine Science* 10 (May).
+<https://doi.org/10.3389/fmars.2023.1148899>.
 
 </div>
 
@@ -471,6 +487,16 @@ of Climate* 20 (22): 5473–96. <https://doi.org/10.1175/2007JCLI1824.1>.
 
 </div>
 
+<div id="ref-wagner2020" class="csl-entry">
+
+Wagner, Penelope Mae, Nick Hughes, Pascale Bourbonnais, Julienne
+Stroeve, Lasse Rabenstein, Uma Bhatt, Joe Little, Helen Wiggins, and
+Andrew Fleming. 2020. “Sea-Ice Information and Forecast Needs for
+Industry Maritime Stakeholders.” *Polar Geography* 43 (2-3): 160–87.
+<https://doi.org/10.1080/1088937X.2020.1766592>.
+
+</div>
+
 <div id="ref-waters2017" class="csl-entry">
 
 Waters, J., M. J. Bell, M. J. Martin, and D. J. Lea. 2017. “Reducing
@@ -506,6 +532,15 @@ Williams, K. D., C. M. Harris, A. Bodas-Salcedo, J. Camp, R. E. Comer,
 D. Copsey, D. Fereday, et al. 2015. “The Met Office Global Coupled Model
 2.0 (GC2) Configuration.” *Geoscientific Model Development* 8 (5):
 1509–24. <https://doi.org/10.5194/gmd-8-1509-2015>.
+
+</div>
+
+<div id="ref-zampieri2019" class="csl-entry">
+
+Zampieri, Lorenzo, Helge F. Goessling, and Thomas Jung. 2019.
+“Predictability of Antarctic Sea Ice Edge on Subseasonal Time Scales.”
+*Geophysical Research Letters* 46 (16): 9719–27.
+<https://doi.org/10.1029/2019GL084096>.
 
 </div>
 
