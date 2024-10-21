@@ -1,10 +1,12 @@
 ---
 title: "Untitled"
 format: revealjs
+execute:
+  cache: true
 ---
 
-
 ```{r setup}
+#| cache: false
 library(lubridate)
 library(ggplot2)
 library(data.table)
@@ -17,26 +19,24 @@ source(here::here("R/datasets.R"))
 source(here::here("R/ggplot.R"))
 ```
 
-
 ## Experiments
 
-Idea: 
+Idea:
 
-1. Use initial conditions from a very average day/month.
-2. Run experiments with changing sea ice initial condtions: 
-  1. Experiments with high initial sea ice
-  2. Experiments with low sea ice. 
-  
+1.  Use initial conditions from a very average day/month.
+2.  Run experiments with changing sea ice initial condtions:
+3.  Experiments with high initial sea ice
+4.  Experiments with low sea ice.
+
 ## Identifying "average" starting points
 
-1. Compute an error metric between dates and the climatology and chose the lowest. 
-2. Three posible metrics:
-  1. RMSE 
-  2. IIEE
-  3. Extent difference (IIEE, is better overall because it also includes location error, so I discard this)
+1.  Compute an error metric between dates and the climatology and chose the lowest.
+2.  Three possible metrics:
+    1.  RMSE
+    2.  IIEE
+    3.  Extent difference (IIEE, is better overall because it also includes location error, so I discard this)
 
-
----
+------------------------------------------------------------------------
 
 ```{r}
 s2_monthly <- S2_reanalysis() |> 
@@ -58,8 +58,6 @@ rmse_clim <- cdo_ymonsub(s2_monthly, s2_monthly_clim) |>
   melt(id.vars = "time") 
 
 ```
-
-
 
 ```{r}
 s2_monthly_edge <- s2_monthly |> 
@@ -92,7 +90,7 @@ rbind(iiee_clim, rmse_clim) |>
   facet_wrap(~ month(time))
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| fig.cap: Relationship between IIEE and RMSE with respeceet to climatology for each month. 
@@ -126,41 +124,43 @@ min_error_data <- s2_monthly |>
   
 ```
 
----
-
+------------------------------------------------------------------------
+```{r}
+breaks <- seq(-0.9, 0.9, by = 0.1)
+```
 ```{r}
 min_error_data |> 
   _[variable == "iiee"] |> 
-  _[, label := paste0(formatC(month(time), width = "2", flag = "0"), " - ", as.character(time))] |> 
+  _[, label := paste0(formatC(month(time), width = "2", flag = "0"), " - ", as.character(as.Date(time)))] |> 
   s2_climatology[i = _, on = .NATURAL] |> 
   ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = aice - clim, fill = after_stat(level))) +
+  geom_contour_fill(aes(z = aice - clim, fill = after_stat(level)), breaks = breaks) +
   geom_contour2(aes(z = aice), breaks = 0.15) +
   geom_contour2(aes(z = clim), breaks = 0.15, linetype = 2) +
   scale_fill_divergent_discretised() +
   geomcoord_antarctica +
   geom_antarctica_path +
-  facet_wrap(~ label) +
+  facet_wrap(~ label, ncol = 6) +
   wide_legend +
   labs(title = "iiee")
 ```
 
----
+------------------------------------------------------------------------
+
 
 ```{r}
 min_error_data |> 
   _[variable == "rmse"] |> 
-  _[, label := paste0(formatC(month(time), width = "2", flag = "0"), " - ", as.character(time))] |> 
+  _[, label := paste0(formatC(month(time), width = "2", flag = "0"), " - ", as.character(as.Date(time)))] |> 
   s2_climatology[i = _, on = .NATURAL] |> 
   ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = aice - clim, fill = after_stat(level))) +
+  geom_contour_fill(aes(z = aice - clim, fill = after_stat(level)), breaks = breaks) +
   geom_contour2(aes(z = aice), breaks = 0.15) +
   geom_contour2(aes(z = clim), breaks = 0.15, linetype = 2) +
   scale_fill_divergent_discretised() +
   geomcoord_antarctica +
   geom_antarctica_path +
-  facet_wrap(~ label) +
+  facet_wrap(~ label, ncol = 6) +
   wide_legend +
   labs(title = "rmse")
 ```
-
