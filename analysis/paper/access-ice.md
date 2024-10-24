@@ -19,21 +19,14 @@
 
 # Introduction
 
-{==**Antarctic sea ice general description**. Seasonality, trends.==}
-
-…..
-
 Unlike Arctic sea ice, which has been steadily retreating at least since
 the start of satellite records in the early 80s, Antarctic sea ice had a
 slightly increasing trend that models systematically failed to reproduce
-and puzzled researchers . Then, in 2016 Antarctic sea ice extent dropped
-precipitously and has been at low and record low levels since,
-highlighting even more our lack of understanding of Antarctic sea ice
-variability and change. \[ref: that CESM run with forced winds\].
-
-{==**Importance**. Impacts on life. Potential impacts on weather.
-Impacts on climate. Impacts on ocean circulation.(Justify why it’s
-important to study and understand)==}
+and puzzled researchers (Hobbs et al. 2016). Then, in 2016 Antarctic sea
+ice extent dropped precipitously and has been at low and record low
+levels since, highlighting even more our lack of understanding of
+Antarctic sea ice variability and change. \[ref: that CESM run with
+forced winds\].
 
 Antarctic sea ice is in a remote location but the potential impacts of
 its variability and trends extend far into the lower latitudes,
@@ -41,37 +34,36 @@ affecting ocean and atmospheric circulation, ocean carbon uptake and
 biological processes. It’s likely that a reduction in sea ice extent
 would reduce the temperature gradient between high and low latitudes
 (and vice versa), which in turn influences the strength and location of
-the jet, which is a crucial component of weather events. For the
-northern hemisphere, it has been hypothesised that the reduction in sea
-ice in the northern hemisphere has lead to a weaker, wavier jet,
-increasing the frequency of extreme events \[refs\]. Less is known about
-the effects of Antarctic sea ice variability {==is this true? It feels
-that way from the (lack of) literature. Is there a reference to
-substantiate this claim?==} on weather timescales. On climate scales, it
-is thought that the signal of a reduction in Antarctic sea ice is like a
-“mini global warming” and experiments also predict a weakening and
-northerly shift of the jet (Ayres et al. 2022; England et al. 2020).
-
-{==Relevant papers to read:
-
-==}
-
-{==**Prediction systems.** Why is it important: operations {\>\>Discuss
-with Phil\<\<}; science needs (we need good models). What is available.
-Discussion on S1 {\>\>Can we discuss previous S1 results? Laura’s paper
-is not public.\<\<}==}
+the eddy-driven jet, which is a crucial component of weather events. For
+the northern hemisphere, it has been hypothesised that the reduction in
+sea ice in the northern hemisphere has lead to a weaker, wavier jet,
+increasing the frequency of extreme events (Barnes and Screen 2015).
+There is some evidence of this effect in the Southern Hemisphere. Models
+show a weakened vortex in the middle atmosphere, increased vertical wave
+flux and greater zonal wave 1 amplitude in Springs following a low sea
+ice maximum. But models don’t fully agree on the exact phase of the
+zonal wave response and observations don’t show a clear signal (Rea et
+al. 2024). The jet response to sea ice loss is also very model
+dependent, particularly sensitive to its the climatological location (H.
+c. Ayres and Screen 2019). It is also small compared with the direct
+effect of CO2 increase and Sea Surface Temperature warming (H. c. Ayres
+and Screen 2019). On climate scales, it is thought that the signal of a
+reduction in Antarctic sea ice is like a “mini global warming” and
+experiments also predict a weakening and northerly shift of the
+eddy-driven (Raphael, Hobbs, and Wainer 2011; M. England, Polvani, and
+Sun 2018; M. R. England et al. 2020; H. C. Ayres et al. 2022).
 
 Correctly modelling Antarctic sea ice is not only necessary for process
-understanding and climate projections to inform adaptation strategies,
-but accurate seasonal to subseasonal forecast are crucial for operations
-in and around the Antarctic continent Wagner et al. (2020). However,
+understanding and climate projections to inform adaptation strategies.
+Accurate seasonal to subseasonal forecast are crucial for operations in
+and around the Antarctic continent Wagner et al. (2020). However,
 Antarctic sea ice forecasts have been challenging both due to model
-deficiencies and observational uncertainty (Zampieri, Goessling, and
-Jung 2019){==check if this is true, hehe.==}. Dynamical seasonal
-forecasts of Summer Antarctic sea ice have been shown to perform worse
-than relatively simple statistical methods (Massonnet et al. 2023),
-which also underscores the need for better understanding of sea ice
-dynamics.
+biases and inherent large variability and complexity and it has lagged
+behind Arctic sea ice forecasts (Zampieri, Goessling, and Jung 2019).
+Dynamical seasonal forecasts of Summer Antarctic sea ice have been shown
+to perform worse than relatively simple statistical methods (Massonnet
+et al. 2023), which also underscores the need for better understanding
+of sea ice dynamics.
 
 {==**S2** Introduce S2==}
 
@@ -196,11 +188,11 @@ NOAA/NSIDC CDRV4 ACCESS-S2 shows a severe low extent bias, especially in
 the late summer-early autumn. This is due primarily to a faster and
 longer melt season between January and March and slower growth during
 March and April This is then balanced with faster growth between May and
-July (<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). This
-bias is common in climate models \[ref!\] and it’s been linked to xxxx??
-
-Melt overestimation during the melt season is very common in models
-(Massonnet et al. 2023).
+July (<a href="#fig-mean-growth" class="quarto-xref">Fig. 2</a>). Many
+S2S systems exhibit this systematic underestimation during the sea ice
+minimum and early freezing season (Massonnet et al. 2023) and could
+indicate problems in the representation of thermodynamics in the model
+(Zampieri, Goessling, and Jung 2019).
 
 Comparing ACCESS-S2 with ACCESS-S1, the latter has a smaller bias,
 especially at low lags
@@ -277,7 +269,7 @@ expected that a persistence forecast would be better than the model
 forecast at very short lags, but that the persistence forecast errors
 would grow faster and eventually surpass the mode forecast, at which
 time is statistically useful {==I’ve got this from CC at the ICTP summer
-school and makes sense, but it would be great to have a referece?= =}.
+school and makes sense, but it would be great to have a reference?= =}.
 Here the persistence errors are almost always lower than the ACCESS-S2
 forecast, indicating that the model doesn’t have skill at any lag and in
 any month. The only exception is the RMSE around February forecasted
@@ -337,12 +329,29 @@ assimilation scheme is not influencing sea ice initial conditions.
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
 
+<div id="ref-ayres2019" class="csl-entry">
+
+Ayres, H.c., and J.a. Screen. 2019. “Multimodel Analysis of the
+Atmospheric Response to Antarctic Sea Ice Loss at Quadrupled CO2.”
+*Geophysical Research Letters* 46 (16): 9861–69.
+<https://doi.org/10.1029/2019GL083653>.
+
+</div>
+
 <div id="ref-ayres2022" class="csl-entry">
 
 Ayres, Holly C., James A. Screen, Edward W. Blockley, and Thomas J.
 Bracegirdle. 2022. “The Coupled Atmosphere–Ocean Response to Antarctic
 Sea Ice Loss.” *Journal of Climate* 35 (14): 4665–85.
 <https://doi.org/10.1175/JCLI-D-21-0918.1>.
+
+</div>
+
+<div id="ref-barnes2015" class="csl-entry">
+
+Barnes, Elizabeth A, and James A Screen. 2015. “The Impact of Arctic
+Warming on the Midlatitude Jet-Stream: Can It? Has It? Will It?” *WIREs
+Climate Change* 6 (3): 277–86. <https://doi.org/10.1002/wcc.337>.
 
 </div>
 
@@ -394,6 +403,15 @@ Loss.” *Nature Geoscience* 13 (4): 275–81.
 
 </div>
 
+<div id="ref-england2018" class="csl-entry">
+
+England, Mark, Lorenzo Polvani, and Lantao Sun. 2018. “Contrasting the
+Antarctic and Arctic Atmospheric Responses to Projected Sea Ice Loss in
+the Late Twenty-First Century.” *Journal of Climate* 31 (16): 6353–70.
+<https://doi.org/10.1175/JCLI-D-17-0666.1>.
+
+</div>
+
 <div id="ref-goessling2016" class="csl-entry">
 
 Goessling, H. F., S. Tietsche, J. J. Day, E. Hawkins, and T. Jung. 2016.
@@ -409,6 +427,16 @@ Quality Controlled Ocean Temperature and Salinity Profiles and Monthly
 Objective Analyses with Uncertainty Estimates.” *Journal of Geophysical
 Research: Oceans* 118 (12): 6704–16.
 <https://doi.org/10.1002/2013JC009067>.
+
+</div>
+
+<div id="ref-hobbs2016" class="csl-entry">
+
+Hobbs, William R., Rob Massom, Sharon Stammerjohn, Phillip Reid, Guy
+Williams, and Walter Meier. 2016. “A Review of Recent Changes in
+Southern Ocean Sea Ice, Their Drivers and Forcings.” *Global and
+Planetary Change* 143 (August): 228–50.
+<https://doi.org/10.1016/j.gloplacha.2016.06.008>.
 
 </div>
 
@@ -475,6 +503,25 @@ Harris, E. C. Hunke, and D. N. Walters. 2015. “Development of the Global
 Sea Ice 6.0 CICE Configuration for the Met Office Global Coupled Model.”
 *Geoscientific Model Development* 8 (7): 2221–30.
 <https://doi.org/10.5194/gmd-8-2221-2015>.
+
+</div>
+
+<div id="ref-raphael2011" class="csl-entry">
+
+Raphael, M. N., W. Hobbs, and I. Wainer. 2011. “The Effect of Antarctic
+Sea Ice on the Southern Hemisphere Atmosphere During the Southern
+Summer.” *Climate Dynamics* 36 (7): 1403–17.
+<https://doi.org/10.1007/s00382-010-0892-1>.
+
+</div>
+
+<div id="ref-rea2024" class="csl-entry">
+
+Rea, Divya, Dillon Elsbury, Amy H. Butler, Lantao Sun, Yannick Peings,
+and Gudrun Magnusdottir. 2024. “Interannual Influence of Antarctic Sea
+Ice on Southern Hemisphere Stratosphere-Troposphere Coupling.”
+*Geophysical Research Letters* 51 (15): e2023GL107478.
+<https://doi.org/10.1029/2023GL107478>.
 
 </div>
 
