@@ -40,51 +40,29 @@ balbalbal
 
 # Introduction
 
-{==**Antarctic sea ice general description**.
-Seasonality, trends.==}
-
-.....
-
-Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice had a slightly increasing trend that models systematically failed to reproduce and puzzled researchers \cite{hobbs2016}. 
+Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice had a slightly increasing trend that models systematically failed to reproduce and puzzled researchers [@hobbs2016]. 
 Then, in 2016 Antarctic sea ice extent dropped precipitously and has been at low and record low levels since, highlighting even more our lack of understanding of Antarctic sea ice variability and change. [ref: that CESM run with forced winds]. 
 
-{==**Importance**.
-Impacts on life.
-Potential impacts on weather.
-Impacts on climate.
-Impacts on ocean circulation.(Justify why it's important to study and understand)==}
-
 Antarctic sea ice is in a remote location but the potential impacts of its variability and trends extend far into the lower latitudes, affecting ocean and atmospheric circulation, ocean carbon uptake and biological processes. 
-It's likely that a reduction in sea ice extent would reduce the temperature gradient between high and low latitudes (and vice versa), which in turn influences the strength and location of the jet, which is a crucial component of weather events. 
-For the northern hemisphere, it has been hypothesised that the reduction in sea ice in the northern hemisphere has lead to a weaker, wavier jet, increasing the frequency of extreme events [refs].
-Less is known about the effects of Antarctic sea ice variability {==is this true? It feels that way from the (lack of) literature. Is there a reference to substantiate this claim?==} on weather timescales. 
-On climate scales, it is thought that the signal of a reduction in Antarctic sea ice is like a "mini global warming" and experiments also predict a weakening and northerly shift of the jet [@ayres2022; @england2020]. 
+It's likely that a reduction in sea ice extent would reduce the temperature gradient between high and low latitudes (and vice versa), which in turn influences the strength and location of the eddy-driven jet, which is a crucial component of weather events. 
+For the northern hemisphere, it has been hypothesised that the reduction in sea ice in the northern hemisphere has lead to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015]. 
+There is some evidence of this effect in the Southern Hemisphere. 
+Models show a weakened vortex in the middle atmosphere, increased vertical wave flux and greater zonal wave 1 amplitude in Springs following a low sea ice maximum. 
+But models don't fully agree on the exact phase of the zonal wave response and observations don't show a clear signal [@rea2024]. 
+The jet response to sea ice loss is also very model dependent, particularly sensitive to its the climatological location [@ayres2019]. 
+It is also small compared with the direct effect of CO2 increase and Sea Surface Temperature warming [@ayres2019].
+On climate scales, it is thought that the signal of a reduction in Antarctic sea ice is like a "mini global warming" and experiments also predict a weakening and northerly shift of the eddy-driven [@raphael2011; @england2018; @england2020; @ayres2022].
 
-
-{==Relevant papers to read: 
-
-\cite{ayres2019}
-\cite{england2018}
-\cite{raphael2011}
-\cite{raphael2003a}
-
-==}
-
-{==**Prediction systems.** Why is it important: operations {\>\>Discuss with Phil\<\<}; science needs (we need good models).\cite{desilva2020}\cite{wagner2020}
-What is available.
-Discussion on S1 {\>\>Can we discuss previous S1 results?
-Laura's paper is not public.\<\<}==}
-
-Correctly modelling Antarctic sea ice is not only necessary for process understanding and climate projections to inform adaptation strategies, but accurate seasonal to subseasonal forecast are crucial for operations in and around the Antarctic continent [@desilva2020 @wagner2020]. 
-However, Antarctic sea ice forecasts have been challenging both due to model deficiencies and observational uncertainty [@zampieri2019]{==check if this is true, hehe.==}. 
+Correctly modelling Antarctic sea ice is not only necessary for process understanding and climate projections to inform adaptation strategies. 
+Accurate seasonal to subseasonal forecast are crucial for operations in and around the Antarctic continent [@desilva2020 @wagner2020]. 
+However, Antarctic sea ice forecasts have been challenging both due to model biases and inherent large variability and complexity and it has lagged behind Arctic sea ice forecasts [@zampieri2019]. 
 Dynamical seasonal forecasts of Summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023], which also underscores the need for better understanding of sea ice dynamics. 
-
 
 {==**S2** Introduce S2==}
 
-
-
 {==**Objective.** Evaluate S2.==}
+
+
 
 # Data and methods
 
@@ -173,7 +151,7 @@ extent_daily <- datasets |>
   _[, let(lon = NULL, lat = NULL)]
 ```
 
-```{r}
+```{r extent_climatology} 
 extent_climatology <- extent_daily |>  
   copy() |>
   _[aice == 0, aice := NA] |> 
@@ -189,7 +167,8 @@ hindcast_extent <- rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_exten
                          idcol = "model") |>
   _[, model := relevel(factor(model), "S2")] |> 
   _[, lag := as.numeric(as.Date(time) - forecast_time)] |> 
-  _[lag > 0]
+  _[lag > 0] |> 
+  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
 ```
 
 ```{r fig-hindcast-extent}
@@ -227,10 +206,7 @@ hindcast_extent |>
 @fig-hindcast-extent a shows the seasonal cycle of Sea Ice Extent for the +S2 hindcast and +CDR
 +S2 shows a severe low extent bias, especially in the late summer-early autumn.
 This is due primarily to a faster and longer melt season between January and March and slower growth during March and April This is then balanced with faster growth between May and July ([Fig. @fig-mean-growth]).
-This bias is common in climate models \[ref!\]
-and it's been linked to xxxx??
-
-Melt overestimation during the melt season is very common in models [@massonnet2023]. 
+Many S2S systems exhibit this systematic underestimation during the sea ice minimum and early freezing season [@massonnet2023] and could indicate problems in the representation of thermodynamics in the model [@zampieri2019]. 
 
 Comparing +S2 with +S1, the latter has a smaller bias, especially at low lags ([Fig. @fig-hindcast-extent b]) even though the typical growth rates are very similar between both models ([Fig. @fig-mean-growth]).
 At larger lags, +S1's bias in summer and autumn is very similar to +S2's.
@@ -433,7 +409,7 @@ errors |>
 
 @fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence.
 This figure uses +CDR data, but the results are nearly identical compared with ERA5 or Bootstrap.
-Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, at which time is statistically useful {==I've got this from CC at the ICTP summer school and makes sense, but it would be great to have a referece?=
+Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, at which time is statistically useful {==I've got this from CC at the ICTP summer school and makes sense, but it would be great to have a reference?=
 =}.
 Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model doesn't have skill at any lag and in any month.
 The only exception is the RMSE around February forecasted from June onwards.
@@ -532,9 +508,6 @@ For +S2, this is true only only between July and October, approximately.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it's not constant.
 
 
-
-
-
 ```{r fig-iiee-variance}
 #| fig-cap: Mean spread of IIEE at different lags for different models. 
 #| fig.height: 9
@@ -593,6 +566,7 @@ This also shows that the perturbation scheme in +S2 is comparable to the one in 
 
 On the other hand, the spread of the mean error is always larger in +S2 than +S1.
 The difference is particularly large at short lags in some months, which coindice with the ones in which the data assimilation scheme is not influencing sea ice initial conditions.
+
 
 ## Conclusions
 
