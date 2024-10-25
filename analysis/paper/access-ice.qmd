@@ -270,7 +270,10 @@ climatologies |>
   ggplot(aes(xgrid, ygrid)) +
   geom_contour_fill(aes(z = S2 - obs, fill = after_stat(level)), 
                     breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
-  scale_fill_divergent_discretised(paste0("Bias with respect to ", labels_models[which_dataset])) +
+  scale_fill_divergent_discretised(paste0("Bias with respect to ",
+                                          labels_models[which_dataset]),
+                                   low = scales::muted("red"),
+                                   high = scales::muted("blue")) +
   geomcoord_antarctica +
   geom_antarctica_fill +
   facet_wrap(~ lubridate::month(time, label = TRUE)) +
