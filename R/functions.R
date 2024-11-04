@@ -109,7 +109,7 @@ extent <- function(dataset) {
 }
 
 remap_cdr <- function(file) {
-    nsidc_grid <- "data/raw/nsidc_grid.txt"
+    nsidc_grid <- here::here("data/raw/nsidc_grid.txt")
 
     rcdo::cdo_remapbil(file, nsidc_grid)
 }

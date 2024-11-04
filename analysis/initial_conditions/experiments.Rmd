@@ -1,0 +1,222 @@
+---
+title: "Experiment test"
+output: ioslides_presentation
+date: "2024-11-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(lubridate)
+library(ggplot2)
+library(data.table)
+library(metR)
+library(rcdo)
+
+cdo_options_set("-L -s")
+
+source(here::here("R/functions.R"))
+source(here::here("R/datasets.R"))
+source(here::here("R/ggplot.R"))
+
+zero_breaks <- AnchorBreaks(0, exclude = 0)
+
+```
+
+
+```{r}
+forecast <- function(variable, experiments) {
+  vapply(experiments, function(experiment) {
+    file <- glue::glue("/home/565/ec0044/cylc-run/202405_{experiment}/share/data/20240501T0000Z/forecast/20240501/e01/d*_{variable}_*_e01.nc")  |> 
+      Sys.glob()
+  }, character(1))
+}
+```
+
+
+```{r}
+ic <- function(part, experiments) {
+  vapply(experiments, function(experiment) {
+    file <- glue::glue("/home/565/ec0044/cylc-run/202405_{experiment}/share/data/20240501T0000Z/gc2-IC-bom/{part}/*") |> 
+      Sys.glob()
+  }, character(1))
+  
+}
+```
+
+```{r}
+experiments <- c("control", 1990)
+initial <- as.Date("2024-05-01")
+```
+```{r}
+cdo_remap1 <- function(file) {
+  file |> 
+    cdo_setmisstonn(neighbors = 2) |> 
+    cdo_remapavg(grid = "r360x180")
+}
+```
+
+```{r}
+climatology_cdr <- CDR() |> 
+  climatology() |> 
+  ReadNetCDF(c(clim = "aice")) |> 
+  setnames("time", "time2")
+```
+
+## POC for sea ice experiments
+
+
+
+## Setup
+
+* Initial conditions: 1st May 2024
+* Control run: regular initial conditions. 
+* These are S2 initial conditions. 
+* Pre-DA initial conditions -> need to check up with Griff/Lynn on what does that exactly mean.
+
+* Experiment run: sea ice initial conditions set up to 1990 (random round number)
+
+
+## Sea Ice concentration anomalies
+
+```{r}
+ice_ic <- forecast("aice", experiments) |> 
+  lapply(\(x) {
+    x |> 
+      cdo_seldate(startdate = as.character(initial + 1)) |> 
+      cdo_selname("aice") |> 
+      remap_cdr() |> 
+      cdo_execute() |>
+      ReadNetCDF(vars = c("aice"))
+  }) |> 
+  rbindlist(idcol = "experiment") |> 
+  _[, time2 := update(time, year = 2000)]
+
+
+ice_ic <- climatology_cdr[ice_ic, on = .NATURAL]
+```
+
+```{r}
+ice_ic |> 
+  ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(aes(z = aice - clim, fill = after_stat(level)),
+                    breaks = zero_breaks) +
+  scale_fill_divergent_discretised(NULL, 
+                                   low = scales::muted("red"),
+                                   high = scales::muted("blue")) +
+  geomcoord_antarctica +
+  geom_antarctica_fill +
+  facet_wrap(~ experiment)  +
+  wide_legend +
+  labs(subtitle = "WRT NOAA CDR climatology")
+```       
+
+
+## Control - experiment
+
+```{r}
+ice_ic |> 
+  copy() |> 
+  _[, let(control = aice[experiment == "control"]), 
+    by = .(ygrid, xgrid)] |> 
+  _[experiment != "control"] |> 
+  ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(aes(z = control - aice, fill = after_stat(level)),
+                    breaks = zero_breaks) +
+  scale_fill_divergent_discretised(NULL, 
+                                   low = scales::muted("red"),
+                                   high = scales::muted("blue")) +
+  geomcoord_antarctica +
+  geom_antarctica_fill +
+  facet_wrap(~ experiment)  +
+  wide_legend 
+```
+
+## Zonal mean zonal wind at 60ºS, 10 hPa. 
+
+```{r}
+forecast("ua", experiments) |> 
+  lapply(\(x) {
+    x |> 
+      ReadNetCDF(c(u = "ua"), 
+                 subset = list(z1_p_level = 10, lat = -60)) |> 
+      _[, .(u = mean(u)), by = .(time)] 
+  }) |> 
+  rbindlist(idcol = "experiment") |> 
+  ggplot(aes(time, u)) +
+  geom_line(aes(color = experiment))
+```
+
+## Zonal mean zonal wind Hovmoller 
+
+
+```{r}
+forecast("ua", experiments) |> 
+  lapply(\(x) {
+    x |> 
+      ReadNetCDF(c(u = "ua"), 
+                 subset = list(lat = -60)) |> 
+      _[, .(u = mean(u, na.rm = TRUE)), by = .(z1_p_level, time)] 
+  }) |> 
+  rbindlist(idcol = "experiment") |> 
+  ggplot(aes(time, z1_p_level)) +
+  geom_contour_fill(aes(z = u)) +
+  scale_fill_viridis_c() +
+  scale_y_level() +
+  facet_wrap(~ experiment) 
+```
+
+
+## Control - experiment
+
+
+```{r}
+forecast("ua", experiments) |> 
+  lapply(\(x) {
+    x |> 
+      ReadNetCDF(c(u = "ua"), 
+                 subset = list(lat = -60)) |> 
+      _[, .(u = mean(u, na.rm = TRUE)), by = .(z1_p_level, time)] 
+  }) |> 
+  rbindlist(idcol = "experiment") |> 
+  copy() |> 
+  _[, let(control = u[experiment == "control"]), 
+    by = .(z1_p_level, time)] |> 
+  _[experiment != "control"] |> 
+  ggplot(aes(time, z1_p_level)) +
+  geom_contour_fill(aes(z = control - u, fill = after_stat(level)),
+                    breaks = zero_breaks) +
+  scale_fill_divergent_discretised(NULL) +
+  scale_y_level() +
+  wide_legend
+```
+
+## Stratospheric temperature
+
+```{r}
+t <- forecast("ta", experiments) |> 
+  lapply(\(x) {
+    x |> 
+      cdo_selname("ta") |> 
+      cdo_seldate(startdate = "2024-07-01", enddate = "2024-07-15") |> 
+      cdo_remapbil(grid = "r360x180") |> 
+      cdo_timmean() |> 
+      cdo_execute() |> 
+      ReadNetCDF(c(t = "ta"), 
+                 subset = list(lat = -c(90, 20), 
+                               z1_p_level = c(50, 10))) 
+  }) |> 
+  rbindlist(idcol = "experiment") 
+
+t |> 
+  ggplot(aes(lon, lat)) +
+  geom_contour_fill(aes(z = t - 273.15)) +
+  scale_fill_viridis_c() +
+  wide_legend +
+  coord_sf(crs = sic_projection, lims_method = "box", default_crs = "+proj=lonlat") +
+  facet_grid(experiment ~ z1_p_level) +
+  labs(substitle = "Averaged between 1 and 15 July")
+
+```
+
+
+
