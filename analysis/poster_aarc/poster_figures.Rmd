@@ -300,11 +300,11 @@ errors |>
   geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
              colour = "gray50", linewidth = 0.1) +
   
-  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
+  geom_text(data = month_from_lag(15, 1), aes(y = Inf, label = month2), 
             size = 2.5,
             vjust = 1) +
   
-  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
+  geom_text(data = month_from_lag(1, 1), aes(y = -Inf, label = lag), 
             size = 2.5,
             vjust = 0) +
   
