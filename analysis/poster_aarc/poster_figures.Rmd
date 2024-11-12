@@ -203,8 +203,6 @@ errors <- rbind(
 
 ```{r fig-rmse, fig.height=1524/150, fig.width=2306/150}
 #| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
-#| fig.height: 5
-#| fig.width: 9
 
 month_from_lag <- function(day = 1, step = 2) {
   force(day)
