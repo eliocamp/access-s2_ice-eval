@@ -89,9 +89,9 @@ geom_antarctica_fill <- ggplot2::geom_polygon(data = contour, ggplot2::aes(x, y,
 
 geomcoord_antarctica <- list(
     NULL,
-    ggplot2::coord_sf(crs = sic_projection, lims_method = "box"),
-    ggplot2::scale_x_continuous(name = NULL, expand = c(0, 0)),
-    ggplot2::scale_y_continuous(name = NULL, expand = c(0, 0)),
+    ggplot2::coord_sf(crs = sic_projection, lims_method = "box", label_axes =  "----"),
+    ggplot2::scale_x_continuous(name = NULL, expand = c(0, 0), labels = NULL),
+    ggplot2::scale_y_continuous(name = NULL, expand = c(0, 0), labels = NULL),
     geom_antarctica_path
 )
 
