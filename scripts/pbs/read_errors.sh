@@ -2,9 +2,9 @@
 
 #PBS -P lo70
 #PBS -q normal
-#PBS -l ncpus=48
-#PBS -l mem=190GB
-#PBS -l walltime=03:00:00
+#PBS -l ncpus=192
+#PBS -l mem=380GB
+#PBS -l walltime=10:00:00
 #PBS -l wd
 #PBS -l jobfs=400GB
 #PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5
@@ -18,5 +18,5 @@ module load cdo/2.4.3
 # https://opus.nci.org.au/display/Help/PBS+Directives+Explained
 
 # Run R application
-export PBS_WORKERS=100
-Rscript scripts/hindcast_extent.R > logs/hindcast_extent.log
+export PBS_WORKERS=192
+Rscript scripts/read_errors.R

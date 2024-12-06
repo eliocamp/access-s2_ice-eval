@@ -1,55 +1,50 @@
 library(furrr)
-workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 25))
+workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 2))
 message(workers, " workers")
 
-plan(multisession, workers = workers)
+plan(multicore, workers = workers)
 
 source(here::here("R/functions.R"))
 source(here::here("R/datasets.R"))
 
-
-
-forecast_times_s2 <- get_forecast_times("S2")
-
-all_files <- data.table::CJ(
-    forecast_time = forecast_times_s2,
+run <- function(model, measure) {
+  message(glue::glue("computing {measure} for {model}"))
+  forecast_times <- get_forecast_times(model)
+  
+  all_files <- data.table::CJ(
+    forecast_time = forecast_times,
     member = 1:9
-)
-
-
-
-furrr::future_pmap(all_files, \(forecast_time, member) {
-    S2_hindcast(forecast_time, member) |>
-        extent() |>
-        metR::ReadNetCDF("aice") |>
-        _[, `:=`(
-            lat = NULL, lon = NULL,
-            forecast_time = forecast_time,
-            member = member
-        )] |>
-        _[]
-}) |>
+  )
+  
+  hindcast_fun <- match.fun(glue::glue("{model}_hindcast"))
+  
+  fun_apply <- match.fun(measure)
+  
+  file <- here::here(glue::glue("data/derived/{model}_hindcast_{measure}.Rds"))
+  if (file.exists(file)) {
+    return(file)
+  }
+  
+  furrr::future_pmap(all_files, \(forecast_time, member) {
+    hindcast_fun(forecast_time, member) |>
+      fun_apply() |> 
+      metR::ReadNetCDF("aice") |>
+      _[, let(lat = NULL, lon = NULL,
+              forecast_time = forecast_time,
+              member = member)] |>
+      _[]
+  }) |>
     data.table::rbindlist() |>
-    saveRDS("data/derived/S2_hindcast_extent.Rds")
+    saveRDS(file)
+  
+  return(file)
+}
 
 
-forecast_times_s1 <- get_forecast_times("S1")
 
-all_files <- data.table::CJ(
-    forecast_time = forecast_times_s1,
-    member = 1:9
-)
+models <- c("S2", "S1")
+measures <- c("extent", "area")
 
-furrr::future_pmap(all_files, \(forecast_time, member) {
-    S1_hindcast(forecast_time, member) |>
-        extent() |>
-        metR::ReadNetCDF("aice") |>
-        _[, `:=`(
-            lat = NULL, lon = NULL,
-            forecast_time = forecast_time,
-            member = member
-        )] |>
-        _[]
-}) |>
-    data.table::rbindlist() |>
-    saveRDS("data/derived/S1_hindcast_extent.Rds")
+data.table::CJ(model = models, measure = measures) |> 
+  purrr::pmap(run)
+

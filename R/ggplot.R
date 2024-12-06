@@ -72,20 +72,18 @@ topo <- rcdo::cdo_topo(
     metR::ReadNetCDF(c(z = "topo")) |>
     _[, .(x = xgrid, y = ygrid, z)]
 
-get <- `$`
-
 sic_projection <- CDR() |>
     rcdo::cdo_seltimestep(1) |>
     rcdo::cdo_execute() |>
     ncdf4::nc_open() |>
     ncdf4::ncatt_get(varid = "crs") |>
-    get("proj_params")
+    _[["proj_params"]]
 
 
-contour <- ggplot2::StatContour$compute_group(topo, breaks = 0)
-geom_antarctica_path <- ggplot2::geom_path(data = contour, ggplot2::aes(x, y, group = group), inherit.aes = FALSE, colour = "black")
+contour_antarctica <- ggplot2::StatContour$compute_group(topo, breaks = 0)
+geom_antarctica_path <- ggplot2::geom_path(data = contour_antarctica, ggplot2::aes(x, y, group = group), inherit.aes = FALSE, colour = "black")
 
-geom_antarctica_fill <- ggplot2::geom_polygon(data = contour, ggplot2::aes(x, y, group = group), inherit.aes = FALSE, colour = "black", fill = "#FAFAFA")
+geom_antarctica_fill <- ggplot2::geom_polygon(data = contour_antarctica, ggplot2::aes(x, y, group = group), inherit.aes = FALSE, colour = "black", fill = "#FAFAFA")
 
 geomcoord_antarctica <- list(
     NULL,
