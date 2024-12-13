@@ -1,26 +1,104 @@
 ---
-title: "Untitled"
-format: gfm
+title: Evaluation of +S2 sea ice forecast and some other better title
+pdf-engine: pdflatex
+journal:
+  name: tc
+author:
+  - given_name: Elio 
+    surname: Campitelli
+    affiliation: "1,2"
+    email: elio.campitelli@monash.edu
+    corresponding: true
+  - given_name: Ariaan 
+    surname: Purich
+    affiliation: "1,2"
+  - given_name: Julie
+    surname: Arblaster
+    affiliation: "1,2"
+  - given_name: Eun-Pa
+    surname: Lim
+    affiliation: "3"
+  - given_name: Matthew
+    surname: Wheeler
+    affiliation: "3"
+  - given_name: Phillip
+    surname: Reid
+    affiliation: "3"        
+  
+affiliation:
+  - code: 1
+    address: School of Earth, Atmosphere and Environment, Monash University, Australia
+  - code: 2
+    address: Securing Antarctica’s Environmental Future, Monash University, Australia
+  - code: 3
+    address: Bureau of Meteorology
+
+abstract: |
+  The abstract goes here.
+  It can also be on _multiple lines_.
+bibliography: references.bib
+running:
+  title: +S2 sea ice forecast
+  author: Campitelli et al.
+# This section is mandatory even if you declare that no competing interests are present.
+competinginterests: |
+  The authors declare no competing interests.
+# See https://publications.copernicus.org/for_authors/licence_and_copyright.html, normally used for transferring the copyright, if needed. 
+# Note: additional copyright statements for affiliated software or data need to be placed in the data availability section. 
+copyrightstatement: |
+  The author's copyright for this publication is transferred to institution/company. 
+### The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
+### It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
+### Note: unless stated otherwise, software and data affiliated with the manuscript are assumed to be published under the same licence as the article (currently Creative Commons 4.0)
+availability:
+  #code: |
+  #  use this to add a statement when having only software code available
+  #data: |
+  #  use this to add a statement when having only data sets available
+  codedata: |
+    use this to add a statement when having data sets and software code available
+  sample: |
+    use this section when having geoscientific samples available
+videosupplement: |
+  use this section when having video supplements available
+authorcontribution: |
+  Contributions
+disclaimer: |
+  We like Copernicus.
+acknowledgements: |
+  Acknowledgements will gohere
+appendix: |
+  \section{Figures and tables in appendices}
+  Regarding figures and tables in appendices, the following two options are possible depending on your general handling of figures and tables in the manuscript environment:
+  \subsection{Option 1}
+  If you sorted all figures and tables into the sections of the text, please also sort the appendix figures and appendix tables into the respective appendix sections.
+  They will be correctly named automatically.
+  \subsection{Option 2}
+  If you put all figures after the reference list, please insert appendix tables and figures after the normal tables and figures.
+  
+  To rename them correctly to A1, A2, etc., please add the following commands in front of them:
+  `\appendixfigures` needs to be added in front of appendix figures
+  `\appendixtables` needs to be added in front of appendix tables
+  
+  Please add `\clearpage` between each table and/or figure.
+format: copernicus-pdf
+
 execute: 
   echo: false
   warning: false
   message: false
-  cache: false
+  cache: refresh
 filters:
   - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
-  - ../../_extensions/mloubout/critic-markup/critic-markup.lua
+  # - ../../_extensions/mloubout/critic-markup/critic-markup.lua
   - ../../_extensions/ute/search-replace/search-replace.lua
 search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
-bibliography: references.bib
-editor: 
-  markdown: 
-    wrap: sentence
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache = FALSE}
 library(lubridate)
 library(ggplot2)
 library(data.table)
@@ -29,6 +107,10 @@ library(rcdo)
 library(tagger)
 
 cdo_options_set("-L")
+```
+
+
+```{r helpers, cache = FALSE}
 source(here::here("R/functions.R"))
 source(here::here("R/datasets.R"))
 source(here::here("R/ggplot.R"))
@@ -40,100 +122,91 @@ balbalbal
 
 # Introduction
 
-Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice had a slightly increasing trend that models systematically failed to reproduce and puzzled researchers [@hobbs2016].
-Then, in 2016 Antarctic sea ice extent dropped precipitously and has been at low and record low levels since, highlighting even more our lack of understanding of Antarctic sea ice variability and change.
-\[ref: that CESM run with forced winds\].
+Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice has experienced a slightly increasing trend that models systematically failed to reproduce and puzzled researchers [@hobbs2016].
+Then, in 2016 Antarctic sea ice extent dropped precipitously and has been at low and record low levels since, highlighting even more our lack of understanding of Antarctic sea ice variability and change [@espinosa2024].
 
-Antarctic sea ice is in a remote location but the potential impacts of its variability and trends extend far into the lower latitudes, affecting ocean and atmospheric circulation, ocean carbon uptake and biological processes.
-It's likely that a reduction in sea ice extent would reduce the temperature gradient between high and low latitudes (and vice versa), which in turn influences the strength and location of the eddy-driven jet, which is a crucial component of weather events.
-For the northern hemisphere, it has been hypothesised that the reduction in sea ice in the northern hemisphere has lead to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015].
+Antarctic sea ice is in a remote location but the potential impacts of its variability extends far into the lower latitudes, affecting the circulation of both the ocean and the atmosphere, ocean carbon uptake and biological processes.
+It's likely that a reduction in sea ice extent would reduce the meridional temperature gradient which in turn would reduce the strength and location of the eddy-driven jet (and vice versa for an increase in sea ice), which is a crucial component of weather events.
+In the northern hemisphere, it has been hypothesised that the reduction in Arctic sea ice has lead to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015].
 There is some evidence of this effect in the Southern Hemisphere.
 Models show a weakened vortex in the middle atmosphere, increased vertical wave flux and greater zonal wave 1 amplitude in Springs following a low sea ice maximum.
 But models don't fully agree on the exact phase of the zonal wave response and observations don't show a clear signal [@rea2024].
-The jet response to sea ice loss is also very model dependent, particularly sensitive to its the climatological location [@ayres2019].
-It is also small compared with the direct effect of CO2 increase and Sea Surface Temperature warming [@ayres2019].
-On climate scales, it is thought that the signal of a reduction in Antarctic sea ice is like a "mini global warming" and experiments also predict a weakening and northerly shift of the eddy-driven [@raphael2011; @england2018; @england2020; @ayres2022].
+The jet response to sea ice loss is also very model dependent, particularly sensitive to its the climatological location and relatively small compared with the direct effect of CO2 increase and Sea Surface Temperature (SST) warming [@ayres2019].
+On climate scales, it is thought that the temperature signal of a reduction in Antarctic sea ice mirrors a "mini global warming" and experiments also predict a weakening and northerly shift of the eddy-driven [@raphael2011; @england2018; @england2020; @ayres2022].
 
-Correctly modelling Antarctic sea undsen sector and the Amundsen-Bellingshausen sector (Fice is not only necessary for process understanding and climate projections to inform adaptation strategies.
-Accurate seasonal to subseasonal forecast are crucial for operations in and around the Antarctic continent [@desilva2020 @wagner2020].
-However, Antarctic sea ice forecasts have been challenging both due to model biases and inherent large variability and complexity and it has lagged behind Arctic sea ice forecasts [@zampieri2019].
-Dynamical seasonal forecasts of Summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023], which also underscores the need for better understanding of sea ice dynamics.
+Correctly modelling Antarctic sea  is not only necessary for process understanding and climate projections to inform adaptation strategies.
+Accurate seasonal to subseasonal forecast are crucial for operations in and around the Antarctic continent such as scientific missions, fisheries and tourism [@desilva2020 @wagner2020].
+However, producing accurate Antarctic sea ice forecasts has been challenging due to model biases and inherent large variability and complexity and it has lagged behind Arctic sea ice forecasts [@zampieri2019].
+Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023], which also underscores the need for better understanding of sea ice dynamics.
 
-{==**S2** Introduce S2==}
-
-{==**Objective.** Evaluate S2.==}
+In this work we evaluate sea ice forecasts produced by +S2, the Australian Bureau of Meteorology subseasonal-to-seasonal prediction system. 
+This evaluation will inform future work with the model as a reseach tool and explore the potential of using it as a sea ice forecasting tool.
 
 # Data and methods
 
 ## +S2
 
-+S2 [@wedd2022] is the Australian Bureau of Meteorology's current seasonal prediction system that replaced +S1 [@hudson2017] in October 2021.
-Both +S2 and +S1 consist on the Global Atmosphere 6.0 (GA6) [@williams2015; @waters2017], Global Land 6.0 [@best2011; @waters2017], Global Ocean 5.0 [@madec2013; @megann2014] and Global Sea Ice 6.0 [CICE; @rae2015].
-The atmosphere has a N216 horizontal resolution(\~60km in the mid-latitudes) with 85 levels.
++S2 [@wedd2022] is the Australian Bureau of Meteorology current subseasonal-to-seasonal prediction system which replaced +S1 [@hudson2017] in October 2021.
+Both +S2 and +S1 consist on the Global Atmosphere 6.0 (GA6) [@williams2015; @waters2017], Global Land 6.0 [@best2011; @waters2017], Global Ocean 5.0 [@madec2013; @megann2014] and Global Sea Ice 6.0 [CICE; @rae2015] model components.
+The atmosphere has a N216 horizontal resolution (\~60km in the mid-latitudes) with 85 levels.
 The land model uses the same horizontal grid with 4 soil levels.
 The ocean component has a 1/4º resolution with 75 vertical levels.
 The ice component --based on CICE version 4.1-- has the same resolution than the ocean and 5 sea ice categories as well as an open water category.
 
-Both systems took atmospheric initial conditions derived from ERA-interim [@dee2011] for the hindcast and from the Bureau's operational analysis for real-time forecasts.
+Both systems take atmospheric initial conditions derived from ERA-interim [@dee2011] for the hindcast and from the Bureau's operational analysis for real-time forecasts.
 The main difference between the two are the ocean and ice initial conditions.
-+S1 initial conditions came from from the Met Office FOAM system, which uses a multivariate, incremental three-dimensional variational (3D-Var), first-guess-at-appropriate-time (FGAT) DA scheme [@waters2015] and assimilates sea surface temperature (SST), sea surface height (SSH), in situ temperature and salinity profiles, and sea ice concentration.
++S1 initial conditions come from the Met Office FOAM system, which uses a multivariate, incremental three-dimensional variational (3D-Var), first-guess-at-appropriate-time (FGAT) data assimilation scheme [@waters2015] and assimilates sea surface temperature (SST), sea surface height (SSH), in situ temperature and salinity profiles, and sea ice concentration.
 +S2, instead, runs from initial conditions generated by the in-house data assimilation scheme described in @wedd2022.
 This scheme is a weakly coupled ensemble optimal interpolation method and assimilates temperature and salinity profiles from EN4 [@good2013] for the hindcast and from the WMO Global Telecommunication System (GTS) and both the Coriolis and USGODAE Global Data Assembly Centers (GDACs) for the real-time forecast.
-SSTs are nudged to Reynolds OISSTv2.1 [@reynolds2007] for the hindcast and to the Global Australian Multi-Sensor SST Analysis (GAMSSA; Zhong and Beggs 2008) for the real-time forecast in areas where SSTs are larger than 0ºC.
+SSTs are nudged to Reynolds OISSTv2.1 [@reynolds2007] for the hindcast and to the Global Australian Multi-Sensor SST Analysis (GAMSSA; Zhong and Beggs 2008) for the real-time forecast in areas where SSTs are over 0ºC.
 Relevant for this work, sea ice concentrations are not assimilated.
 
-For evaluation we use hindcast for the period 1981--2023{\>\>Check\<\<}.
-Anomalies will be taken with respect to the 1981--2011 climatology computed from the reanalysis.
-Climatology is smoothed with a 11 day running mean.
+The +S2 hindcast used in this study runs for the period 1981--2018.
+Each forecast consists of 9 ensemble members, 3 of which run for 279 days and 6 for 42 days.
+Anomalies are be taken with respect to the 1981--2011 climatology computed from the daily +S2 reanalysis and smoothed with a 11 day running mean.
+
+The +S1 hindcast runs for the period 1990--2012, with 7-member forecasts integrated for 217 days. 
+No reanalysis is available so we are not able to compute a climatology for this forecast, therefore we don't show metrics based on anomalies. 
 
 ## Verification datasets
 
 ```{r datasets}
 datasets <- list(cdr = CDR(),
-                 bt = BT(),
-                 osi = OSI(),
-                 era5 = ERA5()
-)
+                 osi = OSI())
 which_dataset <- "cdr"
 ```
 
-There is not a lot of data on sea ice properties, especially for things like thickness, age, etc.
-However there are relatively reliable satellite-derived estimates of sea ice concentration, which estimates the proportion of each grid area that is covered with ice.
-
-These data are not perfect.
-\cite{meier2019} Sensor sensitivity and resolution.
-Weather filtering.
-Land To account for observational uncertainty we performed the verification on other data sources.
-We find that the spread among the different datasets is minimal compared with the difference with the +S2 and +S1 forecasts, so the conclusions are independent of the dataset used.
+For verification we use satellite-derived estimates of sea ice concentration, which estimates the proportion of each grid area that is covered with ice.
+Different datasets derived using different algorithms provide different estimates, each with its own biases and uncertainties. 
+@meier2019 estimated that the inter-product uncertainty of sea ice extent is of the order of 1 million km^2^. 
+As will be shown below, this spread is minimal compared with the errors in the +S2 and +S1 forecasts, so the conclusions are independent of the dataset used.
 
 We use NOAA/NSIDC's Climate Data Record V4 [CDR; @meier2014] as the primary verification dataset.
-Its sea ice concentration data are estimated taking the maximum value of the NASA Team \[ref\] and NASA Bootstrap [@comiso2023] algorithms to reduce their low concentration bias [@meier2014; @meier2021].
-Both algorithms use data from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites.
+It takes the maximum value of the NASA Team [@cavalieri1984] and NASA Bootstrap [@comiso2023] sea ice concentration products to reduce their low concentration bias [@meier2014; @meier2021].
+Both source algorithms use data from the Scanning Multichannel Microwave Radiometer (SMMR) on the Nimbus-7 satellite and from the Special Sensor Microwave/Imager (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP) -F8, -F11, and -F13 satellites.
 The data has a resolution of 25 by 25km and daily from 1978 onwards.
 
-Results based on two other different datasets are provided as supplementary material:
-
-1.  The NASA Bootstrap [@comiso2023] product is... it is not an independent dataset from NOAA/NSIDC CDRV4.
-
-2.  The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility (OSI SAF) \[ref\] is another satellite-derived sea ice concentration product based on mostly the same sensors as the NOA CDR but computed independently using different algorithms.
+The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility (OSI SAF) [@OSISAF] is another satellite-derived sea ice concentration product. 
+It is based on mostly the same sensors as the NOA CDR but computed independently using different algorithms.
+Figures prepared with this dataset are provided in the supplementary material. 
 
 ## Error measures
 
 For evaluation purposes, we use a series of measures.
 
-### Sea ice extent
-
 Sea Ice Extent is defined as the area of ocean covered with at least 15% ice.
 This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for lower sea ice conditions.
 
-Sea Ice Extent is a rough global measure, but a model could have relatively accurate extent of ice but with different distributions.
-We use two other measures to account for these errors.
+Pan-Antarctic Sea Ice Extent serves as a rough global measure of the amount of sea ice but it doesn't take into account the spatial distribution. 
+A model could have relatively accurate extent of ice but with different distributions. To account for location errors, we computed the Root Mean Squared Error (RMSE) of sea ice concentration anomalies and the Integrated Ice Edge Error [IIEE; @goessling2016]. 
 
-We compute Root Mean Square Error of sea ice concentration anomalies.
+We compute RMSE as the square root of the average squared differences between forecasted and observed sea ice concentration anomalies. 
+We compute a pan-Antarctic RMSE by averaging over the whole domain, and also a zonally-varying RMSE by averaging over 24 15° longitude slices around Antarctica. 
 
-We also compute the Integrated Ice Edge Error (IIEE) [@goessling2016].
-This is defined as the area in which the model misspredicts sea ice concentration being above or belong 15% ice.
+The IIEE is defined as the area in which the model misspredicts sea ice concentration being above or belong 15% ice.
 That is, dichotomise sea ice concentration into areas with more and less than 15% sea ice both in the forecast and observations; the IIEE is the area in which forecast and observations differ.
+
+All error measures were computed on the +CDR domain grid and projection to which model output was bilinearly interpolated. 
 
 # Results and discussion
 
@@ -233,20 +306,22 @@ hindcast_extent |>
 ```
 
 @fig-hindcast-extent a shows the seasonal cycle of Sea Ice Extent for the +S2 hindcast and +CDR +S2 shows a severe low extent bias, especially in the late summer-early autumn.
-This is due primarily to a faster and longer melt season between January and March and slower growth during March and April This is then balanced with faster growth between May and July ([Fig. @fig-mean-growth]).
-Many S2S systems exhibit this systematic underestimation during the sea ice minimum and early freezing season [@massonnet2023] and could indicate problems in the representation of thermodynamics in the model [@zampieri2019].
+This is due primarily to faster melt during a longer melt season between January and March and slower growth during March and April. 
+This is then balanced with faster growth between May and July ([Fig. @fig-mean-growth]).
+Many sea ice models exhibit this systematic underestimation during the sea ice minimum and early freezing season [@massonnet2023] and could indicate problems in the representation of thermodynamics in the model [@zampieri2019].
 
-Comparing +S2 with +S1, the latter has a smaller bias, especially at low lags ([Fig. @fig-hindcast-extent b]) even though the typical growth rates are very similar between both models ([Fig. @fig-mean-growth]).
++S1 has a smaller low bias than +S2, especially at low lags ([Fig. @fig-hindcast-extent b]) even though the typical growth rates are very similar between both models ([Fig. @fig-mean-growth]).
 At larger lags, +S1's bias in summer and autumn is very similar to +S2's.
-This suggests that this lower sea ice state is closer to the models' equilibrium, indicating that it is an issue with model formulation that was being corrected by the data assimilation system in +S1.
+This suggests that this lower sea ice state is closer to the models' equilibrium, indicating that it is an issue with model formulation that was being corrected by the data assimilation system in +S1 and not in +S2.
 
-At long lags, sea ice extent loses most of the initial condition memory and reverts to the model's preferred equilibrium state.
+At large lags, sea ice extent loses most of the initial condition memory and reverts to the model's preferred equilibrium state.
 Therefore we can estimate the latter using the hindcasts with the largest possible lag, which is shown in triangles in @fig-hindcast-extent for the same dates as the initial conditions.
 The difference between the two is the effect of the data assimilation.
 
-The equilibrium of +S1 and +S2 is very similar (comparing the triangles in each panel in [Fig. @fig-hindcast-extent]), owing to both having the same model formulation.
-From June to October, in +S2 circles move away from triangles and towards observations, indicating that the information from the ocean and atmosphere data assimilation is getting to sea ice and affecting the initial conditions.
+The equilibrium of +S1 and +S2 is very similar (comparing the triangles in each panel in [Fig. @fig-hindcast-extent]), owing to them having the same model formulation.
+From June to October, in +S2 circles are closer to observations than to the triangles, indicating that the information from the ocean and atmosphere data assimilation is getting to sea ice and improving the initial conditions.
 The rest of the year, there is little if any difference between circles and triangles in +S2, indicating that almost no data assimilation is taking place and the sea ice component of the model is virtually free-running.
+In +S1, on the other hand, circles are very close to observations year-round.
 
 ```{r fig-mean-growth}
 #| fig-cap: Median daily sea ice extent growth of +S1 and +S2 hindcasts and observations. Values are smoothed with a 2-degree loess smooth with a 30 day window. 
@@ -271,21 +346,9 @@ extent_daily |>
               aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
   scale_x_datetime(NULL, date_breaks = "1 month", 
                    date_labels = "%b", expand = c(0, 0)) +
-  scale_y_continuous(NULL, labels = labels_extent) +
+  scale_y_continuous(NULL, labels = \(x) paste0(labels_extent(x), "/day")) +
   scale_color_models
 ```
-
-```{r climatology}
-climatologies <- c(datasets,
-                   S2 = S2_reanalysis()) |>
-  lapply(\(x) climatology(x) |>
-           cdo_ymonmean() |> 
-           cdo_execute()
-  ) |>
-  lapply(\(x) ReadNetCDF(x, "aice")) |>
-  rbindlist(idcol = "model") 
-```
-
 
 ```{r hindcast_clim}
 zeropad <- function(x, n = 2) formatC(x, width = 2, flag = "0")
@@ -309,8 +372,11 @@ hindcast_clim <- lapply(setNames(months, months), \(month) {
 
 obs_clim <- CDR() |> 
   climatology() |> 
+  cdo_ymonmean() |>
+  cdo_execute() |> 
   ReadNetCDF(c(obs = "aice")) |> 
-  setnames("time", "time2")
+  setnames("time", "time2") |> 
+  _[, time2 := update(time2, day = 1)]
 
 hindcast_clim <- hindcast_clim |> 
   merge(obs_clim) |> 
@@ -321,7 +387,7 @@ hindcast_clim <- hindcast_clim |>
 ```{r fig-bias}
 #| fig-width: 9
 #| fig-height: 6
-#| fig-cap: 1-month lag +S2 forecast bias compared with NSIDC. 
+#| fig-cap: Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias compared with NSIDC. 
 
 hindcast_clim |> 
   # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |> 
@@ -340,13 +406,12 @@ hindcast_clim |>
   tag_facets()
 ```
 
-@fig-bias shows the difference in monthly mean sea ice concentrations between +CDR and +S2 reanalysis.
-From October to May, the model underestimates sea ice concentrations pretty much everywhere there is ice except for the deep Weddell Sea in April and May, where sea ice concentrations saturate to 1.
-In winter, the differences are mostly on the sea ice edge, with slight positive bias in XXX and negative bias around the Indian Ocean sector.
+
+@fig-bias shows the difference of monthly mean sea ice concentrations between +CDR and +S2 hindcasts at the shortest lag. 
+From October to May, the model underestimates sea ice concentrations pretty much everywhere there is ice except for the deep Weddell Sea in April and May, where sea ice concentrations saturate to 1 both in the observations and forecasts.
+In winter, the differences are mostly on the sea ice edge, with light positive bias in the African sector of East Antarctica and negative bias around the Indian Ocean sector which partially compensate, resulting in the near-zero extent bias seen in those months ([Fig. @fig-hindcast-extent]).
 
 ### Anomalies
-
-{==intro connecting subsections==}
 
 ```{r fig-extent-anom}
 #| fig-cap: Sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue). 
@@ -389,7 +454,7 @@ hindcast_extent |>
 ```
 
 @fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lags.
-The anomalies in this case were computed with respect of the climatology of each lag, which is a way of bias-correction.
+The anomalies in this case were computed with respect of the climatology of each lag, which works as a bias-correction method. 
 Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skilful even at lag 3.
 +S2 shows much bigger variability than observations, with dramatic lows between 1995 and 2007 and highs between 2007 and 2015.
 
@@ -412,6 +477,25 @@ errors <- rbind(
 
 ```
 
+```{r clim_std}
+clim_std <- datasets |> 
+  lapply(\(x) x |> 
+           anomalies() |> 
+           cdo_sqr() |> 
+           cdo_fldmean() |> 
+           cdo_sqrt() |> 
+           cdo_execute() |> 
+           ReadNetCDF(c(std = "aice")) |> 
+           _[, let(lat = NULL, lon = NULL)]
+  ) |> 
+  rbindlist(idcol = "obs_dataset") |> 
+  _[, time := as.Date(time)] |> 
+  _[std == 0, std := NA] |> 
+  _[std < 0.05, std := NA] 
+
+```
+
+
 ```{r fig-rmse}
 #| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
 #| fig.height: 5
@@ -431,9 +515,11 @@ month_from_lag <- function(day = 1, step = 2) {
 
 errors |> 
   _[measure == "rmse"] |>
+  _[, time2 := update(time, year = 2000)] |> 
+  # merge(clim_std) |>
   _[obs_dataset ==  which_dataset] |>
-  _[, median_ci(value), 
-    by = .(lag, version, measure, month(time_forecast), obs_dataset)] |> 
+  _[, median_ci(value),
+    by = .(lag, version, measure, month(time_forecast), obs_dataset)] |>
   _[version == "persistence", version := obs_dataset] |> 
   ggplot(aes(lag, mid)) +
   
@@ -448,7 +534,6 @@ errors |>
             size = 2.5,
             vjust = 0) +
   
-  
   geom_ribbon(aes(ymin = low, 
                   ymax = high, 
                   color = version, 
@@ -456,6 +541,8 @@ errors |>
                   group = interaction(obs_dataset, version)),
               alpha = 0.1) +
   geom_line(aes(color = version, group = interaction(obs_dataset, version)), linewidth = 1) +
+  
+  # geom_line(aes(y = clim_std)) +
   scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
   labs(y = "RMSE", 
        x = "Lag") +
@@ -467,11 +554,9 @@ errors |>
 ```
 
 @fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence.
-This figure uses +CDR data, but the results are nearly identical compared with ERA5 or Bootstrap.
-Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, at which time is statistically useful {==I've got this from CC at the ICTP summer school and makes sense, but it would be great to have a reference?=
-=}.
+Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, after when it is statistically useful.
 Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model doesn't have skill at any lag and in any month.
-The only exception is the RMSE around February. 
+The only exception is around February, where the model has lower RMSE than the persistence forecast at virtually every lag. 
 
 ```{r}
 topo_lonlat <- rcdo::cdo_topo(grid = "r180x90") |>
@@ -480,22 +565,17 @@ topo_lonlat <- rcdo::cdo_topo(grid = "r180x90") |>
   ggperiodic::periodic(lon = c(0, 360)) 
 ```
 
-```{r rmse_lon}
-rmse_lon <- here::here("data/derived/rmse_lon.Rds") |> 
+```{r rmse_lon_mean}
+rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |> 
   readRDS() |> 
   _[version != "S1"] |> 
-  _[, lag := as.numeric(as.Date(time) - time_forecast)] 
-
-
-rmse_lon[, base := value[version == "persistence"], 
-         by = .(time, lon, lag, obs_dataset)]
-
-rmse_lon_mean <- rmse_lon |> 
+  _[, lag := as.numeric(as.Date(time) - time_forecast)] |> 
+  _[, base := value[version == "persistence"], 
+    by = .(time, lon, lag, obs_dataset)] |> 
   _[version != "persistence"] |>
   _[, .(dif = median(value - base, na.rm = TRUE)),
     by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]
 ```
-
 
 ```{r fig-rmse_lon, fig.height=7, fig.width=10}
 #| fig.cap: Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands. 
@@ -527,23 +607,24 @@ rmse_lon_mean |>
        y = "Lag") +
   wide_legend +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) +
-  theme(panel.background = element_blank()) +
-  tag_facets(position = list(x = 0.1, y = 1-.02))
+  theme(panel.background = element_blank(), 
+        tagger.panel.tag.background = element_rect(colour = "white", fill = "white")) +
+  tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1))
 ```
 
 Even though +S2 is no better than persistence at forecasting pan-Antarctic sea ice concentration anomalies, the quality of the forecast might vary between regions. 
-To analyse the spatial distribution of the model error, we computed ice concentration RMSE on `r uniqueN(rmse_lon_mean$lon)` meridional slices `r diff(unique(rmse_lon_mean$lon))[1]` degrees thick.
+To analyse the spatial distribution of the model error, we computed sea ice concentration anomalies RMSE on `r uniqueN(rmse_lon_mean$lon)` meridional slices `r diff(unique(rmse_lon_mean$lon))[1]`º wide.
 The median difference between the forecast and persistence RMSE is shown on @fig-rmse_lon, where negative values indicate that the model has lower RMSE than the benchmark. 
 
-The skill shown by +S2 at February-March forecasts is evident by a band of negative values across almost all longitudes except around and east of the Antarctic Peninsula, where most of the Summer ice is left. 
-This suggests that the positive skill comes from the model correctly forecasting no ice where there is never ice. 
+The skill shown by +S2 at February-March forecasts is evidenced by a band of negative values across almost all longitudes. 
+The only region where February-March sea ice is not well forecasted is east of the Antarctic Peninsula, which is the only region with consistent summer sea ice.
+This suggests that the positive skill around the summer minimum comes from the model correctly forecasting no ice where no ice is ever found. 
 However, there are other regions of skilful forecasts. 
 
-Forecasts initialised on January 1^st^ ([Fig. @fig-rmse_lon] panel a) shows RMSE values below persistence at lags larger than 180 days (corresponding to July through September) in the Ross and Weddell Sea. 
+Forecasts initialised on January 1^st^ ([Fig. @fig-rmse_lon] panel a) show RMSE values below persistence at lags larger than 180 days (corresponding to July through September) in the Ross and Weddell Sea. 
 These two regions are also relatively well forecasted from other months. 
-Notably, May forecasts of Weddell sea ice concentration anomalies ([Fig. @fig-rmse_lon] panel e) are skillful after about 20 days and remain so until December. 
-The Weddell sea region is also the region with the maximum erro --arround June irregardless of initialisation date. 
-
+Notably, May forecasts of Weddell sea ice concentration anomalies ([Fig. @fig-rmse_lon] panel e) are skilful after about 20 days and remain so until December. 
+The Weddell Sea is also the region with the maximum error --around June regardless of initialisation date. 
 
 ### Comparison with S1
 
@@ -628,67 +709,69 @@ errors |>
 
 To compare +S2 with +S1, we computed the IIEE for both models.
 This error measure is shown in @fig-iiee for all lags and forecasts initialised at the first of every month.
-+S1 has lower error at short lags at all months, with the errors converging as the forecast goes on.
-The time to convergence depends on the month and it can be as fas as two weeks June and July to as large as 160 days for forecasts initialised in February.
-Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the the memory of sea ice to initial conditions; at least from October to March when the data assimilated form the other components has little to no influence on sea ice.
++S1 has lower error at short lags at all months, with the errors converging to +S2 as the forecast goes on.
+The time to convergence depends on the month and it can be as short as two weeks June and July to as long as 160 days for forecasts initialised in February.
+Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the the memory of sea ice to initial conditions --at least from October to March when the data assimilated form the other components has little to no influence on sea ice.
 
 Also evident in @fig-iiee is the difference in the error spread at short lags between +S2 and +S1.
-In all month +S1 shows a small error spread at lag 1, indicating that the error in the initial conditions not only is small, but also fairly constant.
+In all months +S1 has much narrower error spread at lag 1. 
+The error in the initial conditions is not only small, but also fairly constant.
 This spread then grows towards a climatological spread as errors accumulate differently in different forecasts.
 For +S2, this is true only only between July and October, approximately.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it's not constant.
 
 ```{r fig-iiee-variance}
 #| fig-cap: Mean spread of IIEE at different lags for different models. 
-#| fig.height: 9
-#| fig.width: 4
+#| fig.height: 6
+#| fig.width: 8
 labels_extent_2 <- function(x) {
-m <- which.max(x)
-x <- scales::label_number(scale = (1e-12)^2)(x)
-x[m] <- paste0(x[m], "\nM km⁴")
-x
+  m <- which.max(x)
+  x <- scales::label_number(scale = (1e-12)^2)(x)
+  x[m] <- paste0(x[m], "\nM km⁴")
+  x
 }
 
 rbind(mean_variance = errors |>
-_[measure == "iiee"] |>
-_[obs_dataset == which_dataset] |>
-_[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-_[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-
-variance_of_mean = errors |>
-_[measure == "iiee"] |>
-_[obs_dataset == which_dataset] |>
-_[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-_[, .(value = var(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-idcol = "component") |> 
-
-ggplot(aes(lag, value)) +
-
-
-geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-colour = "gray50", linewidth = 0.1) +
-
-geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
-size = 2.5,
-vjust = 1) +
-
-geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
-size = 2.5,
-vjust = 0) +
-
-geom_line(aes(color = version), linewidth = 1) +
-scale_y_continuous("Variance", 
-labels = labels_extent_2) +
-# scale_color_models +
-scale_x_continuous("Lag", breaks = NULL) +
-scale_color_models +
-facet_grid(month ~ component, 
-labeller = labeller(month = labels_month, 
-component = c(mean_variance = "Mean variance",
-variance_of_mean = "Variance of mean"))) 
+        _[measure == "iiee"] |>
+        _[obs_dataset == which_dataset] |>
+        _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
+        _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
+      
+      variance_of_mean = errors |>
+        _[measure == "iiee"] |>
+        _[obs_dataset == which_dataset] |>
+        _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
+        _[, .(value = var(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
+      idcol = "component") |> 
+  
+  ggplot(aes(lag, value)) +
+  
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = "gray50", linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
+  geom_line(aes(color = version), linewidth = 1) +
+  scale_y_continuous("Variance", 
+                     labels = labels_extent_2) +
+  # scale_color_models +
+  scale_x_continuous("Lag", breaks = NULL) +
+  scale_color_models +
+  ggh4x::facet_nested_wrap(month ~ component, ncol = 6, 
+                           remove_labels = "all",
+             labeller = labeller(month = labels_month, 
+                                 component = c(mean_variance = "Mean variance",
+                                               variance_of_mean = "Variance of mean"))) 
 ```
 
-The large initial error spread could be due either to large spread of ensemble members or due to a large spread of individual forecasts.
+The large initial error spread could be due either to large spread of ensemble members or to large spread of individual forecasts.
 @fig-iiee-variance splits the IIEE variance for each lag into the mean variance of each individual forecast and the variance of the mean error of each individual forecast, which adds up to the total variance.
 The average variance of each forecast is almost identical between forecast systems in all months.
 This shows that the ensemble spread of individual forecasts evolves identically, which, again, it's not unexpected because both systems share the same model formulation.
@@ -699,28 +782,31 @@ The difference is particularly large at short lags in some months, which coindic
 
 ## Conclusions
 
-------------------------------------------------------------------------
-
-We evaluated the sea
-
-The ACCESS-S2 model, the Australian Bureau of Meteorology's current seasonal prediction system, shows a significant low extent bias in its sea ice extent predictions, particularly during late summer and early autumn.
+Sea ice forecasts from the +S2 model show a significant low extent bias, particularly during late summer and early autumn. 
 This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April.
-This underestimation during the minimum and early freezing season is a common issue in many seasonal-to-subseasonal (S2S) systems, suggesting potential problems with the model's thermodynamic representation.
+This underestimation during the minimum and early freezing season is a common issue in many seasonal-to-subseasonal (S2S) systems, suggesting potential problems either with the model's thermodynamic representation or with short wave radiation forcing, as shown in other climate models. 
+Even though +S2 shares the same model formulation with +S1, the latter does not suffer from this bias. 
+This is due to the assimilation of sea ice concentration anomalies into the initial conditions, which successful corrects for the negative bias in the model. 
+The analysis suggests that the data assimilation system in +S2 is only effectively influencing sea ice initial conditions from June to October, while the rest of the year, the sea ice component runs virtually free, reverting to its biased equilibrium state. 
 
-Comparison with the previous ACCESS-S1 model reveals that while both models share the same formulation and thus similar equilibrium states, ACCESS-S1 had a smaller bias, especially at shorter forecast lead times.
-This difference suggests that the data assimilation system in ACCESS-S1 was correcting for this low sea ice bias.
-The analysis suggests that the data assimilation in ACCESS-S2 is only effectively influencing sea ice initial conditions from June to October, while the rest of the year, the sea ice component runs virtually free, reverting to its biased equilibrium state.
+Analysis of the error spread shows that +S2 initial conditions from December to May not only have large errors, but that the initial error spread is very large compared with +S1. 
+This spread is not due to the perturbation scheme, since the mean error variance for individual forecasts is low and comparable with +S1. 
+Instead, it is due to large variance of the mean error of individual forecasts, which is comparable to the climatology spread. 
+This is further evidence that individual initial conditions are not being affected by the data assimilation scheme. 
 
-Further evaluation of ACCESS-S2's performance in forecasting sea ice anomalies reveals a poor performance even at short lead times, exhibiting much larger variability than observed.
-Quantitative analysis using root mean square error (RMSE) of sea ice concentration anomalies shows that ACCESS-S2 generally lacks skill at any lead time and for any month, with its performance often worse than a simple persistence forecast.
+Based on the observation that +S2 sea ice initial conditions are essentially not initialised, comparing its forecasts with +S1's allows us to estimate the time-scale for which initial conditions are important. 
+This highlights February initial conditions as a crucial for determining sea ice evolution at least up to late June. 
+Arctic sea ice forecast also show greater sensitivity to initial conditions in (boreal) summer compared with (boreal) winter [@day2014; @bunzel2016], so similar mechanism might be playing a role. 
 
-Comparison with ACCESS-S1 using the Integrated Ice Edge Error (IIEE) metric confirms that ACCESS-S1 consistently demonstrates lower errors at short lead times, with the errors converging between the two models as the forecast progresses.
-This convergence timescale, ranging from two weeks to 160 days depending on the month, is indicative of the sea ice memory of initial conditions, particularly during October to March when data assimilation has minimal influence.
+Although forecasts are not skilful for forecasting panantarctic sea ice concentrations, there are some areas where the model does show skill. 
+The Weddell Sea, and the Ross Sea to a lesser extent are particularly well forecasted between June and November for forecasts initialised from January to June. 
+These regions have been recognised as a regions of high predictability thanks to persistent and eastwardly advected upper ocean heat content anomalies [@bushuk2021] 
+Sea surface temperatures are assimilated by +S2 only in areas with temperatures greater than 0°C and errors don't show a clear easterly-propagating signal, so it is not clear if +S2 is leveraging the same source of predictability. 
 
-Analysis of error spread further reveals that ACCESS-S1 consistently exhibits a smaller error spread at short lead times, indicating both smaller and more consistent initial condition errors.
-While both models show similar ensemble spread in individual forecasts, likely due to their shared model formulation and comparable perturbation schemes, ACCESS-S2 shows a larger spread in the mean error of individual forecasts, particularly at short lead times when data assimilation is less influential on sea ice initial conditions.
 
-------------------------------------------------------------------------
+
+
+-----
 
 # References
 

@@ -8,7 +8,6 @@ times <- get_forecast_times("S2")
 
 nsidc_grid <- here::here("data/raw/nsidc_grid.txt")
 
-
 months <- 1:12
 
 furrr::future_walk(months, \(month) {
