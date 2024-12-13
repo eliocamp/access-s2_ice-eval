@@ -108,6 +108,19 @@ extent <- function(dataset) {
         rcdo::cdo_execute(output = file, options = "-L")
 }
 
+area <- function(dataset) {
+  file  <- here::here("data/derived/area", name_from_dataset(dataset))
+  dir.create(dirname(file), FALSE, TRUE)
+  
+  if (file.exists(file)) {
+    return(file)
+  }
+  dataset |> 
+    rcdo::cdo_fldint() |> 
+    rcdo::cdo_execute(output = file, options = "-L")
+}
+
+
 remap_cdr <- function(file) {
     nsidc_grid <- here::here("data/raw/nsidc_grid.txt")
 

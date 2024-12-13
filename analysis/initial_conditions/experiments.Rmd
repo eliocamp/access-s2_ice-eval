@@ -1,6 +1,9 @@
 ---
 title: "Experiment test"
-output: ioslides_presentation
+output: 
+  revealjs::revealjs_presentation:
+    transition: none
+    
 date: "2024-11-03"
 ---
 
@@ -47,6 +50,7 @@ ic <- function(part, experiments) {
 experiments <- c("control", 1990)
 initial <- as.Date("2024-05-01")
 ```
+
 ```{r}
 cdo_remap1 <- function(file) {
   file |> 
@@ -107,7 +111,7 @@ ice_ic |>
   geom_antarctica_fill +
   facet_wrap(~ experiment)  +
   wide_legend +
-  labs(subtitle = "WRT NOAA CDR climatology")
+  labs(subtitle = "Anomaly wrt NOAA CDR climatology")
 ```       
 
 
@@ -197,24 +201,26 @@ t <- forecast("ta", experiments) |>
   lapply(\(x) {
     x |> 
       cdo_selname("ta") |> 
-      cdo_seldate(startdate = "2024-07-01", enddate = "2024-07-15") |> 
-      cdo_remapbil(grid = "r360x180") |> 
-      cdo_timmean() |> 
+      cdo_seldate(startdate = "2024-06-01", enddate = "2024-06-15") |> 
+      cdo_remapbil(grid = "r360x180") |>
+      # cdo_timmean() |> 
       cdo_execute() |> 
       ReadNetCDF(c(t = "ta"), 
-                 subset = list(lat = -c(90, 20), 
-                               z1_p_level = c(50, 10))) 
+                 subset = list(z1_p_level = 10, lat = c(-90, -20))) 
   }) |> 
   rbindlist(idcol = "experiment") 
 
 t |> 
+  _[time == time[2]] |> 
   ggplot(aes(lon, lat)) +
-  geom_contour_fill(aes(z = t - 273.15)) +
+  geom_contour_fill(aes(z = t - 273.15), proj = sic_projection, proj.latlon = FALSE) +
   scale_fill_viridis_c() +
   wide_legend +
-  coord_sf(crs = sic_projection, lims_method = "box", default_crs = "+proj=lonlat") +
+  geom_antarctica_path +
+  coord_sf(crs = sic_projection, lims_method = "box") +
   facet_grid(experiment ~ z1_p_level) +
-  labs(substitle = "Averaged between 1 and 15 July")
+  labs(substitle = "Averaged between 1 and 15 July") +
+  
 
 ```
 

@@ -45,7 +45,7 @@ CDR <- function() {
 
 CDR_BT <- function() {
   file <- here::here("data/raw/cdr_bt.nc")
-  years <- 1981:2023
+  years <- 1981:2024
   
   if (file.exists(file)) {
     return(file)
