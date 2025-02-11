@@ -20,17 +20,15 @@ get_forecast_times <- function(model) {
     stop("Model needs to be S1 or S2")
   )
   
-  years <- list.files(file.path(dir, "e01")) |>
+  dates <- list.files(file.path(dir, "e01")) |>
     strcapture(
-      pattern = "di_a?ice_(\\d{4})\\d{4}_e01.nc",
-      proto = list(time = numeric(1))
-    ) |>
-    range()
-  
-  seq(as.Date(paste0(years[1], "-01-01")),
-      as.Date(paste0(years[2], "-01-01")),
-      by = "month"
-  )
+      pattern = "di_a?ice_(\\d{8})_e01.nc",
+      proto = list(date = character(1))
+    ) |> 
+    _$date |> 
+    lubridate::as_date()
+    
+  dates
 }
 
 compute_climatology <- function(dataset,
