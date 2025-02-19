@@ -176,3 +176,24 @@ cdo_extent <- function(file, threshhold = 0.15) {
         rcdo::cdo_gtc(threshhold) |>
         rcdo::cdo_fldint()
 }
+
+
+
+pad_number <- function(x, pad = 2) formatC(x, width = pad, flag = "0")
+
+
+
+correlate <- function(x, y, signif = 2, sep = "\ ", ...) {
+  correlation <- stats::cor.test(x, y, ...)
+  out <- with(correlation,
+              list(estimate = estimate,
+                   p.value = p.value,
+                   low = conf.int[1],
+                   hig = conf.int[2]))
+  
+  out$text <- with(out,
+                   paste0(round(estimate, signif), sep, "(CI:\ ",
+                          round(low, signif), "\ --\ ", round(hig, signif), ")"))
+  
+  out
+}

@@ -324,6 +324,29 @@
       ],
       "Hash": "698ece7ba5a4fa4559e3d537e7ec3d31"
     },
+    "dplyr": {
+      "Package": "dplyr",
+      "Version": "1.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "cli",
+        "generics",
+        "glue",
+        "lifecycle",
+        "magrittr",
+        "methods",
+        "pillar",
+        "rlang",
+        "tibble",
+        "tidyselect",
+        "utils",
+        "vctrs"
+      ],
+      "Hash": "fedd9d00c2944ff00a0e2696ccf048ec"
+    },
     "e1071": {
       "Package": "e1071",
       "Version": "1.7-14",
@@ -491,6 +514,38 @@
         "utils"
       ],
       "Hash": "281e56bcab06202f51be7b50254f2fce"
+    },
+    "ggh4x": {
+      "Package": "ggh4x",
+      "Version": "0.2.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "cli",
+        "ggplot2",
+        "grid",
+        "gtable",
+        "lifecycle",
+        "rlang",
+        "scales",
+        "stats",
+        "vctrs"
+      ],
+      "Hash": "012d7705b4cdc7b5ee89895aeefc1d45"
+    },
+    "ggperiodic": {
+      "Package": "ggperiodic",
+      "Version": "1.0.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "data.table",
+        "dplyr",
+        "ggplot2",
+        "sticky",
+        "tidyselect"
+      ],
+      "Hash": "107fc3cf286ea1dfb33d9c28fba13246"
     },
     "ggplot2": {
       "Package": "ggplot2",
@@ -1009,21 +1064,21 @@
     },
     "rcdo": {
       "Package": "rcdo",
-      "Version": "0.0.0.9000",
+      "Version": "0.1.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "eliocamp",
       "RemoteRepo": "rcdo",
       "RemoteRef": "main",
-      "RemoteSha": "ba1881e5dd4b3669236a8229756b88acdfbc3caf",
+      "RemoteSha": "891489a2ca3834ac07e67c5056e5a1e6ed440a57",
       "Requirements": [
         "R",
         "R6",
         "cli",
         "rlang"
       ],
-      "Hash": "d1d3a0a192071104e8bdd7e6ae97eaed"
+      "Hash": "d9d424bf0cc49d9ab3bb90fa172d625d"
     },
     "renv": {
       "Package": "renv",
@@ -1173,6 +1228,17 @@
       "Repository": "CRAN",
       "Hash": "dd86d6fd2a01d4eb3777dfdee7076d56"
     },
+    "sticky": {
+      "Package": "sticky",
+      "Version": "0.5.6.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "64340ce1095ab3d9f5910c82ce1542ce"
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.8.4",
@@ -1248,6 +1314,22 @@
         "vctrs"
       ],
       "Hash": "a84e2cc86d07289b3b6f5069df7a004c"
+    },
+    "tidyselect": {
+      "Package": "tidyselect",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cli",
+        "glue",
+        "lifecycle",
+        "rlang",
+        "vctrs",
+        "withr"
+      ],
+      "Hash": "829f27b9c4919c16b593794a6344d6c0"
     },
     "timechange": {
       "Package": "timechange",

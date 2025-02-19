@@ -220,7 +220,7 @@ S2_reanalysis <- function() {
     rcdo::cdo_execute(output = file, options = "-L")
 }
 
-hindcast <- function(model, forecast_times, members = 1:9) {
+hindcast <- function(forecast_times, model, members = 1:9) {
   if (model == "S2") {
     S2_hindcast(forecast_times, members)
   } else {
