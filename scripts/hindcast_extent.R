@@ -1,5 +1,5 @@
 library(furrr)
-workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 2))
+workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 7))
 message(workers, " workers")
 
 plan(multicore, workers = workers)
@@ -9,42 +9,45 @@ source(here::here("R/datasets.R"))
 
 run <- function(model, measure) {
   message(glue::glue("computing {measure} for {model}"))
-  forecast_times <- get_forecast_times(model)
+  forecast_times <- get_forecast_times(model) |> 
+    Filter(f = \(x) data.table::mday(x) == 1)
   
   all_files <- data.table::CJ(
     forecast_time = forecast_times,
     member = 1:9
-  )
-  
-  hindcast_fun <- match.fun(glue::glue("{model}_hindcast"))
+  ) |> 
+    _[, file := hindcast(forecast_time, model, member), by = .(forecast_time, member)] |> 
+    na.omit()
   
   fun_apply <- match.fun(measure)
   
-  file <- here::here(glue::glue("data/derived/{model}_hindcast_{measure}.Rds"))
-  if (file.exists(file)) {
-    return(file)
-  }
+  files <- furrr::future_pmap_chr(all_files, \(forecast_time, member, file) {
+    extent <- file |> 
+      fun_apply()
+    
+    extent2 <- try(metR::GlanceNetCDF(extent, "aice"))
+    
+    if (inherits(extent2, "try-error")) {
+      file.remove(extent)
+      extent <- file |> 
+        fun_apply() 
+    }
+    extent
+  }) 
   
-  furrr::future_pmap(all_files, \(forecast_time, member) {
-    hindcast_fun(forecast_time, member) |>
-      fun_apply() |> 
-      metR::ReadNetCDF("aice") |>
-      _[, let(lat = NULL, lon = NULL,
-              forecast_time = forecast_time,
-              member = member)] |>
-      _[]
-  }) |>
-    data.table::rbindlist() |>
-    saveRDS(file)
-  
-  return(file)
+  all_files[, file := files]
 }
 
 
 
 models <- c("S2", "S1")
-measures <- c("extent", "area")
+measures <- c("extent")
 
-data.table::CJ(model = models, measure = measures) |> 
-  purrr::pmap(run)
+files <- data.table::CJ(model = models, measure = measures) |> 
+  _[order(-model)] |> 
+  _[, run(model, measure), by = .(model, measure)]
 
+
+data <- files[, ReadNetCDF(file, "aice"), by = .(model, measure, forecast_time, member)]
+
+fwrite(data, here::here("data/derived/hindcast_extent.csv"))
