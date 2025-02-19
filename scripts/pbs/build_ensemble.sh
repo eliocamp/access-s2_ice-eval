@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -P lo70
+#PBS -P gb02
 #PBS -q normal
 #PBS -l ncpus=48
 #PBS -l mem=64GB
@@ -9,7 +9,7 @@
 #PBS -l jobfs=400GB
 #PBS -o logs/
 #PBS -e logs/
-#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo07
+#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo70+scratch/lo70
 #PBS -N build_ensemble
 
 # Load module, always specify version number.

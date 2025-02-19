@@ -1,25 +1,53 @@
-library(furrr)
-
-plan(multisession, workers = 12)
-
+library(rcdo)
+library(data.table)
+library(metR)
 source(here::here("R/datasets.R"))
 
-times <- get_forecast_times("S2")
+future::plan("multicore", workers = 12)
 
-nsidc_grid <- here::here("data/raw/nsidc_grid.txt")
+file <- get_forecast_times("S2") |> 
+  Filter(f = \(x) lubridate::day(x) == 1 & lubridate::month(x) == 1) |> 
+  _[2] |> 
+  hindcast(model = "S2", members = 1)
 
-months <- 1:12
+ndays <- as.numeric(cdo_ntime(file) |> 
+             cdo_execute())
 
-furrr::future_walk(months, \(month) {
-  month <- formatC(month, width = 2, flag = "0")
-  files <- here::here(glue::glue("data/derived/hindcast_ensmean/di_aice_*{month}01_emm.nc")) |> 
-    Sys.glob()
-  files_chr <- paste0(files, collapse = " ")
+bytes_per_day <- file.size(file)/ndays
+
+year_clim <- c(1990, 2012)
+
+compute_clim <- function(model, month) {
+  file <- here::here("data/derived/climatology", model, pad_number(month), "em.nc")
+  dir.create(dirname(file), showWarnings = FALSE, recursive = TRUE)
   
-  out <- here::here(glue::glue("data/derived/hindcast_climatology/mo_aice_1981{month}01_mean.nc"))
-  dir.create(dirname(out), showWarnings = FALSE, recursive = TRUE)
-  glue::glue("cdo -L -O -s ensmean [ -monmean : {files_chr} ] {out}") |> 
-    system()
-})
+  dates <- get_forecast_times(model) |> 
+    Filter(f = \(x) lubridate::day(x) == 1 & lubridate::month(x) == month & lubridate::year(x) %between% year_clim) 
+  
+  # the 7th member has some weird jumps and inconsistencies. 
+  if (model == "S1" && month == 1) {
+    members <- c(1:6, 8:9)
+  } else {
+    members <- 1:9
+  }
+  forecasts <- hindcast(dates, model, 1)
+  
+  # Some forecast have less than the correct number of days. 
+  # Throw them out
+  size <- forecasts |> 
+    file.size()
+  
+  ndays <- floor(size/bytes_per_day)
+  
+  forecasts[ndays >= 215] |> 
+    cdo_mergetime() |> 
+    cdo_ydaymean() |> 
+    cdo_setyear(2000) |> 
+    cdo_execute(output = file, options = "-L")
+}
 
+
+dates <- data.table::CJ(model = c("S1", "S2"),
+                        month = 1:12) |>
+  _[, clim := furrr::future_map2_chr(model, month, compute_clim)]
 

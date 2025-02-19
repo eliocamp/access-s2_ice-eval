@@ -1,13 +1,16 @@
 #!/bin/bash
 
-#PBS -P dx2
+#PBS -P lo70
 #PBS -q normal
 #PBS -l ncpus=48
-#PBS -l mem=190GB
-#PBS -l walltime=03:00:00
+#PBS -l mem=64GB
+#PBS -l walltime=01:00:00
 #PBS -l wd
-#PBS -l jobfs=400GB
-#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7
+#PBS -l jobfs=20GB
+#PBS -o logs/
+#PBS -e logs/
+#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo07
+#PBS -N hindcast_climatolgy
 
 # Load module, always specify version number.
 module load R/4.3.1
