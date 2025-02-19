@@ -251,27 +251,15 @@ area_climatology <- area_daily |>
 ```
 
 
+
 ```{r hindcast_extent}
-hindcast_extent <- rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_extent.Rds")),
-                         S2 = readRDS(here::here("data/derived/S2_hindcast_extent.Rds")), 
-                         idcol = "model") |>
+hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |> 
   _[, model := relevel(factor(model), "S2")] |> 
-  _[, lag := as.numeric(as.Date(time) - forecast_time)] |> 
+  _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |> 
   _[lag > 0] |> 
   _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
 ```
 
-
-
-```{r}
-hindcast_area <- rbind(S1 = readRDS(here::here("data/derived/S1_hindcast_area.Rds")),
-                       S2 = readRDS(here::here("data/derived/S2_hindcast_area.Rds")), 
-                       idcol = "model") |>
-  _[, model := relevel(factor(model), "S2")] |> 
-  _[, lag := as.numeric(as.Date(time) - forecast_time)] |> 
-  _[lag > 0] |> 
-  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
-```
 
 ```{r fig-hindcast-extent}
 #| fig-cap: Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the median sea ice extent of +CDR. 
@@ -357,17 +345,21 @@ lt$year*12 + lt$mon }
 mondf <- function(d1, d2) { monnb(d2) - monnb(d1) }
 
 months <- 1:12
+
 hindcast_clim <- lapply(setNames(months, months), \(month) {
-  here::here(glue::glue("data/derived/hindcast_climatology/mo_aice_1981{zeropad(month)}01_mean.nc")) |> 
+  here::here(glue::glue("data/derived/climatology/S2/{zeropad(month)}/em.nc")) |> 
+    cdo_selmonth(month) |> 
+    cdo_execute() |> 
     ReadNetCDF("aice")
 }) |> 
   rbindlist(idcol = "forecast_month") |> 
-  _[, forecast_month := as.numeric(forecast_month)] |> 
-  _[, forecast_time := lubridate::make_datetime(1981, forecast_month, 01)] |> 
-  _[, time := lubridate::floor_date(time, "month")] |> 
-  _[, lag := mondf(forecast_time, time)] |> 
-  _[lag == 0] |> 
-  _[, time2 := update(time, year = 2000)]
+  _[, forecast_month := as.numeric(forecast_month)]
+
+
+hindcast_clim <- hindcast_clim |> 
+  copy() |> 
+  _[, .(aice = mean(aice)), by = .(month(time), ygrid, xgrid, forecast_month)] |> 
+  _[forecast_month == month]
 
 
 obs_clim <- CDR() |> 
@@ -375,12 +367,10 @@ obs_clim <- CDR() |>
   cdo_ymonmean() |>
   cdo_execute() |> 
   ReadNetCDF(c(obs = "aice")) |> 
-  setnames("time", "time2") |> 
-  _[, time2 := update(time2, day = 1)]
+  _[, month := month(time)]
 
 hindcast_clim <- hindcast_clim |> 
-  merge(obs_clim) |> 
-  _[, month := month(time)] 
+  merge(obs_clim)
 ```
 
 
@@ -401,7 +391,7 @@ hindcast_clim |>
                                    high = scales::muted("blue")) +
   geomcoord_antarctica +
   geom_antarctica_fill +
-  facet_wrap(~ lubridate::month(time, label = TRUE)) +
+  facet_wrap(~ month) +
   wide_legend +
   tag_facets()
 ```
@@ -421,6 +411,7 @@ months_difference <- function(x, y) {
 }
 
 monthly_extent <- extent_daily |> 
+  _[dataset == which_dataset] |> 
   _[aice == 0, aice := NA]  |> 
   _[, .(aice = mean(aice)), by = .(dataset, time = as.Date(round_date(time, "month")))] |>
   _[, aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE), 
@@ -428,28 +419,28 @@ monthly_extent <- extent_daily |>
 
 N <- uniqueN(monthly_extent$time)
 
+s1_range <- hindcast_extent[model == "S1"][, range(time)]
+s2_range <- hindcast_extent[model == "S2"][, range(time)]
+
 hindcast_extent |> 
   copy() |> 
-  # _[model == "S2"] |> 
   _[, aice := aice - mean(aice[year(time) %between% c(1981, 2011)]), 
     by = .(lag, model, time = update(time, year = 2000))] |> 
-  _[, .(aice = mean(aice)), by = .(model, forecast_time, time = as.Date(round_date(time, "month")))] |> 
-  _[, lag := months_difference(time, forecast_time) + 1] |> 
-  _[lag %in% c(1, 3, 5, 7)] |> 
-  ggplot(aes(time, aice)) +
-  geom_line(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
-              _[dataset == which_dataset],
-            aes(group = dataset, color = dataset)) +
-  # geom_smooth(data = monthly_extent[year(time) <= max(year(hindcast_extent$time))] |> 
-  #               _[dataset == "cdr"], 
-  #             aes(group = dataset, color = dataset),
-  #             se = FALSE, span = 10*12/N, n = 366) +
-  geom_line(aes(color = model))  +
-  # geom_smooth(aes(color = model), se = FALSE, span = 10*12/N, n = 366) +
+  _[, .(forecast = mean(aice)), by = .(model, forecast_time, time = as.Date(round_date(time, "month")))] |> 
+  _[, lag := months_difference(time, forecast_time)] |> 
+  _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |> 
+  _[lag %in% (c(1, 3, 5, 7) - 1)] |>
+  _[time %between% s2_range] |> 
+  ggplot(aes(time)) +
+  geom_line(aes(y = aice, group = dataset, color = dataset)) +
+  geom_line(aes(y = forecast, color = model))  +
+  geom_text(data = \(x) x[time %between% s1_range, correlate(aice, forecast, use = "complete.obs"), by = .(lag, model)],
+            aes(label = text), x = -Inf, y = Inf, 
+            vjust = 1.2, hjust = -0.2) +
   scale_y_continuous(NULL,
                      labels = labels_extent) +
   scale_x_date(NULL, expand = c(0, 0)) +
-  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Lag: ", x))) +
+  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Month: ", x))) +
   scale_color_models
 ```
 
