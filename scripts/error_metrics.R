@@ -1,13 +1,19 @@
-logfile <- here::here("logs/error_metrics.log")
+logfile <- here::here("logs/error_metrics.log")q
 log <- function(text) {
-  write(paste0(format(lubridate::now()), ": ", text), logfile, append = TRUE)
+  messg <- paste0(format(lubridate::now()), ": ", text)
+  if (interactive()) {
+    message(messg)
+  } else {
+    write(messg, logfile, append = TRUE)    
+  }
 }
 on.exit(log("exiting"))
 writeLines("", logfile)
 log("Booting up")
+
 library(furrr)
 
-workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 25))
+workers <- as.numeric(Sys.getenv("PBS_WORKERS", unset = 2))
 plan_type <- "multicore"
 log(glue::glue("setting up {workers} workers in a {plan_type} plan"))
 
@@ -20,8 +26,8 @@ cdo_options_set("-L")
 library(data.table)
 library(lubridate)
 library(ncdf4)
-source("R/functions.R")
-source("R/datasets.R")
+source(here::here("R/functions.R"))
+source(here::here("R/datasets.R"))
 
 # Force evaluation now and not in the workers.
 obs <- list(
@@ -150,13 +156,9 @@ cdo_rmse_lon <- function(file, obs, n = 15, output) {
 compute_metrics <- function(forecast_time, member, version, obs_dataset) {
   tick <- lubridate::now()
   cdo_options_set(c("-L"))
-  # file <- files[i, ]
   
-  if (version == "S2") {
-    file <- S2_hindcast(forecast_time, member)
-  } else if (version == "S1") {
-    file <- S1_hindcast(forecast_time, member)
-  }
+  file <- hindcast(forecast_time, model = version, members = member)
+  model_climatology <- here::here("data/derived/climatology", version, pad_number(month(forecast_time)), "em.nc")
   
   file_template <- paste0("di_aice_", format(forecast_time, "%Y%m%d"), "_e0", member, ".nc")
   
@@ -197,16 +199,16 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
   
   if (!file.exists(rmse_out)) {
     file |>
-      cdo_ydaysub(S2_reanalysis() |> climatology()) |>
+      cdo_ydaysub(model_climatology) |>
       cdo_rmse(observation_part_anomaly) |>
       cdo_execute(output = rmse_out)
   }
   
   if (!file.exists(rmse_lon_out)) {
     log(glue::glue("   computing rmse_lon {basename(file)}"))
-   
+    
     file |> 
-      cdo_ydaysub(S2_reanalysis() |> climatology()) |> 
+      cdo_ydaysub(model_climatology) |> 
       cdo_rmse_lon(observation_part_anomaly, 
                    output = rmse_lon_out)
   }
@@ -246,15 +248,17 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
       cdo_rmse_lon(observation_part_anomaly, 
                    output = rmse_lon_persistence_out)
   }
-
+  
   tock <- lubridate::now()
   log(glue::glue("   done in {as.numeric(tock) - as.numeric(tick)} seconds"))
 }
 
 
-forecast_times_s1 <- get_forecast_times("S1")
+forecast_times_s1 <- get_forecast_times("S1") |> 
+  Filter(f = \(x) mday(x) == 1) 
 
-forecast_times_s2 <- get_forecast_times("S2")
+forecast_times_s2 <- get_forecast_times("S2") |> 
+  Filter(f = \(x) mday(x) == 1) 
 
 all_files <- data.table::CJ(
   forecast_time = forecast_times_s1,
@@ -269,12 +273,15 @@ all_files <- data.table::CJ(
       version = c("S2"),
       obs_dataset = names(obs$data)
     )
-  ) 
+  ) |> 
+  _[mday(forecast_time) == 1]
 
-forecast_time <- all_files[1, ]$forecast_time
-obs_dataset  <-  all_files[1, ]$obs_dataset
-version  <-  all_files[1, ]$version
-member  <-  all_files[1, ]$member
+i <- 2
+
+forecast_time <- all_files[i, ]$forecast_time
+obs_dataset  <-  all_files[i, ]$obs_dataset
+version  <-  all_files[i, ]$version
+member  <-  all_files[i, ]$member
 
 future_pwalk(all_files, compute_metrics, .options = furrr_options(seed = NULL))
 
