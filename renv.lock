@@ -304,14 +304,14 @@
     },
     "data.table": {
       "Package": "data.table",
-      "Version": "1.15.4",
+      "Version": "1.17.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "methods"
       ],
-      "Hash": "8ee9ac56ef633d0c7cab8b2ca87d683e"
+      "Hash": "d06cd1a942bb17b607df7d57048d6840"
     },
     "digest": {
       "Package": "digest",
@@ -380,14 +380,13 @@
     },
     "evaluate": {
       "Package": "evaluate",
-      "Version": "0.23",
+      "Version": "1.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
-        "R",
-        "methods"
+        "R"
       ],
-      "Hash": "daf4a1246be12c1fa8c7705a0935c1a0"
+      "Hash": "e9651417729bbe7472e32b5027370e79"
     },
     "fansi": {
       "Package": "fansi",
@@ -856,15 +855,14 @@
     },
     "metR": {
       "Package": "metR",
-      "Version": "0.15.0.9000",
+      "Version": "0.17.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "metR",
       "RemoteUsername": "eliocamp",
-      "RemotePkgRef": "eliocamp/metR",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "b1f2c2ea8a2466416ab5952b2de97dbe061b4dc6",
+      "RemoteRepo": "metR",
+      "RemoteRef": "master",
+      "RemoteSha": "4104e73c7073c6ae3183db195e2e1ac58266c8d3",
       "Requirements": [
         "Formula",
         "R",
@@ -884,7 +882,7 @@
         "sf",
         "stringr"
       ],
-      "Hash": "f0539f36cacc17015910fba9455f6fc4"
+      "Hash": "89962a8606022a752ed6d7eed159efeb"
     },
     "mgcv": {
       "Package": "mgcv",
@@ -1446,10 +1444,10 @@
     },
     "yaml": {
       "Package": "yaml",
-      "Version": "2.3.8",
+      "Version": "2.3.10",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "29240487a071f535f5e5d5a323b7afbd"
+      "Hash": "51dab85c6c98e50a18d7551e9d49f76c"
     }
   }
 }
