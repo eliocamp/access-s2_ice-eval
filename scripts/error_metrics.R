@@ -1,4 +1,4 @@
-logfile <- here::here("logs/error_metrics.log")q
+logfile <- here::here("logs/error_metrics.log")
 log <- function(text) {
   messg <- paste0(format(lubridate::now()), ": ", text)
   if (interactive()) {
@@ -158,6 +158,11 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
   cdo_options_set(c("-L"))
   
   file <- hindcast(forecast_time, model = version, members = member)
+
+  if (length(file) == 0) {
+    stop(glue::glue("No file found for model {version} at forecast time {forecast_time} member {member}"))
+  }
+  
   model_climatology <- here::here("data/derived/climatology", version, pad_number(month(forecast_time)), "em.nc")
   
   file_template <- paste0("di_aice_", format(forecast_time, "%Y%m%d"), "_e0", member, ".nc")
@@ -258,7 +263,8 @@ forecast_times_s1 <- get_forecast_times("S1") |>
   Filter(f = \(x) mday(x) == 1) 
 
 forecast_times_s2 <- get_forecast_times("S2") |> 
-  Filter(f = \(x) mday(x) == 1) 
+  Filter(f = \(x) mday(x) == 1) |> 
+  Filter(f = Negate(\(x) year(x) == 1981 & month(x) == 1)) 
 
 all_files <- data.table::CJ(
   forecast_time = forecast_times_s1,

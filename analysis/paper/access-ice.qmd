@@ -455,10 +455,9 @@ To study +S2 forecasts quantitatively, we compute error measures for all hindcas
 
 ```{r errors}
 errors <- rbind(
-  readRDS(here::here("data/derived/rmse.Rds")) |>
-    _[version != "S1"], 
+  readRDS(here::here("data/derived/rmse.Rds")),
   readRDS(here::here("data/derived/iiee.Rds"))
-) |>
+) |> 
   _[value < 0.01, value := NA] |> 
   _[value > 3e13, value := NA] |> 
   _[, time := as.Date(time)] |> 
@@ -467,6 +466,7 @@ errors <- rbind(
   _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]  # This member is wrong
 
 ```
+
 
 ```{r clim_std}
 clim_std <- datasets |> 
@@ -543,6 +543,15 @@ errors |>
   #   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) 
 ```
+
+::: notes
+
+Use climatology
+
+monthly rmse/corelation at gridpoints per lead time.  
+
+:::
+
 
 @fig-rmse shows the median and 95% range of RMSE of sea ice concentration anomalies for +S2 forecasts compared with a benchmark of persistence.
 Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lags, but that the persistence forecast errors would grow faster and eventually surpass the mode forecast, after when it is statistically useful.

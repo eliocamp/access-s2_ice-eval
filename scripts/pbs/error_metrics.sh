@@ -2,7 +2,7 @@
 
 #PBS -P lo70
 #PBS -q normal
-#PBS -l ncpus=48
+#PBS -l ncpus=32
 #PBS -l mem=64GB
 #PBS -l walltime=8:00:00
 #PBS -l wd
@@ -17,5 +17,5 @@ module load R/4.3.1
 module load cdo/2.4.3
 
 # Run R application
-export PBS_WORKERS=24
+export PBS_WORKERS=28
 Rscript scripts/error_metrics.R 
