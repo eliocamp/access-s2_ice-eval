@@ -532,6 +532,21 @@
       ],
       "Hash": "012d7705b4cdc7b5ee89895aeefc1d45"
     },
+    "gglgbtq": {
+      "Package": "gglgbtq",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "ggplot2",
+        "grDevices",
+        "graphics",
+        "rlang",
+        "tibble"
+      ],
+      "Hash": "8c66cab1c405c580ff5f5bede2b3d91e"
+    },
     "ggperiodic": {
       "Package": "ggperiodic",
       "Version": "1.0.3",
@@ -974,6 +989,25 @@
         "utils"
       ],
       "Hash": "6e8b139c1904f5e9e14c69db64453bbe"
+    },
+    "patchwork": {
+      "Package": "patchwork",
+      "Version": "1.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "cli",
+        "farver",
+        "ggplot2",
+        "grDevices",
+        "graphics",
+        "grid",
+        "gtable",
+        "rlang",
+        "stats",
+        "utils"
+      ],
+      "Hash": "e23fb9ecb1258207bcb763d78d513439"
     },
     "pillar": {
       "Package": "pillar",
