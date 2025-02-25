@@ -53,10 +53,10 @@ scale_fill_models <- ggplot2::scale_fill_manual(NULL,
                                          labels = labels_models
 )
 
-labels_extent <- function(x) {
+labels_extent <- function(x, sep = "\n") {
   m <- which.max(x)
   x <- scales::label_number(scale = 1e-12)(x)
-  x[m] <- paste0(x[m], "\nM km²")
+  x[m] <- paste0(x[m], sep, "M km²")
   x
 }
 

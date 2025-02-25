@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2024-11-11" />
+
+<title>Poster figures</title>
+
+<script src="presentation_figures_files/header-attrs-2.27/header-attrs.js"></script>
+<script src="presentation_figures_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="presentation_figures_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="presentation_figures_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="presentation_figures_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="presentation_figures_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="presentation_figures_files/navigation-1.1/tabsets.js"></script>
+<link href="presentation_figures_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="presentation_figures_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Poster figures</h1>
+<h4 class="date">2024-11-11</h4>
+
+</div>
+
+
+<pre class="r"><code>source(here::here(&quot;R/functions.R&quot;))
+source(here::here(&quot;R/datasets.R&quot;))
+source(here::here(&quot;R/ggplot.R&quot;))</code></pre>
+<pre><code>## Warning: Using CDO version 2.4.0 which is different from the version supported by this
+## version of rcdo (2.4.3).
+## ℹ This warning is displayed once per session.</code></pre>
+<pre class="r"><code>datasets &lt;- list(cdr = CDR())
+which_dataset &lt;- &quot;cdr&quot;</code></pre>
+<div id="bias" class="section level3">
+<h3>Bias</h3>
+<pre class="r"><code>extent_daily &lt;- datasets |&gt;
+  lapply(extent) |&gt;
+  lapply(\(x) ReadNetCDF(x, &quot;aice&quot;)) |&gt;
+  rbindlist(idcol = &quot;dataset&quot;) |&gt;
+  _[, let(lon = NULL, lat = NULL)]</code></pre>
+<pre class="r"><code>extent_climatology &lt;- extent_daily |&gt;  
+  copy() |&gt;
+  _[aice == 0, aice := NA] |&gt; 
+  _[!(month(time) == 2 &amp; mday(time) == 29)] |&gt; 
+  _[, time := update(time, year = 2001)] |&gt; 
+  _[, median_ci(aice), by = .(time, dataset)] </code></pre>
+<pre class="r"><code>hindcast_extent &lt;- fread(here::here(&quot;data/derived/hindcast_extent.csv&quot;)) |&gt; 
+  _[, model := relevel(factor(model), &quot;S2&quot;)] |&gt; 
+  _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |&gt; 
+  _[lag &gt; 0] |&gt; 
+  _[!(month(forecast_time) == 1 &amp; member == 7 &amp; model == &quot;S1&quot;)]  # This member is wrong</code></pre>
+<pre class="r"><code>hindcast_extent |&gt; 
+  _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
+                              lag = as.numeric(as.Date(time) - forecast_time),
+                              model)] |&gt;
+  _[, time := forecast_time + lag] |&gt;
+  _[, time2 := update(time, year = 2001)] |&gt;
+  _[, month := lubridate::month(forecast_time, label = TRUE)] |&gt;
+  # _[]
+  ggplot(aes(time2, mid)) +
+  geom_line(data = extent_climatology[dataset == which_dataset], 
+            aes(x = as.Date(time),
+                group = dataset)) + 
+  geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
+  
+  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], by = .(forecast_time, model)], 
+             aes(fill = month), 
+             shape = 24, size = 2.2) +
+  
+  geom_point(data = \(x) x[lag == 1], aes(fill = month), 
+             shape = 21, size = 2) +
+  
+  scale_x_date(NULL, date_breaks = &quot;1 month&quot;, 
+               date_labels = &quot;%b&quot;, expand = c(0, 0)) +
+  scale_y_continuous(NULL, labels = labels_extent) +
+  scale_color_manual(values = colorRampPalette(gglgbtq::palette_lgbtq(&quot;nonbinary&quot;)[c(1, 3, 4, 1)])(12),
+                     aesthetics = c(&quot;fill&quot;, &quot;color&quot;), guide = &quot;none&quot;) +
+  facet_wrap(~ model, ncol = 1) +
+  tag_facets() </code></pre>
+<pre><code>## Warning in eval(bysub, x, parent.frame()): Incompatible methods (&quot;-.Date&quot;,
+## &quot;-.IDate&quot;) for &quot;-&quot;</code></pre>
+<div class="figure">
+<img src="presentation_figures_files/figure-html/fig-hindcast-extent-1.png" alt="Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the median sea ice extent of +CDR." width="672" />
+<p class="caption">
+Median sea ice extent for al hindcasts initialised the first of the
+month for +S2 and +S1 in colours representing the start month. In black,
+the median sea ice extent of +CDR.
+</p>
+</div>
+<pre class="r"><code>hindcast_extent |&gt; 
+  _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
+                              lag = as.numeric(as.Date(time) - forecast_time),
+                              model)] |&gt;
+  _[, time := forecast_time + lag] |&gt;
+  _[, time2 := update(time, year = 2001)] |&gt;
+  _[, month := lubridate::month(forecast_time, label = TRUE)] |&gt;
+  _[copy(extent_climatology)[, time := as.Date(time)], on = c(time2 = &quot;time&quot;)] |&gt; 
+  _[] |&gt; 
+  ggplot(aes(time2, mid - i.mid)) +
+  geom_hline(yintercept = 0) +
+  geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
+  
+  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], by = .(forecast_time, model)], 
+             aes(fill = month), 
+             shape = 24, size = 2.2) +
+  
+  geom_point(data = \(x) x[lag == 1], aes(fill = month), 
+             shape = 21, size = 2) +
+  
+  scale_x_date(NULL, date_breaks = &quot;1 month&quot;, 
+               date_labels = &quot;%b&quot;, expand = c(0, 0)) +
+  scale_y_continuous(NULL, labels = labels_extent) +
+  scale_color_manual(values = colorRampPalette(gglgbtq::palette_lgbtq(&quot;nonbinary&quot;)[c(1, 3, 4, 1)])(12),
+                     aesthetics = c(&quot;fill&quot;, &quot;color&quot;), guide = &quot;none&quot;) +
+  facet_wrap(~ model, ncol = 1) +
+  tag_facets() </code></pre>
+<pre><code>## Warning in eval(bysub, x, parent.frame()): Incompatible methods (&quot;-.Date&quot;,
+## &quot;-.IDate&quot;) for &quot;-&quot;</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<pre class="r"><code>zeropad &lt;- function(x, n = 2) formatC(x, width = 2, flag = &quot;0&quot;)
+monnb &lt;- function(d) { lt &lt;- as.POSIXlt(as.Date(d, origin=&quot;1900-01-01&quot;)); 
+lt$year*12 + lt$mon } 
+mondf &lt;- function(d1, d2) { monnb(d2) - monnb(d1) }
+
+months &lt;- 1:12
+
+hindcast_clim &lt;- lapply(setNames(months, months), \(month) {
+  here::here(glue::glue(&quot;data/derived/climatology/S2/{zeropad(month)}/em.nc&quot;)) |&gt; 
+    cdo_selmonth(month) |&gt; 
+    cdo_execute() |&gt; 
+    ReadNetCDF(&quot;aice&quot;)
+}) |&gt; 
+  rbindlist(idcol = &quot;forecast_month&quot;) |&gt; 
+  _[, forecast_month := as.numeric(forecast_month)]
+
+
+hindcast_clim &lt;- hindcast_clim |&gt; 
+  copy() |&gt; 
+  _[, .(aice = mean(aice)), by = .(month(time), ygrid, xgrid, forecast_month)] |&gt; 
+  _[forecast_month == month]
+
+
+obs_clim &lt;- CDR() |&gt; 
+  climatology() |&gt; 
+  cdo_ymonmean() |&gt;
+  cdo_execute() |&gt; 
+  ReadNetCDF(c(obs = &quot;aice&quot;)) |&gt; 
+  _[, month := month(time)]
+
+hindcast_clim &lt;- hindcast_clim |&gt; 
+  merge(obs_clim)</code></pre>
+<pre class="r"><code>trans_pink &lt;- gglgbtq::palette_lgbtq(&quot;transgender&quot;)[2] |&gt; 
+  colorspace::darken(0.2)
+trans_blue &lt;- gglgbtq::palette_lgbtq(&quot;transgender&quot;)[1] |&gt; 
+  colorspace::darken(0.2)</code></pre>
+<pre class="r"><code>hindcast_clim |&gt; 
+  # _[month == 1] |&gt;
+  # dcast(time + xgrid + ygrid ~ model, value.var = &quot;aice&quot;) |&gt; 
+  # setnames(which_dataset, &quot;obs&quot;) |&gt;
+  ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
+                    breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
+  # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
+  #               linewidth = 0.1) +
+  scale_fill_divergent_discretised(paste0(&quot;Bias with respect to &quot;,
+                                          labels_models[which_dataset]),
+                                   low = trans_pink,
+                                   high = trans_blue) +
+  geomcoord_antarctica +
+  geom_antarctica_fill +
+  facet_wrap(~ month, 
+             labeller = labeller(month = setNames(months, month.abb)),
+             nrow = 2) +
+  wide_legend +
+  tag_facets()</code></pre>
+<div class="figure">
+<img src="presentation_figures_files/figure-html/fig-bias-1.png" alt="Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias compared with NSIDC." width="864" />
+<p class="caption">
+Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias
+compared with NSIDC.
+</p>
+</div>
+</div>
+<div id="anomalies" class="section level3">
+<h3>Anomalies</h3>
+<pre class="r"><code>nb_yellow &lt;- gglgbtq::palette_lgbtq(&quot;nonbinary&quot;)[1] |&gt; 
+  colorspace::darken(0.3)
+nb_purple &lt;- gglgbtq::palette_lgbtq(&quot;nonbinary&quot;)[3]
+colours_models &lt;- c(
+  S2 = nb_purple,
+  S1 = nb_yellow,
+  cdr = &quot;black&quot;,
+  persistence = &quot;black&quot;,
+  climatology = &quot;gray50&quot;
+)
+
+
+labels_models &lt;- c(
+  S2 = &quot;ACCESS-S2&quot;,
+  S1 = &quot;ACCESS-S1&quot;,
+  cdr = &quot;CDR&quot;,
+  bt = &quot;Bootstrap&quot;,
+  era5 = &quot;ERA5&quot;,
+  osi = &quot;OSI&quot;,
+  persistence = &quot;Persistence&quot;,
+  climatology = &quot;Climatology&quot;
+)
+
+scale_color_models &lt;-   ggplot2::scale_color_manual(NULL,
+                                                    values = colours_models,
+                                                    labels = labels_models
+)
+
+scale_fill_models &lt;-   ggplot2::scale_fill_manual(NULL,
+                                                  values = colours_models,
+                                                  labels = labels_models
+)</code></pre>
+<pre class="r"><code>months_difference &lt;- function(x, y) {
+  lubridate::interval(y, x) %/% months(1)
+}
+
+monthly_extent &lt;- extent_daily |&gt; 
+  _[dataset == which_dataset] |&gt; 
+  _[aice == 0, aice := NA]  |&gt; 
+  _[, .(aice = mean(aice)), by = .(dataset, time = as.Date(round_date(time, &quot;month&quot;)))] |&gt;
+  _[, aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE), 
+    by = .(month(time), dataset)] 
+
+N &lt;- uniqueN(monthly_extent$time)
+
+s1_range &lt;- hindcast_extent[model == &quot;S1&quot;][, range(time)]
+s2_range &lt;- hindcast_extent[model == &quot;S2&quot;][, range(time)]
+
+hindcast_extent |&gt; 
+  copy() |&gt; 
+  _[, aice := aice - mean(aice[year(time) %between% c(1981, 2011)]), 
+    by = .(lag, model, time = update(time, year = 2000))] |&gt; 
+  _[, .(forecast = mean(aice)), by = .(model, forecast_time, time = as.Date(round_date(time, &quot;month&quot;)))] |&gt; 
+  _[, lag := months_difference(time, forecast_time)] |&gt; 
+  _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |&gt; 
+  _[lag %in% (c(1, 3, 5, 7) - 1)] |&gt;
+  _[time %between% s2_range] |&gt; 
+  ggplot(aes(time)) +
+  geom_line(aes(y = aice, group = dataset, color = dataset)) +
+  geom_line(aes(y = forecast, color = model))  +
+  geom_text(data = \(x) x[time %between% s1_range, 
+                          .(text = sqrt(mean((aice - forecast)^2, na.rm = TRUE))), by = .(lag, model)],
+            aes(label = paste0(scales::number(text, scale = 1e-12), &quot; M km²&quot;)), x = -Inf, y = Inf,
+            vjust = 1.2, hjust = -0.2) +
+  scale_y_continuous(NULL,
+                     labels = labels_extent) +
+  scale_x_date(NULL, expand = c(0, 0)) +
+  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0(&quot;Month: &quot;, x))) +
+  scale_color_models</code></pre>
+<pre><code>## Warning: Removed 184 rows containing missing values or values outside the scale range
+## (`geom_line()`).</code></pre>
+<div class="figure">
+<img src="presentation_figures_files/figure-html/fig-extent-anom-1.png" alt="Sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue)." width="672" />
+<p class="caption">
+Sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue).
+</p>
+</div>
+</div>
+<div id="rmse" class="section level3">
+<h3>RMSE</h3>
+<pre class="r"><code>errors &lt;- rbind(
+  readRDS(here::here(&quot;data/derived/rmse.Rds&quot;)),
+  readRDS(here::here(&quot;data/derived/iiee.Rds&quot;))
+) |&gt; 
+  _[value &lt; 0.01, value := NA] |&gt; 
+  _[value &gt; 3e13, value := NA] |&gt; 
+  _[, time := as.Date(time)] |&gt; 
+  _[, lag := as.numeric(time - time_forecast)] |&gt; 
+  _[lag &gt; 0] |&gt; 
+  _[!(month(time_forecast) == 1 &amp; member == &quot;07&quot; &amp; version == &quot;S1&quot;)]  # This member is wrong</code></pre>
+<pre class="r"><code>clim_std &lt;- datasets |&gt; 
+  lapply(\(x) x |&gt; 
+           anomalies() |&gt; 
+           cdo_sqr() |&gt; 
+           cdo_fldmean() |&gt; 
+           cdo_sqrt() |&gt; 
+           cdo_execute() |&gt; 
+           ReadNetCDF(c(climatology = &quot;aice&quot;)) |&gt; 
+           _[, let(lat = NULL, lon = NULL)]
+  ) |&gt; 
+  rbindlist(idcol = &quot;obs_dataset&quot;) |&gt; 
+  _[, time := as.Date(time)] |&gt; 
+  _[climatology == 0, climatology := NA] |&gt; 
+  _[climatology &lt; 0.05, climatology := NA] </code></pre>
+<pre class="r"><code>clim_std2 &lt;- clim_std[errors, on = .NATURAL] |&gt; 
+  _[, let(climatology = NULL,
+          value = climatology)] |&gt; 
+  na.omit() |&gt; 
+  _[, version := &quot;climatology&quot;]</code></pre>
+<pre class="r"><code>month_from_lag &lt;- function(day = 1, step = 2) {
+  force(day)
+  force(step)
+  function(x) {
+    unique(x[, .(lag, month)])[, time := make_date(month = month, day = 1) + lag] |&gt; 
+      _[mday(time) == day, .(lag, month, 
+                             month2 = lubridate::month(time, label = TRUE)
+      )] |&gt; 
+      _[, .SD[((seq_len(.N) + 1) %% step) == 0], by = month]
+  }
+}
+
+
+g &lt;- clim_std2 |&gt; 
+  rbind(errors) |&gt;
+  _[obs_dataset == which_dataset] |&gt; 
+  _[measure == &quot;rmse&quot;] |&gt;
+  _[, time2 := update(time, year = 2000)] |&gt; 
+  _[, median_ci(value),
+    by = .(lag, version, measure, month(time_forecast), obs_dataset)] |&gt;
+  ggplot(aes(lag, mid)) +
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = &quot;gray50&quot;, linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 1), aes(y = Inf, label = month2),
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 1), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
+  geom_ribbon(aes(ymin = low, 
+                  ymax = high, 
+                  color = version, 
+                  fill = version,
+                  group = interaction(obs_dataset, version)),
+              alpha = 0.1) +
+  geom_line(aes(color = version, group = interaction(obs_dataset, version)), linewidth = 1) +
+  
+  scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
+  labs(y = &quot;RMSE&quot;, 
+       x = &quot;Lag&quot;) +
+  scale_color_models +
+  scale_fill_models +
+  facet_wrap(~ month, labeller = labeller(month = labels_month)) </code></pre>
+<pre class="r"><code>g %+% g$data[version != &quot;climatology&quot;]</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>g %+% g$data[version != &quot;persistence&quot;]</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>p &lt;- g 
+
+p$layers &lt;- p$layers[-4]
+p</code></pre>
+<pre><code>## Warning: No shared levels found between `names(values)` of the manual scale and the
+## data&#39;s fill values.</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>p &lt;- g +
+  coord_cartesian(xlim = c(0, 100))
+
+p$layers &lt;- p$layers[-4]
+p</code></pre>
+<pre><code>## Warning: No shared levels found between `names(values)` of the manual scale and the
+## data&#39;s fill values.</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>topo_lonlat &lt;- rcdo::cdo_topo(grid = &quot;r180x90&quot;) |&gt;
+  rcdo::cdo_execute(options = c(&quot;-f nc&quot;)) |&gt;
+  metR::ReadNetCDF(c(z = &quot;topo&quot;), subset = list(lat = c(-90, -60))) |&gt; 
+  ggperiodic::periodic(lon = c(0, 360)) </code></pre>
+<pre class="r"><code>rmse_lon_mean &lt;- here::here(&quot;data/derived/rmse_lon.Rds&quot;) |&gt; 
+  readRDS() |&gt; 
+  _[version != &quot;S1&quot;] |&gt; 
+  _[, lag := as.numeric(as.Date(time) - time_forecast)] |&gt; 
+  _[, base := value[version == &quot;persistence&quot;], 
+    by = .(time, lon, lag, obs_dataset)] |&gt; 
+  _[version != &quot;persistence&quot;] |&gt;
+  _[, .(dif = median(value - base, na.rm = TRUE)),
+    by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]</code></pre>
+<pre class="r"><code>topo_inset &lt;- list(topo_lonlat) |&gt;
+  rep(4) |&gt;
+  rbindlist(idcol = &quot;month&quot;) |&gt;
+  ggplot(aes(lon, lat)) +
+  geom_contour_fill(aes(z = z),
+                    breaks = c(0, Inf), fill = &quot;gray90&quot;) +
+  geom_contour2(aes(z = z),
+                breaks = 0) +
+  facet_wrap(~month, labeller = labeller(mohth = rep(&quot;&quot;, 4)), nrow = 1) +
+  scale_y_latitude(limits = c(-90, -60)) +
+  scale_x_longitude(ticks = 60, expand = c(0.08, 0)) +
+  theme_void() +
+  theme(strip.background = element_blank(),
+        strip.text = element_blank(),
+        aspect.ratio = 0.1,
+        plot.margin = margin(c(-50, 0, 0, 0)))
+
+theme_margin &lt;- theme_get()$plot.margin
+theme_margin[3] &lt;- margin(-10)[1]
+
+binwidth &lt;- 0.02
+rmse_lon_mean |&gt; 
+  _[obs_dataset == which_dataset] |&gt; 
+  # _[month %in% 1:4] |&gt; 
+  ggperiodic::periodic(lon = c(0, 360)) |&gt; 
+  ggplot(aes(lon, lag)) +
+  geom_contour_fill(aes(z = dif, fill = after_stat(level)),
+                    breaks = AnchorBreaks(0, exclude = 0, binwidth = binwidth))  +
+  geom_contour_tanaka(aes(z = dif), range = c(0.01, 0.4),
+                      breaks = AnchorBreaks(0, exclude = 0, binwidth = binwidth)) +
+  
+  geom_hline(data = month_from_lag(1, 1), aes(yintercept = lag),
+             colour = &quot;gray50&quot;, linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 1), aes(x = 361, label = month2),
+            size = 2.5, 
+            hjust = 0) +
+  
+  geom_text(data = month_from_lag(1, 1), aes(x = -2, label = lag),
+            size = 2.5,
+            hjust = 1) +
+  # scale_fill_divergent_discretised() +
+  scale_fill_divergent_discretised(high = trans_pink,
+                                   low  = trans_blue) +
+  scale_x_longitude(ticks = 60, expand = c(0.08, 0)) +
+  
+  scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
+  labs(fill = NULL, 
+       y = &quot;Lag&quot;) +
+  wide_legend +
+  facet_wrap(~ month, labeller = labeller(month = labels_month)) +
+  theme(panel.background = element_blank(), 
+        tagger.panel.tag.background = element_rect(colour = &quot;white&quot;, fill = &quot;white&quot;), 
+        plot.margin = theme_margin) +
+  tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1)) +
+  
+  
+  topo_inset +
+  
+  plot_layout(ncol = 1, guides = &quot;collect&quot;, heights = c(10, 1), axes = &quot;collect&quot;)</code></pre>
+<div class="figure">
+<img src="presentation_figures_files/figure-html/fig-rmse_lon-1.png" alt="Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands." width="960" />
+<p class="caption">
+Meadian difference between RMSE of +S2 forecasts and persistence
+forecast at longitudinal bands.
+</p>
+</div>
+</div>
+<div id="comparison-with-s1" class="section level3">
+<h3>Comparison with S1</h3>
+<pre class="r"><code>t_test &lt;- function(x, y, ...) {
+  
+  test &lt;- t.test(x, y, ...)
+  
+  list(low = test[[&quot;conf.int&quot;]][1],
+       high = test[[&quot;conf.int&quot;]][2], 
+       estimate = -diff(test$estimate), 
+       p.value = test[[&quot;p.value&quot;]]
+  )
+}
+
+max_lag &lt;- errors[version == &quot;S1&quot;, max(lag)]
+
+dif &lt;- errors |&gt; 
+  na.omit() |&gt; 
+  _[obs_dataset == which_dataset] |&gt;
+  _[measure == &quot;iiee&quot;] |&gt; 
+  _[version != &quot;persistence&quot;] |&gt; 
+  _[lag &lt;= max_lag] |&gt; 
+  dcast(time + time_forecast + member + lag ~ version, value.var = &quot;value&quot;) |&gt; 
+  _[, t_test(na.omit(S1), na.omit(S2)), 
+    by = .(lag, month(time_forecast))] |&gt; 
+  _[p.value &gt; 0.01] |&gt; 
+  _[, .SD[which.min(lag)], by = month] |&gt; 
+  _[order(month), .(month, lag)]
+
+labels_month_significant &lt;- setNames(paste0(month.abb, &quot; (&quot;, dif$lag, &quot;)&quot;),
+                                     1:12)</code></pre>
+<pre class="r"><code>errors |&gt; 
+  _[measure == &quot;iiee&quot;] |&gt;
+  _[obs_dataset == which_dataset] |&gt;
+  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |&gt; 
+  _[, median_ci(value), 
+    by = .(lag, version, measure, obs_dataset, month(time_forecast))] |&gt; 
+  ggplot(aes(lag, mid)) +
+  
+  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
+             colour = &quot;gray50&quot;, linewidth = 0.1) +
+  
+  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
+            size = 2.5,
+            vjust = 1) +
+  
+  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
+            size = 2.5,
+            vjust = 0) +
+  
+  geom_ribbon(aes(ymin = low, 
+                  ymax = high, 
+                  color = version, 
+                  fill = version), alpha = 0.1) +
+  geom_line(aes(color = version), linewidth = 1) +
+  
+  
+  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == &quot;S1&quot;], 
+  #              aes(x = lag, 
+  #                  ymin = mid - (high - low), ymax = mid + (high - low))) +
+  
+  # geom_point(data = \(x) x[dif, on = .NATURAL][version == &quot;S1&quot;],
+  # aes(lag, mid), size = 3, shape = 21) +
+  
+  
+  scale_y_continuous(labels = labels_extent) +
+  scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
+  scale_color_models +
+  scale_fill_models +
+  labs(y = NULL, 
+       x = &quot;Lag&quot;) +
+  #   scale_color_models +
+  #   scale_fill_models +
+  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) </code></pre>
+<div class="figure">
+<img src="presentation_figures_files/figure-html/fig-iiee-1.png" alt="Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lag at which the the mean error of each model is not statistically significant at a 1% level using a two-sisded t-test." width="672" />
+<p class="caption">
+Median and 95% coverage of Integrated Ice Edge Error as a function of
+forecast lag for all forecast initialised on the first of each month for
++S1 and +S2 hindcasts. For each month, the number in parenthesis
+indicates the minimum lag at which the the mean error of each model is
+not statistically significant at a 1% level using a two-sisded t-test.
+</p>
+</div>
+<pre class="r"><code>last_plot() +
+  coord_cartesian(xlim = c(0, 100))</code></pre>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
