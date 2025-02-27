@@ -389,7 +389,7 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
     geomcoord_antarctica +
     geom_antarctica_fill +
     facet_wrap(~ month, 
-               labeller = labeller(month = setNames(1:12, month.abb)),
+               labeller = labeller(month = labels_month),
                nrow = 2) +
     wide_legend +
     tag_facets()

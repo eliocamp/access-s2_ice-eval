@@ -277,7 +277,7 @@ bias_plot <- function(hindcast_clim, which_version, which_lead) {
     geomcoord_antarctica +
     geom_antarctica_fill +
     facet_wrap(~ month, 
-               labeller = labeller(month = setNames(1:12, month.abb)),
+               labeller = labeller(month = labels_month),
                nrow = 2) +
     wide_legend +
     tag_facets()
@@ -537,7 +537,7 @@ rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
     by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]
 ```
 
-```{r fig-rmse_lon, fig.height=11.99/cm, fig.width=23.1/cm}
+```{r fig-rmse_lon, fig.height=12.6/cm, fig.width=23.1/cm}
 #| fig.cap: Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands. 
 
 topo_inset <- list(topo_lonlat) |>
