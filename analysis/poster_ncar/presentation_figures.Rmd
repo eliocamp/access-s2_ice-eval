@@ -254,10 +254,13 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
 
 
 
-```{r fig-bias}
+```{r bias_plot}
 #| fig-cap: Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias compared with NSIDC. 
 
 bias_plot <- function(hindcast_clim, which_version, which_lead) {
+  
+  breaks <- seq(-1, 1, by = 0.1)
+  breaks <- breaks[breaks != 0]
   hindcast_clim |> 
     _[version == which_version] |>
     _[month_diff == which_lead] |> 
@@ -265,7 +268,7 @@ bias_plot <- function(hindcast_clim, which_version, which_lead) {
     # setnames(which_dataset, "obs") |>
     ggplot(aes(xgrid, ygrid)) +
     geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
-                      breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
+                      breaks = breaks) +
     # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
     #               linewidth = 0.1) +
     scale_fill_divergent_discretised(paste0(which_version, " bias at ", which_lead, " months at lead time"),
@@ -287,26 +290,30 @@ width_bias <- 22.15/cm
 height_bias <- 12.3/cm
 ```
 
-```{r bias_S2_0, fig.width=width_bias, fig.height=height_bias}
+```{r bias_S2_0, fig.width=width_bias, fig.height=height_bias, dependson="bias_plot"}
+
 hindcast_clim |> 
   bias_plot("S2", 0)
 ```
 
-```{r bias_S1_0, fig.width=width_bias, fig.height=height_bias}
+```{r bias_S1_0, fig.width=width_bias, fig.height=height_bias, dependson="bias_plot"}
+
 hindcast_clim |> 
   bias_plot("S1", 0)
 ```
 
 lead
-```{r bias_S2_6, fig.width=width_bias, fig.height=height_bias}
+```{r bias_S2_6, fig.width=width_bias, fig.height=height_bias, dependson="bias_plot"}
 hindcast_clim |> 
   bias_plot("S2", 6)
 
+
 ```
 
-```{r bias_S1_6, fig.width=width_bias, fig.height=height_bias}
+```{r bias_S1_6, fig.width=width_bias, fig.height=height_bias, dependson="bias_plot"}
 hindcast_clim |> 
   bias_plot("S1", 6)
+
 ```
 
 

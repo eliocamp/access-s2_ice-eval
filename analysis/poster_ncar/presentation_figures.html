@@ -370,6 +370,9 @@ hindcast_clim &lt;- hindcast_clim |&gt;
 
 hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(forecast_month, month)]</code></pre>
 <pre class="r"><code>bias_plot &lt;- function(hindcast_clim, which_version, which_lead) {
+  
+  breaks &lt;- seq(-1, 1, by = 0.1)
+  breaks &lt;- breaks[breaks != 0]
   hindcast_clim |&gt; 
     _[version == which_version] |&gt;
     _[month_diff == which_lead] |&gt; 
@@ -377,7 +380,7 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
     # setnames(which_dataset, &quot;obs&quot;) |&gt;
     ggplot(aes(xgrid, ygrid)) +
     geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
-                      breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
+                      breaks = breaks) +
     # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
     #               linewidth = 0.1) +
     scale_fill_divergent_discretised(paste0(which_version, &quot; bias at &quot;, which_lead, &quot; months at lead time&quot;),
