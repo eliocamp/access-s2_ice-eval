@@ -26,6 +26,50 @@ source(here::here("R/ggplot.R"))
 ```
 
 
+```{r}
+
+
+
+nb_yellow <- gglgbtq::palette_lgbtq("nonbinary")[1] |> 
+  colorspace::darken(0.3)
+nb_purple <- gglgbtq::palette_lgbtq("nonbinary")[3]
+colours_models <- c(
+  S2 = nb_purple,
+  S1 = nb_yellow,
+  cdr = "black",
+  persistence = "black",
+  climatology = "gray50"
+)
+
+
+labels_models <- c(
+  S2 = "ACCESS-S2",
+  S1 = "ACCESS-S1",
+  cdr = "CDR",
+  bt = "Bootstrap",
+  era5 = "ERA5",
+  osi = "OSI",
+  persistence = "Persistence",
+  climatology = "Climatology"
+)
+
+scale_color_models <-   ggplot2::scale_color_manual(NULL,
+                                                    values = colours_models,
+                                                    labels = labels_models
+)
+
+scale_fill_models <-   ggplot2::scale_fill_manual(NULL,
+                                                  values = colours_models,
+                                                  labels = labels_models
+)
+
+trans_pink <- gglgbtq::palette_lgbtq("transgender")[2] |> 
+  colorspace::darken(0.2)
+trans_blue <- gglgbtq::palette_lgbtq("transgender")[1] |> 
+  colorspace::darken(0.2)
+
+```
+
 
 ```{r datasets}
 datasets <- list(cdr = CDR())
@@ -63,8 +107,11 @@ hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |>
   _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
 ```
 
+```{r}
+cm <- 2.54
+```
 
-```{r fig-hindcast-extent}
+```{r fig-hindcast-extent, fig.height=11.99/cm, fig.width=23.59/cm}
 #| fig-cap: Median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month. In black, the median sea ice extent of +CDR. 
 hindcast_extent |> 
   _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
@@ -97,7 +144,7 @@ hindcast_extent |>
 ```
 
 
-```{r}
+```{r hindcast_extent-bias, fig.height=11.99/cm, fig.width=23.59/cm}
 hindcast_extent |> 
   _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
                               lag = as.numeric(as.Date(time) - forecast_time),
@@ -127,30 +174,61 @@ hindcast_extent |>
   tag_facets() 
 ```
 
+```{r extent-delta, fig.height=11.99/cm, fig.width=19.39/cm}
+
+dif_hindcast <- hindcast_extent |> 
+  copy() |> 
+  _[order(time)] |> 
+  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(model, forecast_time, member)] |> 
+  _[, median_ci(dif), by = .(model, time = update(time, year = 2000))] 
+
+
+extent_daily |> 
+  _[order(time)] |> 
+  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(dataset)] |> 
+  _[, median_ci(dif), by = .(dataset, time = update(time, year = 2000))] |> 
+  _[dataset == which_dataset] |> 
+  ggplot(aes(time, mid)) +
+  geom_hline(yintercept = 0, color = "gray50", linewidth = 0.2) +
+  geom_smooth(aes(group = dataset, color = dataset),
+              span = 30/366, linewidth = 0.5, se = FALSE, n = 366)  +
+  geom_smooth(data = dif_hindcast,
+              aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
+  scale_x_datetime(NULL, date_breaks = "1 month", 
+                   date_labels = "%b", expand = c(0, 0)) +
+  scale_y_continuous(NULL, labels = \(x) labels_extent(x, units = "M km²/day")) +
+  scale_color_models
+```
 
 
 ```{r hindcast_clim}
 zeropad <- function(x, n = 2) formatC(x, width = 2, flag = "0")
 monnb <- function(d) { lt <- as.POSIXlt(as.Date(d, origin="1900-01-01")); 
 lt$year*12 + lt$mon } 
-mondf <- function(d1, d2) { monnb(d2) - monnb(d1) }
+month_differnece <- function(d1, d2) { monnb(d2) - monnb(d1) }
+
+month_diff <- function(month1, month2) {
+  d <- (month2 - month1)
+  
+  (d %% 12)
+  
+} 
 
 months <- 1:12
 
-hindcast_clim <- lapply(setNames(months, months), \(month) {
-  here::here(glue::glue("data/derived/climatology/S2/{zeropad(month)}/em.nc")) |> 
-    cdo_selmonth(month) |> 
+hindcast_clim <- purrr::pmap(CJ(month = 1:12, version = c("S2", "S1")), \(month, version) {
+  here::here(glue::glue("data/derived/climatology/{version}/{zeropad(month)}/em.nc")) |> 
+    # cdo_selmonth(month) |> 
+    cdo_monmean() |> 
     cdo_execute() |> 
-    ReadNetCDF("aice")
+    ReadNetCDF("aice") |> 
+    _[, let(forecast_month = month, 
+            version = version)] 
 }) |> 
-  rbindlist(idcol = "forecast_month") |> 
-  _[, forecast_month := as.numeric(forecast_month)]
-
-
-hindcast_clim <- hindcast_clim |> 
-  copy() |> 
-  _[, .(aice = mean(aice)), by = .(month(time), ygrid, xgrid, forecast_month)] |> 
-  _[forecast_month == month]
+  rbindlist() |> 
+  _[, forecast_month := as.numeric(forecast_month)] |> 
+  _[, forecast_time := update(time, month = forecast_month)] |> 
+  _[, time := as.Date(update(time, day = 1))]
 
 
 obs_clim <- CDR() |> 
@@ -158,90 +236,77 @@ obs_clim <- CDR() |>
   cdo_ymonmean() |>
   cdo_execute() |> 
   ReadNetCDF(c(obs = "aice")) |> 
-  _[, month := month(time)]
+  _[, time := as.Date(update(time, day = 1))]
+
 
 hindcast_clim <- hindcast_clim |> 
-  merge(obs_clim)
+  merge(obs_clim) |> 
+  _[, month := month(time)] |>
+  _[, month_diff := month_differnece(time[1], forecast_time[1]), by = .(forecast_month, time)]
+
+hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(forecast_month, month)]
+
+```
+
+
+
+```{r fig-bias}
+#| fig-cap: Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias compared with NSIDC. 
+
+bias_plot <- function(hindcast_clim, which_version, which_lead) {
+  hindcast_clim |> 
+    _[version == which_version] |>
+    _[month_diff == which_lead] |> 
+    # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |> 
+    # setnames(which_dataset, "obs") |>
+    ggplot(aes(xgrid, ygrid)) +
+    geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
+                      breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
+    # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
+    #               linewidth = 0.1) +
+    scale_fill_divergent_discretised(paste0(which_version, " bias at leadtime ", which_lead, " months"),
+                                     low = trans_pink,
+                                     high = trans_blue) +
+    geomcoord_antarctica +
+    geom_antarctica_fill +
+    facet_wrap(~ month, 
+               labeller = labeller(month = setNames(months, month.abb)),
+               nrow = 2) +
+    wide_legend +
+    tag_facets()
+}
+
+```
+
+
+```{r, fig.width=22.15/cm, fig.height=12.3/cm}
+hindcast_clim |> 
+  bias_plot("S2", 0)
+```
+
+```{r}
+hindcast_clim |> 
+  bias_plot("S1", 0)
 ```
 
 
 ```{r}
-trans_pink <- gglgbtq::palette_lgbtq("transgender")[2] |> 
-  colorspace::darken(0.2)
-trans_blue <- gglgbtq::palette_lgbtq("transgender")[1] |> 
-  colorspace::darken(0.2)
-
-```
-
-```{r fig-bias}
-#| fig-width: 9
-#| fig-height: 6
-#| fig-cap: Mean sea ice concentrations 1-month lag monthly mean +S2 forecast bias compared with NSIDC. 
-
 hindcast_clim |> 
-  # _[month == 1] |>
-  # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |> 
-  # setnames(which_dataset, "obs") |>
-  ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
-                    breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
-  # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
-  #               linewidth = 0.1) +
-  scale_fill_divergent_discretised(paste0("Bias with respect to ",
-                                          labels_models[which_dataset]),
-                                   low = trans_pink,
-                                   high = trans_blue) +
-  geomcoord_antarctica +
-  geom_antarctica_fill +
-  facet_wrap(~ month, 
-             labeller = labeller(month = setNames(months, month.abb)),
-             nrow = 2) +
-  wide_legend +
-  tag_facets()
+  bias_plot("S2", 6)
+
 ```
+
+```{r}
+hindcast_clim |> 
+  bias_plot("S1", 6)
+```
+
 
 
 ### Anomalies
 
-```{r}
 
-
-
-nb_yellow <- gglgbtq::palette_lgbtq("nonbinary")[1] |> 
-  colorspace::darken(0.3)
-nb_purple <- gglgbtq::palette_lgbtq("nonbinary")[3]
-colours_models <- c(
-  S2 = nb_purple,
-  S1 = nb_yellow,
-  cdr = "black",
-  persistence = "black",
-  climatology = "gray50"
-)
-
-
-labels_models <- c(
-  S2 = "ACCESS-S2",
-  S1 = "ACCESS-S1",
-  cdr = "CDR",
-  bt = "Bootstrap",
-  era5 = "ERA5",
-  osi = "OSI",
-  persistence = "Persistence",
-  climatology = "Climatology"
-)
-
-scale_color_models <-   ggplot2::scale_color_manual(NULL,
-                                                    values = colours_models,
-                                                    labels = labels_models
-)
-
-scale_fill_models <-   ggplot2::scale_fill_manual(NULL,
-                                                  values = colours_models,
-                                                  labels = labels_models
-)
-```
-
-```{r fig-extent-anom}
+```{r fig-extent-anom, fig.height=11.99/cm, fig.width=23.22/cm}
 #| fig-cap: Sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue). 
 
 months_difference <- function(x, y) {
@@ -387,24 +452,44 @@ g <- clim_std2 |>
 
 
 
-```{r}
+```{rrmse_persistence, fig.width=19.43/cm, fig.height=11.99/cm}
 g %+% g$data[version != "climatology"]
 ```
 
 
-```{r}
+```{rrmse_climatology, fig.width=19.43/cm, fig.height=11.99/cm}
 g %+% g$data[version != "persistence"]
 ```
 
 ```{r}
-p <- g 
+# ACHTUNG: we have something going on with the 29th of february.
 
-p$layers <- p$layers[-4]
-p
+clim_std2 |> 
+  rbind(errors) |> 
+  _[measure == "rmse"] |> 
+  _[obs_dataset == which_dataset] |> 
+  _[, .(rmse = median(value, na.rm = TRUE)), 
+    by = .(time = update(time, year = 2001), 
+           time_forecast = update(time_forecast, year = 2001), 
+           lag,
+           version)] |> 
+  # _[version == "climatology"] |>
+  ggplot(aes(time, rmse)) +
+  geom_line(data = \(x) x[version == "climatology"],
+            aes(group = interaction(time_forecast, month(time_forecast) <= month(time)))) +
+  # geom_line(data = \(x) x[version == "S2"],
+  #           aes(color = factor(month(time_forecast)),
+  #               group = interaction(time_forecast, month(time_forecast) <= month(time)))) +
+  # geom_point(data = \(x) x[version == "S2" & lag ==1], aes(color =  factor(month(time_forecast)))) +
+  scale_color_manual(values = colorRampPalette(gglgbtq::palette_lgbtq("nonbinary")[c(1, 3, 4, 1)])(12),
+                     aesthetics = c("fill", "color"), guide = "none") +
+  scale_y_continuous(limits = c(0, NA)) +
+  geom_vline(xintercept = as.Date("2001-02-28"))
 ```
 
 
-```{r}
+
+```{r, fig.width=19.43/cm, fig.height=11.99/cm}
 p <- g +
   coord_cartesian(xlim = c(0, 100))
 
