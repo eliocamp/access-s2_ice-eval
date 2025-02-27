@@ -15,6 +15,8 @@ library(rcdo)
 library(tagger)
 library(patchwork)
 
+knitr::opts_chunk$set(cache = TRUE)
+
 cdo_options_set("-L")
 ```
 
@@ -174,7 +176,7 @@ hindcast_extent |>
   tag_facets() 
 ```
 
-```{r extent-delta, fig.height=11.99/cm, fig.width=19.39/cm}
+```{r extent-delta, fig.height=11.99/cm, fig.width=23.59/cm}
 
 dif_hindcast <- hindcast_extent |> 
   copy() |> 
@@ -264,7 +266,7 @@ bias_plot <- function(hindcast_clim, which_version, which_lead) {
                       breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
     # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
     #               linewidth = 0.1) +
-    scale_fill_divergent_discretised(paste0(which_version, " bias at leadtime ", which_lead, " months"),
+    scale_fill_divergent_discretised(paste0(which_version, " bias at ", which_lead, " months at lead time"),
                                      low = trans_pink,
                                      high = trans_blue) +
     geomcoord_antarctica +
@@ -278,25 +280,29 @@ bias_plot <- function(hindcast_clim, which_version, which_lead) {
 
 ```
 
+```{r}
+width_bias <- 22.15/cm
+height_bias <- 12.3/cm
+```
 
-```{r, fig.width=22.15/cm, fig.height=12.3/cm}
+```{r bias_S2_0, fig.width=width_bias, fig.height=height_bias}
 hindcast_clim |> 
   bias_plot("S2", 0)
 ```
 
-```{r}
+```{r bias_S1_0, fig.width=width_bias, fig.height=height_bias}
 hindcast_clim |> 
   bias_plot("S1", 0)
 ```
 
-
-```{r}
+lead
+```{r bias_S2_6, fig.width=width_bias, fig.height=height_bias}
 hindcast_clim |> 
   bias_plot("S2", 6)
 
 ```
 
-```{r}
+```{r bias_S1_6, fig.width=width_bias, fig.height=height_bias}
 hindcast_clim |> 
   bias_plot("S1", 6)
 ```
@@ -444,20 +450,25 @@ g <- clim_std2 |>
   
   scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
   labs(y = "RMSE", 
-       x = "Lag") +
+       x = "Lead time") +
   scale_color_models +
   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) 
 ```
 
 
+```{r}
+width_errors <- 19.43/cm
+height_errors <- 11.99/cm
+```
 
-```{rrmse_persistence, fig.width=19.43/cm, fig.height=11.99/cm}
+
+```{rrmse_persistence, fig.width=width_errors, fig.height=height_errors}
 g %+% g$data[version != "climatology"]
 ```
 
 
-```{rrmse_climatology, fig.width=19.43/cm, fig.height=11.99/cm}
+```{rrmse_climatology, fig.width=width_errors, fig.height=height_errors}
 g %+% g$data[version != "persistence"]
 ```
 
@@ -489,7 +500,7 @@ clim_std2 |>
 
 
 
-```{r, fig.width=19.43/cm, fig.height=11.99/cm}
+```{r error_zoom, fig.width=width_errors, fig.height=height_errors}
 p <- g +
   coord_cartesian(xlim = c(0, 100))
 
@@ -517,7 +528,7 @@ rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
     by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]
 ```
 
-```{r fig-rmse_lon, fig.height=7, fig.width=10}
+```{r fig-rmse_lon, fig.height=11.99/cm, fig.width=23.1/cm}
 #| fig.cap: Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands. 
 
 topo_inset <- list(topo_lonlat) |>
@@ -568,7 +579,7 @@ rmse_lon_mean |>
   
   scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
   labs(fill = NULL, 
-       y = "Lag") +
+       y = "Lead time") +
   wide_legend +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) +
   theme(panel.background = element_blank(), 
@@ -584,90 +595,3 @@ rmse_lon_mean |>
 
 
 
-
-
-### Comparison with S1
-
-```{r}
-t_test <- function(x, y, ...) {
-  
-  test <- t.test(x, y, ...)
-  
-  list(low = test[["conf.int"]][1],
-       high = test[["conf.int"]][2], 
-       estimate = -diff(test$estimate), 
-       p.value = test[["p.value"]]
-  )
-}
-
-max_lag <- errors[version == "S1", max(lag)]
-
-dif <- errors |> 
-  na.omit() |> 
-  _[obs_dataset == which_dataset] |>
-  _[measure == "iiee"] |> 
-  _[version != "persistence"] |> 
-  _[lag <= max_lag] |> 
-  dcast(time + time_forecast + member + lag ~ version, value.var = "value") |> 
-  _[, t_test(na.omit(S1), na.omit(S2)), 
-    by = .(lag, month(time_forecast))] |> 
-  _[p.value > 0.01] |> 
-  _[, .SD[which.min(lag)], by = month] |> 
-  _[order(month), .(month, lag)]
-
-labels_month_significant <- setNames(paste0(month.abb, " (", dif$lag, ")"),
-                                     1:12)
-```
-
-```{r fig-iiee}
-#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lag at which the the mean error of each model is not statistically significant at a 1% level using a two-sisded t-test. 
-
-errors |> 
-  _[measure == "iiee"] |>
-  _[obs_dataset == which_dataset] |>
-  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
-  _[, median_ci(value), 
-    by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
-  ggplot(aes(lag, mid)) +
-  
-  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-             colour = "gray50", linewidth = 0.1) +
-  
-  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
-            size = 2.5,
-            vjust = 1) +
-  
-  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
-            size = 2.5,
-            vjust = 0) +
-  
-  geom_ribbon(aes(ymin = low, 
-                  ymax = high, 
-                  color = version, 
-                  fill = version), alpha = 0.1) +
-  geom_line(aes(color = version), linewidth = 1) +
-  
-  
-  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == "S1"], 
-  #              aes(x = lag, 
-  #                  ymin = mid - (high - low), ymax = mid + (high - low))) +
-  
-  # geom_point(data = \(x) x[dif, on = .NATURAL][version == "S1"],
-  # aes(lag, mid), size = 3, shape = 21) +
-  
-  
-  scale_y_continuous(labels = labels_extent) +
-  scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
-  scale_color_models +
-  scale_fill_models +
-  labs(y = NULL, 
-       x = "Lag") +
-  #   scale_color_models +
-  #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) 
-```
-
-```{r}
-last_plot() +
-  coord_cartesian(xlim = c(0, 100))
-```

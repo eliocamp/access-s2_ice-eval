@@ -323,7 +323,7 @@ extent_daily |&gt;
   scale_color_models</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;
 ## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="presentation_figures_files/figure-html/extent-delta-1.png" width="732.850393700787" /></p>
+<p><img src="presentation_figures_files/figure-html/extent-delta-1.png" width="891.590551181102" /></p>
 <pre class="r"><code>zeropad &lt;- function(x, n = 2) formatC(x, width = 2, flag = &quot;0&quot;)
 monnb &lt;- function(d) { lt &lt;- as.POSIXlt(as.Date(d, origin=&quot;1900-01-01&quot;)); 
 lt$year*12 + lt$mon } 
@@ -378,7 +378,7 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
                       breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
     # geom_contour2(aes(z = aice - obs), breaks = AnchorBreaks(binwidth = 0.1, exclude = 0),
     #               linewidth = 0.1) +
-    scale_fill_divergent_discretised(paste0(which_version, &quot; bias at leadtime &quot;, which_lead, &quot; months&quot;),
+    scale_fill_divergent_discretised(paste0(which_version, &quot; bias at &quot;, which_lead, &quot; months at lead time&quot;),
                                      low = trans_pink,
                                      high = trans_blue) +
     geomcoord_antarctica +
@@ -389,18 +389,21 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
     wide_legend +
     tag_facets()
 }</code></pre>
+<pre class="r"><code>width_bias &lt;- 22.15/cm
+height_bias &lt;- 12.3/cm</code></pre>
 <pre class="r"><code>hindcast_clim |&gt; 
   bias_plot(&quot;S2&quot;, 0)</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-3-1.png" width="837.165354330709" /></p>
+<p><img src="presentation_figures_files/figure-html/bias_S2_0-1.png" width="837.165354330709" /></p>
 <pre class="r"><code>hindcast_clim |&gt; 
   bias_plot(&quot;S1&quot;, 0)</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="presentation_figures_files/figure-html/bias_S1_0-1.png" width="837.165354330709" /></p>
+<p>lead</p>
 <pre class="r"><code>hindcast_clim |&gt; 
   bias_plot(&quot;S2&quot;, 6)</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="presentation_figures_files/figure-html/bias_S2_6-1.png" width="837.165354330709" /></p>
 <pre class="r"><code>hindcast_clim |&gt; 
   bias_plot(&quot;S1&quot;, 6)</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="presentation_figures_files/figure-html/bias_S1_6-1.png" width="837.165354330709" /></p>
 </div>
 <div id="anomalies" class="section level3">
 <h3>Anomalies</h3>
@@ -524,10 +527,12 @@ g &lt;- clim_std2 |&gt;
   
   scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
   labs(y = &quot;RMSE&quot;, 
-       x = &quot;Lag&quot;) +
+       x = &quot;Lead time&quot;) +
   scale_color_models +
   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) </code></pre>
+<pre class="r"><code>width_errors &lt;- 19.43/cm
+height_errors &lt;- 11.99/cm</code></pre>
 <pre class="rrmse_persistence"><code>g %+% g$data[version != &quot;climatology&quot;]</code></pre>
 <pre class="rrmse_climatology"><code>g %+% g$data[version != &quot;persistence&quot;]</code></pre>
 <pre class="r"><code># ACHTUNG: we have something going on with the 29th of february.
@@ -553,7 +558,7 @@ clim_std2 |&gt;
                      aesthetics = c(&quot;fill&quot;, &quot;color&quot;), guide = &quot;none&quot;) +
   scale_y_continuous(limits = c(0, NA)) +
   geom_vline(xintercept = as.Date(&quot;2001-02-28&quot;))</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre class="r"><code>p &lt;- g +
   coord_cartesian(xlim = c(0, 100))
 
@@ -561,7 +566,7 @@ p$layers &lt;- p$layers[-4]
 p</code></pre>
 <pre><code>## Warning: No shared levels found between `names(values)` of the manual scale and the
 ## data&#39;s fill values.</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-11-1.png" width="734.362204724409" /></p>
+<p><img src="presentation_figures_files/figure-html/error_zoom-1.png" width="734.362204724409" /></p>
 <pre class="r"><code>topo_lonlat &lt;- rcdo::cdo_topo(grid = &quot;r180x90&quot;) |&gt;
   rcdo::cdo_execute(options = c(&quot;-f nc&quot;)) |&gt;
   metR::ReadNetCDF(c(z = &quot;topo&quot;), subset = list(lat = c(-90, -60))) |&gt; 
@@ -623,7 +628,7 @@ rmse_lon_mean |&gt;
   
   scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
   labs(fill = NULL, 
-       y = &quot;Lag&quot;) +
+       y = &quot;Lead time&quot;) +
   wide_legend +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) +
   theme(panel.background = element_blank(), 
@@ -636,99 +641,12 @@ rmse_lon_mean |&gt;
   
   plot_layout(ncol = 1, guides = &quot;collect&quot;, heights = c(10, 1), axes = &quot;collect&quot;)</code></pre>
 <div class="figure">
-<img src="presentation_figures_files/figure-html/fig-rmse_lon-1.png" alt="Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands." width="960" />
+<img src="presentation_figures_files/figure-html/fig-rmse_lon-1.png" alt="Meadian difference between RMSE of +S2 forecasts and persistence forecast at longitudinal bands." width="873.070866141732" />
 <p class="caption">
 Meadian difference between RMSE of +S2 forecasts and persistence
 forecast at longitudinal bands.
 </p>
 </div>
-</div>
-<div id="comparison-with-s1" class="section level3">
-<h3>Comparison with S1</h3>
-<pre class="r"><code>t_test &lt;- function(x, y, ...) {
-  
-  test &lt;- t.test(x, y, ...)
-  
-  list(low = test[[&quot;conf.int&quot;]][1],
-       high = test[[&quot;conf.int&quot;]][2], 
-       estimate = -diff(test$estimate), 
-       p.value = test[[&quot;p.value&quot;]]
-  )
-}
-
-max_lag &lt;- errors[version == &quot;S1&quot;, max(lag)]
-
-dif &lt;- errors |&gt; 
-  na.omit() |&gt; 
-  _[obs_dataset == which_dataset] |&gt;
-  _[measure == &quot;iiee&quot;] |&gt; 
-  _[version != &quot;persistence&quot;] |&gt; 
-  _[lag &lt;= max_lag] |&gt; 
-  dcast(time + time_forecast + member + lag ~ version, value.var = &quot;value&quot;) |&gt; 
-  _[, t_test(na.omit(S1), na.omit(S2)), 
-    by = .(lag, month(time_forecast))] |&gt; 
-  _[p.value &gt; 0.01] |&gt; 
-  _[, .SD[which.min(lag)], by = month] |&gt; 
-  _[order(month), .(month, lag)]
-
-labels_month_significant &lt;- setNames(paste0(month.abb, &quot; (&quot;, dif$lag, &quot;)&quot;),
-                                     1:12)</code></pre>
-<pre class="r"><code>errors |&gt; 
-  _[measure == &quot;iiee&quot;] |&gt;
-  _[obs_dataset == which_dataset] |&gt;
-  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |&gt; 
-  _[, median_ci(value), 
-    by = .(lag, version, measure, obs_dataset, month(time_forecast))] |&gt; 
-  ggplot(aes(lag, mid)) +
-  
-  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-             colour = &quot;gray50&quot;, linewidth = 0.1) +
-  
-  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
-            size = 2.5,
-            vjust = 1) +
-  
-  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
-            size = 2.5,
-            vjust = 0) +
-  
-  geom_ribbon(aes(ymin = low, 
-                  ymax = high, 
-                  color = version, 
-                  fill = version), alpha = 0.1) +
-  geom_line(aes(color = version), linewidth = 1) +
-  
-  
-  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == &quot;S1&quot;], 
-  #              aes(x = lag, 
-  #                  ymin = mid - (high - low), ymax = mid + (high - low))) +
-  
-  # geom_point(data = \(x) x[dif, on = .NATURAL][version == &quot;S1&quot;],
-  # aes(lag, mid), size = 3, shape = 21) +
-  
-  
-  scale_y_continuous(labels = labels_extent) +
-  scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
-  scale_color_models +
-  scale_fill_models +
-  labs(y = NULL, 
-       x = &quot;Lag&quot;) +
-  #   scale_color_models +
-  #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) </code></pre>
-<div class="figure">
-<img src="presentation_figures_files/figure-html/fig-iiee-1.png" alt="Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lag for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lag at which the the mean error of each model is not statistically significant at a 1% level using a two-sisded t-test." width="672" />
-<p class="caption">
-Median and 95% coverage of Integrated Ice Edge Error as a function of
-forecast lag for all forecast initialised on the first of each month for
-+S1 and +S2 hindcasts. For each month, the number in parenthesis
-indicates the minimum lag at which the the mean error of each model is
-not statistically significant at a 1% level using a two-sisded t-test.
-</p>
-</div>
-<pre class="r"><code>last_plot() +
-  coord_cartesian(xlim = c(0, 100))</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 
 
