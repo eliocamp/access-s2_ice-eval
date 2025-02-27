@@ -306,25 +306,53 @@ the median sea ice extent of +CDR.
   _[, median_ci(dif), by = .(model, time = update(time, year = 2000))] 
 
 
-extent_daily |&gt; 
+dif_hindcast &lt;- rbind(
+  dif_hindcast |&gt; 
+    copy() |&gt; 
+    _[, time := update(time, year = 1999)],
+  dif_hindcast,
+  dif_hindcast |&gt; 
+    copy() |&gt; 
+    _[, time := update(time, year = 2001)]
+)
+
+
+dif_extent &lt;- extent_daily |&gt; 
   _[order(time)] |&gt; 
   _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(dataset)] |&gt; 
   _[, median_ci(dif), by = .(dataset, time = update(time, year = 2000))] |&gt; 
-  _[dataset == which_dataset] |&gt; 
+  _[dataset == which_dataset]
+
+dif_extent &lt;- rbind(
+  dif_extent |&gt; 
+    copy() |&gt; 
+    _[, time := update(time, year = 1999)],
+  dif_extent,
+  dif_extent |&gt; 
+    copy() |&gt; 
+    _[, time := update(time, year = 2001)]
+)</code></pre>
+<pre class="r"><code>n = 366*3
+
+dif_extent |&gt; 
   ggplot(aes(time, mid)) +
   geom_hline(yintercept = 0, color = &quot;gray50&quot;, linewidth = 0.2) +
-  geom_smooth(aes(group = dataset, color = dataset),
-              span = 30/366, linewidth = 0.5, se = FALSE, n = 366)  +
+  geom_smooth(aes(group = dataset, color = dataset), 
+              method = &quot;loess&quot;,
+              span = 30/n, linewidth = 0.5, se = FALSE, n = n)  +
+  # geom_line() +
   geom_smooth(data = dif_hindcast,
-              aes(color = model), span = 30/366, linewidth = 0.5, se = FALSE, n = 366) +
+              method = &quot;loess&quot;,
+              aes(color = model), span = 30/n, linewidth = 0.5, se = FALSE, n = n) +
   scale_x_datetime(NULL, date_breaks = &quot;1 month&quot;, 
                    date_labels = &quot;%b&quot;, expand = c(0, 0)) +
   scale_y_continuous(NULL, labels = \(x) labels_extent(x, units = &quot;M km²/day&quot;)) +
   theme(legend.position = &quot;inside&quot;, legend.position.inside = c(0.9, 0.9), 
         legend.direction = &quot;vertical&quot;) +
-  scale_color_models</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;
-## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
+  scale_color_models +
+  coord_cartesian(xlim = as.POSIXct(c(&quot;2000-01-01&quot;, &quot;2000-12-31&quot;), tz = &quot;UTC&quot;))</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;
+## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 <p><img src="presentation_figures_files/figure-html/extent-delta-1.png" width="910.488188976378" /></p>
 <pre class="r"><code>zeropad &lt;- function(x, n = 2) formatC(x, width = 2, flag = &quot;0&quot;)
 monnb &lt;- function(d) { lt &lt;- as.POSIXlt(as.Date(d, origin=&quot;1900-01-01&quot;)); 
