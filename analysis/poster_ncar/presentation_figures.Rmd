@@ -176,7 +176,7 @@ hindcast_extent |>
   tag_facets() 
 ```
 
-```{r extent-delta, fig.height=11.99/cm, fig.width=23.59/cm}
+```{r extent-delta, fig.height=11.99/cm, fig.width=24.45/cm}
 
 dif_hindcast <- hindcast_extent |> 
   copy() |> 
@@ -199,6 +199,8 @@ extent_daily |>
   scale_x_datetime(NULL, date_breaks = "1 month", 
                    date_labels = "%b", expand = c(0, 0)) +
   scale_y_continuous(NULL, labels = \(x) labels_extent(x, units = "M km²/day")) +
+  theme(legend.position = "inside", legend.position.inside = c(0.9, 0.9), 
+        legend.direction = "vertical") +
   scale_color_models
 ```
 
