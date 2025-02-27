@@ -176,7 +176,7 @@ hindcast_extent |>
   tag_facets() 
 ```
 
-```{r extent-delta, fig.height=11.99/cm, fig.width=24.45/cm}
+```{r extent-delta, fig.height=11.99/cm, fig.width=24.09/cm}
 
 dif_hindcast <- hindcast_extent |> 
   copy() |> 
