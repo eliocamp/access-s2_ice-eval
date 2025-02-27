@@ -554,11 +554,8 @@ topo_inset <- list(topo_lonlat) |>
   theme_void() +
   theme(strip.background = element_blank(),
         strip.text = element_blank(),
-        aspect.ratio = 0.1,
-        plot.margin = margin(c(-50, 0, 0, 0)))
+        aspect.ratio = 0.1)
 
-theme_margin <- theme_get()$plot.margin
-theme_margin[3] <- margin(-10)[1]
 
 binwidth <- 0.02
 rmse_lon_mean |> 
@@ -592,10 +589,9 @@ rmse_lon_mean |>
   wide_legend +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) +
   theme(panel.background = element_blank(), 
-        tagger.panel.tag.background = element_rect(colour = "white", fill = "white"), 
-        plot.margin = theme_margin) +
+        tagger.panel.tag.background = element_rect(colour = "white", fill = "white")) +
   tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1)) +
-  
+  coord_cartesian(clip = "off") +
   
   topo_inset +
   

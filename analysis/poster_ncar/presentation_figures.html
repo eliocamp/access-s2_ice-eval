@@ -601,11 +601,8 @@ p</code></pre>
   theme_void() +
   theme(strip.background = element_blank(),
         strip.text = element_blank(),
-        aspect.ratio = 0.1,
-        plot.margin = margin(c(-50, 0, 0, 0)))
+        aspect.ratio = 0.1)
 
-theme_margin &lt;- theme_get()$plot.margin
-theme_margin[3] &lt;- margin(-10)[1]
 
 binwidth &lt;- 0.02
 rmse_lon_mean |&gt; 
@@ -639,10 +636,9 @@ rmse_lon_mean |&gt;
   wide_legend +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) +
   theme(panel.background = element_blank(), 
-        tagger.panel.tag.background = element_rect(colour = &quot;white&quot;, fill = &quot;white&quot;), 
-        plot.margin = theme_margin) +
+        tagger.panel.tag.background = element_rect(colour = &quot;white&quot;, fill = &quot;white&quot;)) +
   tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1)) +
-  
+  coord_cartesian(clip = &quot;off&quot;) +
   
   topo_inset +
   
