@@ -536,12 +536,12 @@ g &lt;- clim_std2 |&gt;
   scale_color_models +
   scale_fill_models +
   facet_wrap(~ month, labeller = labeller(month = labels_month)) </code></pre>
-<pre class="r"><code>width_errors &lt;- 19.43/cm
+<pre class="r"><code>width_errors &lt;- 23.87/cm
 height_errors &lt;- 11.99/cm</code></pre>
 <pre class="r"><code>g %+% g$data[version != &quot;climatology&quot;]</code></pre>
-<p><img src="presentation_figures_files/figure-html/rmse_persistence-1.png" width="734.362204724409" /></p>
+<p><img src="presentation_figures_files/figure-html/rmse_persistence-1.png" width="902.173228346457" /></p>
 <pre class="r"><code>g %+% g$data[version != &quot;persistence&quot;]</code></pre>
-<p><img src="presentation_figures_files/figure-html/rmse_climatology-1.png" width="734.362204724409" /></p>
+<p><img src="presentation_figures_files/figure-html/rmse_climatology-1.png" width="902.173228346457" /></p>
 <pre class="r"><code># ACHTUNG: we have something going on with the 29th of february.
 
 clim_std2 |&gt; 
@@ -573,7 +573,7 @@ p$layers &lt;- p$layers[-4]
 p</code></pre>
 <pre><code>## Warning: No shared levels found between `names(values)` of the manual scale and the
 ## data&#39;s fill values.</code></pre>
-<p><img src="presentation_figures_files/figure-html/error_zoom-1.png" width="734.362204724409" /></p>
+<p><img src="presentation_figures_files/figure-html/error_zoom-1.png" width="902.173228346457" /></p>
 <pre class="r"><code>topo_lonlat &lt;- rcdo::cdo_topo(grid = &quot;r180x90&quot;) |&gt;
   rcdo::cdo_execute(options = c(&quot;-f nc&quot;)) |&gt;
   metR::ReadNetCDF(c(z = &quot;topo&quot;), subset = list(lat = c(-90, -60))) |&gt; 

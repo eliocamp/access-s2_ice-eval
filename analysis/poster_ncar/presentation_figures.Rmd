@@ -467,7 +467,7 @@ g <- clim_std2 |>
 
 
 ```{r}
-width_errors <- 19.43/cm
+width_errors <- 23.87/cm
 height_errors <- 11.99/cm
 ```
 
