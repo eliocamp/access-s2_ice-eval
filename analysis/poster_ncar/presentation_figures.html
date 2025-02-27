@@ -389,7 +389,7 @@ hindcast_clim[, month_diff := month_diff(forecast_month[1], month[1]), by = .(fo
     geomcoord_antarctica +
     geom_antarctica_fill +
     facet_wrap(~ month, 
-               labeller = labeller(month = setNames(months, month.abb)),
+               labeller = labeller(month = setNames(1:12, month.abb)),
                nrow = 2) +
     wide_legend +
     tag_facets()
@@ -538,8 +538,10 @@ g &lt;- clim_std2 |&gt;
   facet_wrap(~ month, labeller = labeller(month = labels_month)) </code></pre>
 <pre class="r"><code>width_errors &lt;- 19.43/cm
 height_errors &lt;- 11.99/cm</code></pre>
-<pre class="rrmse_persistence"><code>g %+% g$data[version != &quot;climatology&quot;]</code></pre>
-<pre class="rrmse_climatology"><code>g %+% g$data[version != &quot;persistence&quot;]</code></pre>
+<pre class="r"><code>g %+% g$data[version != &quot;climatology&quot;]</code></pre>
+<p><img src="presentation_figures_files/figure-html/rmse_persistence-1.png" width="734.362204724409" /></p>
+<pre class="r"><code>g %+% g$data[version != &quot;persistence&quot;]</code></pre>
+<p><img src="presentation_figures_files/figure-html/rmse_climatology-1.png" width="734.362204724409" /></p>
 <pre class="r"><code># ACHTUNG: we have something going on with the 29th of february.
 
 clim_std2 |&gt; 
@@ -563,7 +565,7 @@ clim_std2 |&gt;
                      aesthetics = c(&quot;fill&quot;, &quot;color&quot;), guide = &quot;none&quot;) +
   scale_y_continuous(limits = c(0, NA)) +
   geom_vline(xintercept = as.Date(&quot;2001-02-28&quot;))</code></pre>
-<p><img src="presentation_figures_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="presentation_figures_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>p &lt;- g +
   coord_cartesian(xlim = c(0, 100))
 

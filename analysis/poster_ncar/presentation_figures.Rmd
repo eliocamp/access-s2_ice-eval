@@ -277,7 +277,7 @@ bias_plot <- function(hindcast_clim, which_version, which_lead) {
     geomcoord_antarctica +
     geom_antarctica_fill +
     facet_wrap(~ month, 
-               labeller = labeller(month = setNames(months, month.abb)),
+               labeller = labeller(month = setNames(1:12, month.abb)),
                nrow = 2) +
     wide_legend +
     tag_facets()
@@ -472,12 +472,12 @@ height_errors <- 11.99/cm
 ```
 
 
-```{rrmse_persistence, fig.width=width_errors, fig.height=height_errors}
+```{r rmse_persistence, fig.width=width_errors, fig.height=height_errors}
 g %+% g$data[version != "climatology"]
 ```
 
 
-```{rrmse_climatology, fig.width=width_errors, fig.height=height_errors}
+```{r rmse_climatology, fig.width=width_errors, fig.height=height_errors}
 g %+% g$data[version != "persistence"]
 ```
 
