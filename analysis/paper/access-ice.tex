@@ -187,7 +187,7 @@ The abstract goes here. It can also be on \emph{multiple lines}.
 \end{abstract}
 \copyrightstatement{The author's copyright for this publication is
 transferred to institution/company.}
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, boxrule=0pt, frame hidden, sharp corners, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, borderline west={3pt}{0pt}{shadecolor}, interior hidden, sharp corners, boxrule=0pt, enhanced, breakable]}{\end{tcolorbox}}\fi
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -286,15 +286,15 @@ Beggs 2008) for the real-time forecast in areas where SSTs are over 0ºC.
 Relevant for this work, sea ice concentrations are not assimilated.
 
 The ACCESS-S2 hindcast used in this study runs for the period
-1981--2018. Each forecast consists of 9 ensemble members, 3 of which run
-for 279 days and 6 for 42 days. Anomalies are be taken with respect to
-the 1981--2011 climatology computed from the daily ACCESS-S2 reanalysis
-and smoothed with a 11 day running mean.
+1981--2018. Each forecast consists of 9 ensemble members built from
+three consecutive 3-member forecasts initialised at the first of every
+month and the two previous days and run from 279 days. The ACCESS-S1
+hindcast is built in the same manner and running for the period
+1990--2012.
 
-The ACCESS-S1 hindcast runs for the period 1990--2012, with 7-member
-forecasts integrated for 217 days. No reanalysis is available so we are
-not able to compute a climatology for this forecast, therefore we don't
-show metrics based on anomalies.
+Anomalies for each hindcast are be taken with respect to a
+forecast-dependent climatology for the period 1990--2012. This serves as
+a first-order correction of model drift.
 
 \hypertarget{verification-datasets}{%
 \subsection{Verification datasets}\label{verification-datasets}}
@@ -377,49 +377,54 @@ projection to which model output was bilinearly interpolated.
 
 \caption{\label{fig-hindcast-extent}Median sea ice extent for al
 hindcasts initialised the first of the month for ACCESS-S2 and ACCESS-S1
-in colours representing the start month. In black, the median sea ice
-extent of NOAA/NSIDC CDRV4.}
+in colours representing the start month with the median sea ice extent
+of NOAA/NSIDC CDRV4 in the left column and the median difference in the
+right column. The NOAA/NSIDC CDRV4 climatology is computed in the period
+corresponding to each hindcast. Circles represent the initial conditions
+at the first of every month and triangles represent the median value at
+the first of every month forecasted with the largest possible lead time.
+Colours indicate the initialisation month of the forecast.}
 
 \end{figure}
 
-Figure~\ref{fig-hindcast-extent} a shows the seasonal cycle of Sea Ice
-Extent for the ACCESS-S2 hindcast and NOAA/NSIDC CDRV4 ACCESS-S2 shows a
-severe low extent bias, especially in the late summer-early autumn. This
-is due primarily to faster melt during a longer melt season between
-January and March and slower growth during March and April. This is then
+Figure~\ref{fig-hindcast-extent} a shows the median sea ice extent (left
+column) and median difference with respect of NOAA/NSIDC CDRV4 for the
+ACCESS-S2 and ACCESS-S1 hindcasts. Median extent of initial conditions
+at the first of every month are indicated with circles, while median
+extent at the same date but forecasted with the largest lead time
+possible for each model (between 274 and 277 days for ACCESS-S2 and
+between 213 and 216 days for ACCESS-S1). At this large lead time, the
+the information of the initial conditions is essentially lost and the
+forecast reverts to each model's preferred equilibrium state.
+
+Both models' equilibrium state (triangles) show low bias of sea ice
+extent, particularly in the late-autumn and winter months. This is due
+primarily to faster melt during a longer melt season between January and
+March and slower growth during March and April. This is then partially
 balanced with faster growth between May and July
 (Fig.~\ref{fig-mean-growth}). Many sea ice models exhibit this
 systematic underestimation during the sea ice minimum and early freezing
 season \citep{massonnet2023} and could indicate problems in the
-representation of thermodynamics in the model \citep{zampieri2019}.
+representation of thermodynamics in the model \citep{zampieri2019}. It
+is not surprising that both forecasting systems converge to a similar
+climatology because they share the same model configuration.
 
-ACCESS-S1 has a smaller low bias than ACCESS-S2, especially at low lags
-(Fig.~\ref{fig-hindcast-extent}) even though the typical growth rates
-are very similar between both models (Fig.~\ref{fig-mean-growth}). At
-larger lags, ACCESS-S1's bias in summer and autumn is very similar to
-ACCESS-S2's. This suggests that this lower sea ice state is closer to
-the models' equilibrium, indicating that it is an issue with model
-formulation that was being corrected by the data assimilation system in
-ACCESS-S1 and not in ACCESS-S2.
+ACCESS-S2 initial conditions (circles) also have a low extent bias,
+especially in the late summer-early autumn, while ACCESS-S1 initial
+conditions are very close to observations. The faster growth between May
+and July reduces the low bias in ACCESS-S2 for forecasts initialised
+from April to June, but it adds a high bias in ACCESS-S1.
 
-At large lags, sea ice extent loses most of the initial condition memory
-and reverts to the model's preferred equilibrium state. Therefore we can
-estimate the latter using the hindcasts with the largest possible lag,
-which is shown in triangles in Figure~\ref{fig-hindcast-extent} for the
-same dates as the initial conditions. The difference between the two is
-the effect of the data assimilation.
-
-The equilibrium of ACCESS-S1 and ACCESS-S2 is very similar (comparing
-the triangles in each panel in Fig.~\ref{fig-hindcast-extent}), owing to
-them having the same model formulation. From June to October, in
-ACCESS-S2 circles are closer to observations than to the triangles,
-indicating that the information from the ocean and atmosphere data
-assimilation is getting to sea ice and improving the initial conditions.
-The rest of the year, there is little if any difference between circles
-and triangles in ACCESS-S2, indicating that almost no data assimilation
-is taking place and the sea ice component of the model is virtually
-free-running. In ACCESS-S1, on the other hand, circles are very close to
-observations year-round.
+The difference between the initial conditions and the model preferred
+state can be attributed to the effect of data assimilation, which in
+ACCESS-S2 is due solely to atmospheric and oceanic data assimilation.
+From June to October, in ACCESS-S2 circles are closer to observations
+than to the triangles, indicating that the information from the ocean
+and atmosphere data assimilation is affecting sea ice and improving the
+initial conditions. The rest of the year there is little if any
+difference between circles and triangles in ACCESS-S2, indicating that
+almost no data assimilation is taking place and the sea ice component of
+the model is virtually free-running.
 
 \begin{figure}
 
@@ -490,14 +495,12 @@ for all hindcasts started on the 1st of every month.
 
 }
 
-\caption{\label{fig-rmse}Median and 95\% coverage of sea ice
-concentration anomalies RMSE as a function of forecast lag for all
-forecast initialised on the first of each month compared with a
-reference forecast of persistence of anomalies.}
+\caption{\label{fig-rmse}Median RMSE of sea ice concentration anomalies
+as a function of forecast lag for all forecast initialised on the first
+of each month compared with a reference forecast of persistence of
+anomalies.}
 
 \end{figure}
-
-Use climatology
 
 monthly rmse/corelation at gridpoints per lead time.
 
