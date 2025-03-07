@@ -481,8 +481,10 @@ hindcast_extent |>
   ggplot(aes(time)) +
   geom_line(aes(y = aice, group = dataset, color = dataset)) +
   geom_line(aes(y = forecast, color = model))  +
-  geom_text(data = \(x) x[time %between% s1_range, correlate(aice, forecast, use = "complete.obs"), by = .(lag, model)],
-            aes(label = text), x = -Inf, y = Inf, 
+  geom_text(data = \(x) x[time %between% s1_range, 
+                          .(text = sqrt(mean((aice - forecast)^2, na.rm = TRUE))), 
+                          by = .(lag, model)],
+            aes(label = paste0(scales::number(text, scale = 1e-12), " M km²")), x = -Inf, y = Inf,
             vjust = 1.2, hjust = -0.2) +
   scale_y_continuous(NULL,
                      labels = labels_extent) +
@@ -549,7 +551,7 @@ clim_std2 <- clim_std[errors, on = .NATURAL] |>
 
 
 ```{r fig-rmse}
-#| fig-cap: Median and 95% coverage of sea ice concentration anomalies RMSE as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
+#| fig-cap: Median RMSE of sea ice concentration anomalies as a function of forecast lag for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies. 
 #| fig.height: 5
 #| fig.width: 9
 
