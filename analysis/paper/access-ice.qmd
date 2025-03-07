@@ -105,6 +105,7 @@ library(data.table)
 library(metR)
 library(rcdo)
 library(tagger)
+library(patchwork)
 
 cdo_options_set("-L")
 ```
@@ -324,7 +325,7 @@ From June to October, in +S2 circles are closer to observations than to the tria
 The rest of the year there is little if any difference between circles and triangles in +S2, indicating that almost no data assimilation is taking place and the sea ice component of the model is virtually free-running.
 
 
-```{r extent-delta-compute, fig.height=11.99/cm, fig.width=24.09/cm}
+```{r extent-delta-compute}
 dif_hindcast <- hindcast_extent |> 
   copy() |> 
   _[order(time)] |> 
@@ -539,7 +540,7 @@ clim_std <- datasets |>
 
 
 
-```{r}
+```{r clim_std2}
 clim_std2 <- clim_std[errors, on = .NATURAL] |> 
   _[, let(climatology = NULL,
           value = climatology)] |> 
@@ -618,12 +619,7 @@ Due to errors in the initial conditions, it is expected that a persistence forec
 Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model doesn't have skill at any lag and in any month.
 The only exception is around February, where the model has lower RMSE than the persistence forecast at virtually every lag. 
 
-```{r}
-topo_lonlat <- rcdo::cdo_topo(grid = "r360x180") |>
-  rcdo::cdo_execute(options = c("-f nc")) |>
-  metR::ReadNetCDF(c(z = "topo"), subset = list(lat = c(-90, -60))) |> 
-  ggperiodic::periodic(lon = c(0, 360)) 
-
+```{r topo_lonlat}
 topo_lonlat <- here::here("data/raw/ETOPO.nc") |> 
   ReadNetCDF() |> 
   na.omit() 
@@ -704,7 +700,7 @@ The Weddell Sea is also the region with the maximum error --around June regardle
 
 ### Comparison with S1
 
-```{r}
+```{r t_test}
 t_test <- function(x, y, ...) {
   
   test <- t.test(x, y, ...)
