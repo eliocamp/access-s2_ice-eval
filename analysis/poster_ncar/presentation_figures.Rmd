@@ -106,8 +106,10 @@ hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |>
   _[, model := relevel(factor(model), "S2")] |> 
   _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |> 
   _[lag > 0] |> 
-  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
+  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong =
 ```
+
+
 
 ```{r}
 cm <- 2.54
@@ -395,6 +397,47 @@ hindcast_extent |>
 
 ```
 
+```{r}
+
+hindcast_extent |> 
+  copy() |> 
+  _[, aice := aice - mean(aice[year(time) %between% c(1981, 2011)]), 
+    by = .(lag, model, time = update(time, year = 2000))] |> 
+  _[, .(forecast = mean(aice)), by = .(model, forecast_time, time = as.Date(round_date(time, "month")))] |> 
+  _[, lag := months_difference(time, forecast_time)] |> 
+  _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |> 
+  _[time %between% s1_range] |> 
+  _[, .(text = sqrt(mean((aice - forecast)^2, na.rm = TRUE))), by = .(lag, model, dataset)] |> 
+  ggplot(aes(lag, text)) +
+  geom_line(aes(color = model)) +
+  facet_wrap(~dataset)
+
+```
+
+```{r}
+
+hindcast_extent |> 
+  copy() |> 
+  setnames("aice", "forecast") |> 
+  _[, .(forecast = mean(forecast)), by = .(time, forecast_time, lag, model)] |>
+  merge(extent_daily) |> 
+  _[dataset == which_dataset] |> 
+  _[, clim := year(time) %between% c(1981, 2011)] |> 
+  _[, let(aice = aice - mean(aice[clim == TRUE]),
+          forecast = forecast - mean(forecast[clim == TRUE])),
+    by = .(dataset, model, yday(time), forecast_time)] |>
+  _[time %between% s1_range] |> 
+  _[] |> 
+  _[, .(rmse = sqrt(mean((aice - forecast)^2, na.rm = TRUE))), by = .(model, lag, dataset)] |> 
+  ggplot(aes(lag, rmse)) +
+  geom_line(aes(color = model)) +
+  scale_y_continuous(labels = labels_extent)
+
+
+
+```
+
+
 ### RMSE
 
 
@@ -433,6 +476,7 @@ clim_std <- datasets |>
 ```
 
 
+
 ```{r}
 clim_std2 <- clim_std[errors, on = .NATURAL] |> 
   _[, let(climatology = NULL,
@@ -440,6 +484,16 @@ clim_std2 <- clim_std[errors, on = .NATURAL] |>
   na.omit() |> 
   _[, version := "climatology"]
 ```
+
+
+```{r}
+clim_std |> 
+  _[obs_dataset == which_dataset] |> 
+  _[, .(value = median(climatology, na.rm = TRUE)), by = .(time = update(time, year = 2000))] |> 
+  ggplot(aes(time, value)) +
+  geom_line()
+```
+
 
 
 ```{r fig-rmse}
@@ -515,8 +569,9 @@ g %+% g$data[version != "persistence"]
 ```{r}
 # ACHTUNG: we have something going on with the 29th of february.
 
-clim_std2 |> 
-  rbind(errors) |> 
+clim_std2 |>
+  rbind(errors) |>
+  # errors
   _[measure == "rmse"] |> 
   _[obs_dataset == which_dataset] |> 
   _[, .(rmse = median(value, na.rm = TRUE)), 
@@ -536,6 +591,21 @@ clim_std2 |>
                      aesthetics = c("fill", "color"), guide = "none") +
   scale_y_continuous(limits = c(0, NA)) +
   geom_vline(xintercept = as.Date("2001-02-28"))
+```
+
+```{r}
+clim_std2[version == "climatology"] |> 
+  _[obs_dataset == which_dataset] |> 
+  _[member == "01"] |>
+  _[, .(rmse = median(value, na.rm = TRUE)), 
+    by = .(time = update(time, year = 2001), 
+           time_forecast = update(time_forecast, year = 2001), 
+           lag,
+           version)] |>
+  ggplot(aes(time, rmse)) +
+  geom_line() 
+
+
 ```
 
 
