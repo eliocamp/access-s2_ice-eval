@@ -14,4 +14,6 @@ LaTeX: pdfLaTeX
 
 AutoAppendNewline: Yes
 
+MarkdownWrap: Sentence
+
 SpellingDictionary: en_AU

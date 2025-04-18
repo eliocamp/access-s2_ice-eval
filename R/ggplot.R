@@ -25,14 +25,18 @@ ggplot2::theme_set(ggplot2::theme_minimal() +
                      ))
 wide_legend <- ggplot2::theme(legend.key.width = grid::unit(1, 'null'))
 
+trans_pink <- "#D07C8E"
+trans_blue <- "#0AA3CE"
+
+
 
 colours_models <- c(
-  S2 = "black",
-  S1 = "#a51d2d",
-  cdr = "#1a5fb4",
-  bt = "#1a5fb4",
-  era5 = "#1a5fb4",
-  osi = "#1a5fb4",
+  S1 = "#ACA40A",
+  S2 = "#9C59D1",
+  cdr = "black",
+  bt = "black",
+  era5 = "black",
+  osi = "black",
   persistence = "black",
   climatology = "gray50"
 )

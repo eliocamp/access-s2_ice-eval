@@ -116,6 +116,8 @@ source(here::here("R/datasets.R"))
 source(here::here("R/ggplot.R"))
 ```
 
+
+
 # Abstract
 
 balbalbal
@@ -169,11 +171,15 @@ This serves as a first-order correction of model drift.
 
 ## Verification datasets
 
+
+
 ```{r datasets}
 datasets <- list(cdr = CDR(),
                  osi = OSI())
 which_dataset <- "cdr"
 ```
+
+
 
 For verification we use satellite-derived estimates of sea ice concentration, which estimates the proportion of each grid area that is covered with ice.
 Different datasets derived using different algorithms provide different estimates, each with their own biases and uncertainties.
@@ -211,6 +217,8 @@ All error measures were computed on the NOAA/NSIDC CDRV4 domain grid and project
 # Results and discussion
 
 ## Bias
+
+
 
 ```{r extent_daily}
 extent_daily <- datasets |>
@@ -301,6 +309,8 @@ hindcast_bias_extent +
 
 ```
 
+
+
 @fig-hindcast-extent a shows the median sea ice extent (left column) and median difference with respect of +CDR for the +S2 and +S1 hindcasts (right column).
 Median extent of initial conditions at the first of every month are indicated with circles, while median extent at the same date but forecasted with the largest lead time possible for each model (between `r range_max_lag[model == "S2", min]` and `r range_max_lag[model == "S2", max]` days for +S2 and between `r range_max_lag[model == "S1", min]` and `r range_max_lag[model == "S1", max]` days for +S1).
 At this large lead time, the the information of the initial conditions is essentially lost and the forecast reverts to each model's preferred equilibrium state.
@@ -317,6 +327,8 @@ The faster growth between May and July reduces the negative bias in +S2 for fore
 The difference between the initial conditions and the model preferred state can be attributed to the effect of data assimilation, which in +S2 is due solely to atmospheric and oceanic data assimilation.
 From June to October, in +S2 circles are closer to observations than to the triangles, indicating that the information from the ocean and atmosphere data assimilation is affecting sea ice and improving the initial conditions.
 The rest of the year there is little if any difference between circles and triangles in +S2, indicating that the ocean and atmosphere data assimilation is not affecting seas ice and that this component of the model is virtually free-running.
+
+
 
 ```{r extent-delta-compute}
 dif_hindcast <- hindcast_extent |> 
@@ -445,11 +457,15 @@ hindcast_clim |>
   tag_facets()
 ```
 
+
+
 @fig-bias shows the difference of monthly mean sea ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest lag.
 From October to May, the model underestimates sea ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea ice concentrations saturate to 1 both in the observations and forecasts.
 In winter, the differences are mostly on the sea ice edge with light positive bias in the African sector of East Antarctica and negative bias around the Indian Ocean sector which partially compensate, resulting in the near-zero extent bias seen in those months ([Fig. @fig-hindcast-extent]).
 
 ## RMSE
+
+
 
 ```{r fig-extent-anom}
 #| fig-cap: Monthly mean sea ice extent anomalies for +S1 and +S2 (black) and +CDR (blue) forecasted at selected lead times. The RMSE during the overlapping period (1990--2013) is shown on the top left. 
@@ -494,11 +510,15 @@ hindcast_extent |>
   scale_color_models
 ```
 
+
+
 @fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lead times.
 Compared with +S1, +S2 anomaly forecast is relatively poor even in the first month, which stays relatively skilful even at lag 3.
 +S2 shows much bigger variability than observations, with dramatic lows between 1995 and 2007 and highs between 2007 and 2015.
 
 To assess +S2 forecasts quantitatively, we compute error measures for all hindcasts started on the 1st of every month.
+
+
 
 ```{r errors}
 errors <- rbind(
@@ -595,6 +615,8 @@ clim_std2 |>
   facet_wrap(~ month, labeller = labeller(month = labels_month)) 
 ```
 
+
+
 ::: notes
 monthly rmse/corelation at gridpoints per lead time.
 :::
@@ -603,6 +625,8 @@ monthly rmse/corelation at gridpoints per lead time.
 Due to errors in the initial conditions, it is expected that a persistence forecast would be better than the model forecast at very short lead times, but that the persistence forecast errors would grow faster and eventually surpass the model forecast, after when the model is statistically useful.
 Here the persistence errors are almost always lower than the +S2 forecast, indicating that the model does not have skill at any lead time and in any month.
 The only exception is around February, where the model has lower RMSE than the persistence forecast at virtually every lag.
+
+
 
 ```{r topo_lonlat}
 topo_lonlat <- here::here("data/raw/ETOPO.nc") |> 
@@ -669,6 +693,8 @@ rmse_lon_mean |>
   tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1))
 ```
 
+
+
 Even though +S2 is no better than persistence at forecasting pan-Antarctic sea ice concentration anomalies, the quality of the forecast might vary between regions.
 To analyse the spatial distribution of the model error, we computed sea ice concentration anomalies RMSE on `r uniqueN(rmse_lon_mean$lon)` meridional slices `r diff(unique(rmse_lon_mean$lon))[1]`º wide.
 The median difference between the forecast and persistence RMSE is shown on @fig-rmse_lon, where negative values indicate that the model has lower RMSE than the benchmark.
@@ -684,6 +710,8 @@ Notably, May forecasts of Weddell sea ice concentration anomalies ([Fig. @fig-rm
 The Weddell Sea is also the region with the maximum error --around June regardless of initialisation date.
 
 ### Comparison with S1
+
+
 
 ```{r t_test}
 t_test <- function(x, y, ...) {
@@ -764,6 +792,8 @@ errors |>
   facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) 
 ```
 
+
+
 To compare +S2 with +S1, we computed the IIEE for both models.
 This error measure is shown in @fig-iiee for forecasts initialised at the first of every month at all lead times.
 +S1 has lower error at lead times up to 60 days at all months, with the errors converging to +S2 as the forecast goes on.
@@ -776,6 +806,8 @@ The error in the initial conditions is not only small, but also fairly constant.
 This spread then grows towards a climatological spread as errors accumulate differently in different forecasts.
 For +S2, this is true only between July and October, approximately.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it is not constant.
+
+
 
 ```{r fig-iiee-variance}
 #| fig-cap: Mean spread of IIEE at different lags for different models. 
@@ -827,6 +859,8 @@ rbind(mean_variance = errors |>
                                                component = c(mean_variance = "Mean variance",
                                                              variance_of_mean = "Variance of mean"))) 
 ```
+
+
 
 The large initial error spread could be due either to large spread of ensemble members or to large spread of individual forecasts.
 @fig-iiee-variance splits the IIEE variance for each lead time into the mean variance of each individual forecast and the variance of the mean error of each individual forecast, which adds up to the total variance.
@@ -928,3 +962,4 @@ Sea surface temperatures are assimilated by +S2 only in areas with temperatures 
 <!-- <<fig-iiee-variance>> -->
 
 <!-- ``` -->
+
