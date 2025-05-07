@@ -205,30 +205,34 @@ levels since \citep{purich2023, hobs2024, gilbert2024, josey2024}, even
 more highlighting our lack of understanding of Antarctic sea ice
 variability and long-term change \citep{espinosa2024}.
 
-Antarctic sea ice is in a remote location, but the potential impacts of
-its variability extends far into the lower latitudes, affecting the
-circulation of both the ocean and the atmosphere, ocean carbon uptake
-and biological processes. It is likely that a reduction in sea ice
-extent would reduce the meridional temperature gradient which, in turn,
-would reduce the strength and location of the eddy-driven jet (and the
-opposite circulation changes with an increase in sea ice), which is a
-crucial control on extratropical weather. In the northern hemisphere
-(NH), it has been hypothesised that the reduction in Arctic sea ice has
-led to a weaker, wavier jet, increasing the frequency of extreme events
-\citep{barnes2015}. There is some evidence of this effect in the
-southern hemisphere (SH). Models show a weakened vortex in the middle
-atmosphere, increased vertical wave flux and greater zonal wave 1
-amplitude in austral spring following a low sea ice maximum. But models
-do not fully agree on the exact phase of the zonal wave response, and
-observations do not show a clear signal \citep{rea2024}. The jet
-response to sea ice loss is also very model dependent, particularly
-sensitive to its climatological location, and relatively small compared
-with the direct effect of CO2 increase and sea surface temperature (SST)
-warming \citep{ayres2019}. On climate scales, it is thought that the
-temperature signal of a reduction in Antarctic sea ice mirrors a ``mini
-global warming'', and experiments also predict a weakening and
-equatorward shift of the SH eddy-driven jet
-\citep{raphael2011, england2018, england2020, ayres2022}.
+Antarctic sea ice covers the polar ocean, yet the potential impacts of
+its variability extend far into the mid and lower latitudes, affecting
+the circulation of both the ocean and the atmosphere, ocean carbon
+uptake and biological processes \citep[\citet{england2020},
+\citet{swadling2023}]{fogwill2020}. In coupled climate model
+experiments, a reduction in sea ice extent has been shown to reduce the
+meridional temperature gradient, in turn reducing the eddy-driven jet
+strength and shifting it equatorward \citetext{\citealp[
+\citet{england2020}]{england2018}; \citealp{ayres2019}; \citealp{ayres2022}}
+and vice versa for an increase in sea ice
+\citep{raphael2003a, raphael2011}, which is a crucial control on
+extratropical weather. In the Northern Hemisphere, it has been
+hypothesised that the reduction in Arctic sea ice has led to a weaker,
+wavier jet, increasing the frequency of extreme events
+\citep{barnes2015, smith2022b}. There is some evidence of this effect in
+the Southern Hemisphere. For example, model simulations show a weakened
+vortex in the middle atmosphere, increased vertical wave flux and
+greater zonal wave 1 amplitude in austral spring following lower than
+average sea ice extent at in early winter
+\citep[\citet{song2025}]{rea2024}. But models different models disagree
+on the exact phase of the zonal wave response, and observations do not
+show a clear signal \citep{rea2024}. The magnitude of the eddy-driven
+jet response to sea ice loss has been shown to be model dependent, and
+is sensitive to its climatological location \citep{ayres2019}. Further,
+sea ice induced changes in the jet have been found to be relatively
+small compared with the jet-response to the direct effect of CO2
+increase and global sea surface temperature (SST) warming
+\citep{ayres2022}.
 
 Correctly modelling Antarctic sea is not only necessary for process
 understanding and climate projections to inform adaptation strategies
@@ -241,7 +245,8 @@ large variability and complexity, and it has lagged behind Arctic sea
 ice forecasts \citep{zampieri2019}. Dynamical seasonal forecasts of
 summer Antarctic sea ice have been shown to perform worse than
 relatively simple statistical methods \citep{massonnet2023}, which also
-underscores the need for better understanding of sea ice dynamics.
+underscores the need for better understanding of sea ice dynamics, and
+drivers.
 
 In this work we evaluate sea ice forecasts produced by the Australian
 Community Climate and Earth System Simulator -- seasonal version2
@@ -295,8 +300,8 @@ The ACCESS-S2 hindcast used in this study runs for the period
 1981--2018. Each forecast consists of 9 ensemble members built from
 three consecutive 3-member forecasts initialised at the first of every
 month and the two previous days and run from 279 days. The ACCESS-S1
-hindcast is built in the same manner and running for the period
-1990--2012.
+hindcast is built in the same manner (albeit with 217-day runs) for the
+period 1990--2012.
 
 Anomalies for each hindcast are be taken with respect to a
 forecast-dependent climatology for the period 1990--2012. This serves as
@@ -330,7 +335,8 @@ Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility
 (OSI SAF) \citep{OSISAF} is another satellite-derived sea ice
 concentration product. It is based on mostly the same sensors as the
 NOAA CDR but computed independently using different algorithms. Figures
-prepared with this dataset are provided in the supplementary material.
+prepared with this dataset are provided in the supplementary material
+and don't differ significantly from the ones prepared using CDR.
 
 \subsection{Error measures}\label{error-measures}
 
@@ -352,8 +358,8 @@ concentration anomalies and the Integrated Ice Edge Error {[}IIEE;
 We compute RMSE as the square root of the average squared differences
 between forecasted and observed sea ice concentration anomalies. We
 compute a pan-Antarctic RMSE by averaging over the whole NOAA/NSIDC
-CDRV4 southern hemisphere domain, and also a zonally-varying RMSE by
-averaging over twenty-four 15° longitude slices around Antarctica.
+CDRV4 southern hemisphere domain, and also a zonally-varying RMSE
+computed over twenty-four 15° longitude slices around Antarctica.
 
 The IIEE is defined as the area where the model miss-predicts sea ice
 concentration being above or below 15\% ice. That is, dichotomise sea
@@ -375,15 +381,16 @@ projection to which model output was bilinearly interpolated.
 
 }
 
-\caption{\label{fig-hindcast-extent}Median sea ice extent for al
-hindcasts initialised the first of the month for ACCESS-S2 and ACCESS-S1
-in colours representing the start month with the median sea ice extent
-of NOAA/NSIDC CDRV4 in the left column and the median difference in the
-right column. The NOAA/NSIDC CDRV4 climatology is computed in the period
-corresponding to each hindcast. Circles represent the initial conditions
-at the first of every month and triangles represent the median value at
-the first of every month forecasted with the largest possible lead time.
-Colours indicate the initialisation month of the forecast.}
+\caption{\label{fig-hindcast-extent}Pan-antarctic median sea ice extent
+for al hindcasts initialised the first of the month for ACCESS-S2 and
+ACCESS-S1 in colours representing the start month with the median sea
+ice extent of NOAA/NSIDC CDRV4 in the left column and the median
+difference in the right column. The NOAA/NSIDC CDRV4 climatology is
+computed in the period corresponding to each hindcast. Circles represent
+the initial conditions at the first of every month and triangles
+represent the median value at the first of every month forecasted with
+the largest possible lead time. Colours indicate the initialisation
+month of the forecast.}
 
 \end{figure}%
 
@@ -398,24 +405,20 @@ lead time, the the information of the initial conditions is essentially
 lost and the forecast reverts to each model's preferred equilibrium
 state.
 
-Both models' equilibrium state (triangles) show a negative bias of sea
-ice extent, particularly in the late-autumn and winter months. This is
-due primarily to faster melt during a longer melt season between January
-and March and slower growth during March and April. This is then
-partially balanced with faster growth between May and July
-(Fig.~\ref{fig-mean-growth}). Many sea ice models exhibit this
-systematic underestimation during the sea ice minimum and early freezing
-season \citep{massonnet2023} and could indicate problems in the
-representation of thermodynamics in the model \citep{zampieri2019}. It
-is not surprising that both forecasting systems converge to a similar
-climatology because they share the same model formulation.
-
-ACCESS-S2 initial conditions (circles) also have a negative bias,
+ACCESS-S2 initial conditions (circles) show an overall negative bias,
 especially in the late summer-early autumn, while ACCESS-S1 initial
-conditions are very close to observations. The faster growth between May
-and July reduces the negative bias in ACCESS-S2 for forecasts
-initialised from April to June, but it adds a positive bias in
-ACCESS-S1.
+conditions are very close to observations. Both models' equilibrium
+state (triangles) show a negative bias of sea ice extent, particularly
+in the late-autumn and winter months. This is due primarily to faster
+melt during a longer melt season between January and March and slower
+growth during March and April. This is then partially balanced with
+faster growth between May and July (Fig.~\ref{fig-mean-growth}). Many
+sea ice models exhibit this systematic underestimation during the sea
+ice minimum and early freezing season \citep{massonnet2023} and could
+indicate problems in the representation of thermodynamics in the model
+\citep{zampieri2019}. It is not surprising that both forecasting systems
+converge to a similar climatology because they share the same model
+formulation.
 
 The difference between the initial conditions and the model preferred
 state can be attributed to the effect of data assimilation, which in
@@ -437,8 +440,9 @@ that this component of the model is virtually free-running.
 }
 
 \caption{\label{fig-mean-growth}Median daily sea ice extent growth of
-ACCESS-S1 and ACCESS-S2 hindcasts and observations. Values are smoothed
-with a 11-day running mean.}
+ACCESS-S1 and ACCESS-S2 hindcasts and observations computed as the
+median daily differences in sea ice extent for each date and all lead
+times. Values are smoothed with a 11-day running mean.}
 
 \end{figure}%
 
@@ -450,14 +454,15 @@ with a 11-day running mean.}
 
 }
 
-\caption{\label{fig-bias}Mean sea ice concentrations 1-month lag monthly
-mean ACCESS-S2 forecast bias compared with NSIDC.}
+\caption{\label{fig-bias}Mean difffernece between monthly sea ice
+concentrations at 0-month lead time ACCESS-S2 forecast and
+observations.}
 
 \end{figure}%
 
 Figure~\ref{fig-bias} shows the difference of monthly mean sea ice
 concentrations between NOAA/NSIDC CDRV4 and ACCESS-S2 hindcasts at the
-shortest lag. From October to May, the model underestimates sea ice
+shortest lead time From October to May, the model underestimates sea ice
 concentrations in most regions except for the inner Weddell Sea in April
 and May, where sea ice concentrations saturate to 1 both in the
 observations and forecasts. In winter, the differences are mostly on the
@@ -477,18 +482,18 @@ those months (Fig.~\ref{fig-hindcast-extent}).
 }
 
 \caption{\label{fig-extent-anom}Monthly mean sea ice extent anomalies
-for ACCESS-S1 and ACCESS-S2 (black) and NOAA/NSIDC CDRV4 (blue)
-forecasted at selected lead times. The RMSE during the overlapping
-period (1990--2013) is shown on the top left.}
+for ACCESS-S1 and ACCESS-S2 and observations (black) forecasted at
+selected lead times. The RMSE during the overlapping period (1990--2013)
+is shown on the top left.}
 
 \end{figure}%
 
 Figure~\ref{fig-extent-anom} shows monthly sea ice extent anomalies
 forecasted at selected lead times. Compared with ACCESS-S1, ACCESS-S2
 anomaly forecast is relatively poor even in the first month, which stays
-relatively skilful even at lag 3. ACCESS-S2 shows much bigger
-variability than observations, with dramatic lows between 1995 and 2007
-and highs between 2007 and 2015.
+relatively skilful even at a lead time of 3 months. ACCESS-S2 shows much
+bigger variability than observations, with dramatic lows between 1995
+and 2007 and highs between 2007 and 2015.
 
 To assess ACCESS-S2 forecasts quantitatively, we compute error measures
 for all hindcasts started on the 1st of every month.
@@ -502,13 +507,11 @@ for all hindcasts started on the 1st of every month.
 }
 
 \caption{\label{fig-rmse}Median RMSE of sea ice concentration anomalies
-as a function of forecast lag for all forecast initialised on the first
-of each month compared with a reference forecast of persistence of
-anomalies.}
+as a function of forecast lead time for all forecast initialised on the
+first of each month compared with a reference forecast of persistence of
+anomalies (black) and climatology (gray).}
 
 \end{figure}%
-
-monthly rmse/corelation at gridpoints per lead time.
 
 Figure~\ref{fig-rmse} shows the median RMSE of sea ice concentration
 anomalies for ACCESS-S2 and ACCESS-S1 hindcasts compared with a
@@ -520,7 +523,7 @@ model forecast, after when the model is statistically useful. Here the
 persistence errors are almost always lower than the ACCESS-S2 forecast,
 indicating that the model does not have skill at any lead time and in
 any month. The only exception is around February, where the model has
-lower RMSE than the persistence forecast at virtually every lag.
+lower RMSE than the persistence forecast at virtually every lead time.
 
 \begin{figure}
 
@@ -533,7 +536,9 @@ lower RMSE than the persistence forecast at virtually every lag.
 \caption{\label{fig-rmse_lon}Median difference between RMSE of ACCESS-S2
 forecasts and persistence forecast computed on
 \texttt{r\ uniqueN(rmse\_lon\_mean\$lon)} meridional slices
-\texttt{r\ diff(unique(rmse\_lon\_mean\$lon)){[}1{]}}º wide.}
+\texttt{r\ diff(unique(rmse\_lon\_mean\$lon)){[}1{]}}º wide.
+Antarctica's coastline is shown at the bottom of each panel for
+reference.}
 
 \end{figure}%
 
@@ -546,16 +551,17 @@ forecast and persistence RMSE is shown on Figure~\ref{fig-rmse_lon},
 where negative values indicate that the model has lower RMSE than the
 benchmark.
 
-The skill shown by ACCESS-S2 at February-March forecasts is evidenced by
-a band of negative values across almost all longitudes. The only region
-where February-March sea ice is not well forecasted is east of the
-Antarctic Peninsula, which is the only region with consistent summer sea
-ice. This suggests that the positive skill around the summer minimum
+The skill shown by ACCESS-S2 at February-March forecasts is observed
+
+by a band of negative values across almost all longitudes. The only
+region where February-March sea ice is not well forecasted is east of
+the Antarctic Peninsula, which is the only region with consistent summer
+sea ice. This suggests that the positive skill around the summer minimum
 comes from the model correctly forecasting no ice where no ice is ever
 found. However, there are other regions of skilful forecasts.
 
 Forecasts initialised on January 1st (Fig.~\ref{fig-rmse_lon} panel a)
-show RMSE values below persistence at lags larger than 180 days
+show RMSE values below persistence at lead times larger than 180 days
 (corresponding to July through September) in the Ross and Weddell Sea.
 These two regions are also relatively well forecasted from other months.
 Notably, May forecasts of Weddell sea ice concentration anomalies
@@ -574,11 +580,11 @@ maximum error --around June regardless of initialisation date.
 }
 
 \caption{\label{fig-iiee}Median and 95\% coverage of Integrated Ice Edge
-Error as a function of forecast lag for all forecast initialised on the
-first of each month for ACCESS-S1 and ACCESS-S2 hindcasts. For each
-month, the number in parenthesis indicates the minimum lag at which the
-the mean error of each model is not statistically significant at a 1\%
-level using a two-sisded t-test.}
+Error as a function of forecast lead time for all forecast initialised
+on the first of each month for ACCESS-S1 and ACCESS-S2 hindcasts. For
+each month, the number in parenthesis indicates the minimum lead time at
+which the the mean error of each model is not statistically significant
+at a 1\% level using a two-sisded t-test.}
 
 \end{figure}%
 
@@ -596,15 +602,15 @@ assimilated form the other components has little to no influence on sea
 ice.
 
 Also evident in Figure~\ref{fig-iiee} is the difference in the error
-spread at short lags between ACCESS-S2 and ACCESS-S1. In all months
-ACCESS-S1 has much narrower error spread at the first day of the
+spread at short lead times between ACCESS-S2 and ACCESS-S1. In all
+months ACCESS-S1 has much narrower error spread at the first day of the
 forecasts. The error in the initial conditions is not only small, but
 also fairly constant. This spread then grows towards a climatological
 spread as errors accumulate differently in different forecasts. For
-ACCESS-S2, this is true only between July and October, approximately.
-For all other months, the error spread is more or less stable throughout
-the forecast window, indicating that not only the initial error is high,
-but it is not constant.
+ACCESS-S2, this is true only between July and October. For all other
+months, the error spread is more or less stable throughout the forecast
+window, indicating that not only the initial error is high, but it is
+not constant.
 
 \begin{figure}
 
@@ -614,8 +620,8 @@ but it is not constant.
 
 }
 
-\caption{\label{fig-iiee-variance}Mean spread of IIEE at different lags
-for different models.}
+\caption{\label{fig-iiee-variance}Mean spread of IIEE at different lead
+times for different models.}
 
 \end{figure}%
 
@@ -645,15 +651,15 @@ and slower growth between March and April. This underestimation during
 the minimum and early freezing season is a common issue in many
 seasonal-to-subseasonal (S2S) systems, suggesting potential problems
 either with the model's thermodynamic representation or with short wave
-radiation forcing, as shown in other climate models. Even though
-ACCESS-S2 shares the same model formulation with ACCESS-S1, the latter
-does not suffer from this bias. This is due to the assimilation of sea
-ice concentrations into the initial conditions, which successful
-corrects for the negative bias in the model. Our analysis suggests that
-the data assimilation system in ACCESS-S2 is only effectively
-influencing sea ice initial conditions from June to October, while the
-rest of the year, the sea ice component runs virtually free, reverting
-to its biased equilibrium state.
+radiation forcing, as shown in other climate models
+\citep{zampieri2019, roach2020}. Even though ACCESS-S2 shares the same
+model formulation with ACCESS-S1, the latter does not suffer from this
+bias. This is due to the assimilation of sea ice concentrations into the
+initial conditions, which successful corrects for the negative bias in
+the model. Our analysis suggests that the data assimilation system in
+ACCESS-S2 is only effectively influencing sea ice initial conditions
+from June to October, while the rest of the year, the sea ice component
+runs virtually free, reverting to its biased equilibrium state.
 
 Analysis of the error spread shows that ACCESS-S2 initial conditions
 from December to May not only have large errors, but that the initial
