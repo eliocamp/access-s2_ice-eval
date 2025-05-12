@@ -122,19 +122,21 @@ balbalbal
 
 # Introduction
 
-Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice has experienced a slightly increasing trend up to 2015, which models systematically failed to reproduce and puzzled researchers [@hobbs2016].
+Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice has experienced a slightly increasing trend up to 2015. 
+This trend puzzled researchers and was not reproduced by models [@hobbs2016].
 Then, in 2016 Antarctic sea ice extent dropped precipitously [@turner2017a] and has been at low and record low levels since [@purich2023; @hobbs2024; @gilbert2024; @josey2024], even more highlighting our lack of understanding of Antarctic sea ice variability and long-term change [@espinosa2024].
 
 Antarctic sea ice covers the polar ocean, yet the potential impacts of its variability extend far into the mid and lower latitudes, affecting the circulation of both the ocean and the atmosphere, ocean carbon uptake and biological processes [@fogwill2020, @england2020, @swadling2023].
-In coupled climate model experiments, a reduction in sea ice extent has been shown to reduce the meridional temperature gradient, in turn reducing the eddy-driven jet strength and shifting it equatorward [@england2018 @england2020; @ayres2019; @ayres2022] and vice versa for an increase in sea ice [@raphael2003a; @raphael2011], which is a crucial control on extratropical weather.
+In coupled climate model experiments, a reduction in sea ice extent has been shown to reduce the meridional temperature gradient, in turn reducing the eddy-driven jet strength and shifting it equatorward [@england2018; @england2020; @ayres2019; @ayres2022] and vice versa for an increase in sea ice [@raphael2003a; @raphael2011], which is a crucial control on extratropical weather.
 In the Northern Hemisphere, it has been hypothesised that the reduction in Arctic sea ice has led to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015; @smith2022]. 
 There is some evidence of this effect in the Southern Hemisphere.
-For example, model simulations show a weakened vortex in the middle atmosphere, increased vertical wave flux and greater zonal wave 1 amplitude in austral spring following lower than average sea ice extent at in early winter [@rea2024, @song2025]. 
-But models different models disagree on the exact phase of the zonal wave response, and observations do not show a clear signal [@rea2024].
+For example, model simulations show a weakened vortex in the middle atmosphere, increased vertical wave flux and greater zonal wave 1 amplitude in austral spring following lower than average sea ice extent in early winter [@rea2024, @song2025]. 
+But models disagree on the exact phase of the zonal wave response, and observations do not show a clear signal [@rea2024].
 The magnitude of the eddy-driven jet response  to sea ice loss has been shown to be model dependent, and is sensitive to its climatological location [@ayres2019].
 Further, sea ice induced changes in the jet have been found to be  relatively small compared with the jet-response to the direct effect of CO2 increase and global sea surface temperature (SST) warming [@ayres2022].
 
-Correctly modelling Antarctic sea is not only necessary for process understanding and climate projections to inform adaptation strategies but also for accurate seasonal to sub-seasonal forecasts, which are crucial for operations in and around the Antarctic continent such as scientific missions, fisheries and tourism [@desilva2020 @wagner2020].
+Correctly modelling Antarctic sea ice is essential for understanding processes and improving climate projections to inform adaptation strategies.
+Accurate seasonal to sub-seasonal forecasts are also crucial for operations in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020].
 However, producing accurate Antarctic sea ice forecasts has been challenging due to model biases, inherent large variability and complexity, and it has lagged behind Arctic sea ice forecasts [@zampieri2019].
 Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023], which also underscores the need for better understanding of sea ice dynamics, and drivers.
 
@@ -164,7 +166,7 @@ The +S2 hindcast used in this study runs for the period 1981--2018.
 Each forecast consists of 9 ensemble members built from three consecutive 3-member forecasts initialised at the first of every month and the two previous days and run from 279 days.
 The +S1 hindcast is built in the same manner (albeit with 217-day runs) for the period 1990--2012.
 
-Anomalies for each hindcast are be taken with respect to a forecast-dependent climatology for the period 1990--2012.
+Anomalies for each hindcast are taken with respect to a climatology specific to each initalisation date for the period 1990--2012. 
 This serves as a first-order correction of model drift.
 
 ## Verification datasets
@@ -193,11 +195,11 @@ Figures prepared with this dataset are provided in the supplementary material an
 
 For evaluation purposes, we use a series of measures.
 
-Sea-ice extent is defined as the area of ocean covered with at least 15% ice.
+Sea-ice extent is defined as the area of the ocean covered with at least 15% ice.
 This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for lower sea ice conditions (cite -- probably something from NSIDC).
 
 Pan-Antarctic (net) sea ice extent serves as a rough hemispheric measure of the amount of sea ice, but it does not take into account the spatial distribution.
-A model could have relatively accurate extent of the net ice but with different regional distributions.
+A model could have a relatively accurate extent of the net ice but with different regional distributions.
 To account for location errors, we computed the Root Mean Squared Error (RMSE) of sea ice concentration anomalies and the Integrated Ice Edge Error [IIEE; @goessling2016].
 
 We compute RMSE as the square root of the average squared differences between forecasted and observed sea ice concentration anomalies.
@@ -314,7 +316,7 @@ It is not surprising that both forecasting systems converge to a similar climato
 
 The difference between the initial conditions and the model preferred state can be attributed to the effect of data assimilation, which in +S2 is due solely to atmospheric and oceanic data assimilation.
 From June to October, in +S2 circles are closer to observations than to the triangles, indicating that the information from the ocean and atmosphere data assimilation is affecting sea ice and improving the initial conditions.
-The rest of the year there is little if any difference between circles and triangles in +S2, indicating that the ocean and atmosphere data assimilation is not affecting seas ice and that this component of the model is virtually free-running.
+The rest of the year there is little if any difference between circles and triangles in +S2, indicating that the ocean and atmosphere data assimilation is not affecting sea ice and that this component of the model is virtually free-running.
 
 ```{r extent-delta-compute}
 dif_hindcast <- hindcast_extent |> 
@@ -714,7 +716,7 @@ labels_month_significant <- setNames(paste0(month.abb, " (", dif$lag, ")"),
 ```
 
 ```{r fig-iiee}
-#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lead time for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lead time at which the the mean error of each model is not statistically significant at a 1% level using a two-sided t-test. 
+#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lead time for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lead time at which the mean error of each model is not statistically significant at a 1% level using a two-sided t-test. 
 
 errors |> 
   _[measure == "iiee"] |>
@@ -765,7 +767,7 @@ To compare +S2 with +S1, we computed the IIEE for both models.
 This error measure is shown in @fig-iiee for forecasts initialised at the first of every month at all lead times.
 +S1 has lower error at lead times up to 60 days at all months, with the errors converging to +S2 as the forecast goes on.
 The time to convergence depends on the month and it can be as short as two weeks June and July to as long as 160 days for forecasts initialised in February.
-Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the memory of sea ice to initial conditions --at least from October to March when the data assimilated form the other components has little to no influence on sea ice.
+Since the only difference between these forecasts are the initial conditions, this timescale is an indication of the memory of sea ice to initial conditions --at least from October to March when the data assimilated from the other components has little to no influence on sea ice.
 
 Also evident in @fig-iiee is the difference in the error spread at short lead times between +S2 and +S1.
 In all months +S1 has much narrower error spread at the first day of the forecasts.
@@ -840,7 +842,7 @@ Sea ice forecasts from the +S2 model show a significant low extent bias, particu
 This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April.
 This underestimation during the minimum and early freezing season is a common issue in many seasonal-to-subseasonal (S2S) systems, suggesting potential problems either with the model's thermodynamic representation or with short wave radiation forcing, as shown in other climate models [@zampieri2019; @roach2020].
 Even though +S2 shares the same model formulation with +S1, the latter does not suffer from this bias.
-This is due to the assimilation of sea ice concentrations into the initial conditions, which successful corrects for the negative bias in the model.
+This is due to the assimilation of sea ice concentrations into the initial conditions, which successfully corrects for the negative bias in the model.
 Our analysis suggests that the data assimilation system in +S2 is only effectively influencing sea ice initial conditions from June to October, while the rest of the year, the sea ice component runs virtually free, reverting to its biased equilibrium state.
 
 Analysis of the error spread shows that +S2 initial conditions from December to May not only have large errors, but that the initial error spread is very large compared with +S1.
@@ -849,12 +851,12 @@ Instead, it is due to large variance of the mean error of individual forecasts, 
 This is further evidence that individual initial conditions are not being affected by the data assimilation scheme.
 
 Based on the observation that +S2 sea ice initial conditions are essentially not initialised, comparing its forecasts with +S1's allows us to estimate the time-scale for which initial conditions are important.
-This highlights February initial conditions as a crucial for determining sea ice evolution at least up to late June.
-Arctic sea ice forecast also show greater sensitivity to initial conditions in boreal summer compared with boreal winter [@day2014; @bunzel2016], so similar mechanism might be playing a role.
+This highlights February initial conditions as crucial for determining sea ice evolution at least up to late June.
+Arctic sea ice forecasts also show greater sensitivity to initial conditions in boreal summer compared with boreal winter [@day2014; @bunzel2016], so a similar mechanism might be playing a role.
 
 Although forecasts are not skilful for forecasting pan-Antarctic sea ice concentrations, there are some areas where the model does show skill.
 The Weddell Sea, and the Ross Sea to a lesser extent are particularly well forecasted between June and November for forecasts initialised from January to June.
-These regions have been recognised as a regions of high predictability thanks to persistent and eastwardly advected upper ocean heat content anomalies [@bushuk2021].
+These regions have been recognised as a region of high predictability thanks to persistent and eastwardly advected upper ocean heat content anomalies [@bushuk2021].
 Sea surface temperatures are assimilated by +S2 only in areas with temperatures greater than 0°C and errors don't show a clear easterly-propagating signal, so it is not clear if +S2 is leveraging the same source of predictability..
 
 ------------------------------------------------------------------------
