@@ -123,11 +123,11 @@ balbalbal
 # Introduction
 
 Unlike Arctic sea ice, which has been steadily retreating at least since the start of satellite records in the early 80s, Antarctic sea ice has experienced a slightly increasing trend up to 2015, which models systematically failed to reproduce and puzzled researchers [@hobbs2016].
-Then, in 2016 Antarctic sea ice extent dropped precipitously [@turner2017a] and has been at low and record low levels since [@purich2023; @hobs2024; @gilbert2024; @josey2024], even more highlighting our lack of understanding of Antarctic sea ice variability and long-term change [@espinosa2024].
+Then, in 2016 Antarctic sea ice extent dropped precipitously [@turner2017a] and has been at low and record low levels since [@purich2023; @hobbs2024; @gilbert2024; @josey2024], even more highlighting our lack of understanding of Antarctic sea ice variability and long-term change [@espinosa2024].
 
 Antarctic sea ice covers the polar ocean, yet the potential impacts of its variability extend far into the mid and lower latitudes, affecting the circulation of both the ocean and the atmosphere, ocean carbon uptake and biological processes [@fogwill2020, @england2020, @swadling2023].
 In coupled climate model experiments, a reduction in sea ice extent has been shown to reduce the meridional temperature gradient, in turn reducing the eddy-driven jet strength and shifting it equatorward [@england2018 @england2020; @ayres2019; @ayres2022] and vice versa for an increase in sea ice [@raphael2003a; @raphael2011], which is a crucial control on extratropical weather.
-In the Northern Hemisphere, it has been hypothesised that the reduction in Arctic sea ice has led to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015; @smith2022b]. 
+In the Northern Hemisphere, it has been hypothesised that the reduction in Arctic sea ice has led to a weaker, wavier jet, increasing the frequency of extreme events [@barnes2015; @smith2022]. 
 There is some evidence of this effect in the Southern Hemisphere.
 For example, model simulations show a weakened vortex in the middle atmosphere, increased vertical wave flux and greater zonal wave 1 amplitude in austral spring following lower than average sea ice extent at in early winter [@rea2024, @song2025]. 
 But models different models disagree on the exact phase of the zonal wave response, and observations do not show a clear signal [@rea2024].
@@ -146,7 +146,7 @@ This evaluation will inform future work with the prediction system as a research
 ## +S2
 
 +S2 [@wedd2022] became operational in October 2021 by replacing the +S1 system [@hudson2017]..
-The model components of both +S2 and +S1 consist of the Global Atmosphere 6.0 (GA6) [@williams2015; @waters2017], Global Land 6.0 [@best2011; @waters2017], Global Ocean 5.0 [@madec2013; @megann2014] and Global Sea Ice 6.0 [CICE; @rae2015].
+The model components of both +S2 and +S1 consist of the Global Atmosphere 6.0 (GA6) [@williams2015; @waters2017], Global Land 6.0 [@best2011; @waters2017], Global Ocean 5.0 [@gurvan2013; @megann2014] and Global Sea Ice 6.0 [CICE; @rae2015].
 The atmosphere has a N216 horizontal resolution (\~60km in the mid-latitudes) with 85 vertical levels.
 The land model uses the same horizontal grid with 4 soil levels.
 The ocean component has a 1/4º resolution with 75 vertical levels.
