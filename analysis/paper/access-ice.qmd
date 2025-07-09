@@ -219,7 +219,11 @@ extent_daily <- datasets |>
   lapply(extent) |>
   lapply(\(x) ReadNetCDF(x, "aice")) |>
   rbindlist(idcol = "dataset") |>
-  _[, let(lon = NULL, lat = NULL)]
+  _[, let(lon = NULL, lat = NULL)] |> 
+  _[, anom  := aice - mean(aice, na.rm = TRUE), by  = .(yday(time), dataset)] |>
+  # some values before 2010 are zero or extremely low. likely due to missing values.
+  _[year(time) < 2010 & anom < -2.5e12, aice := NA] |>  
+  _[, anom := NULL]
 ```
 
 ```{r hindcast_extent}
