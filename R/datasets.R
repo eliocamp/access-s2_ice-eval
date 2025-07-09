@@ -284,7 +284,7 @@ OSI <- function() {
   dir <- here::here("data/temp/osi/")
   dir.create(dir, FALSE, TRUE)
   requests <- lapply(years, \(year) {
-    raw_file <-  paste0("OSI_", year)
+    raw_file <-  paste0("OSI_", year, ".zip")
     
     if (file.exists(here::here(dir, raw_file))) {
       return(NULL)
@@ -307,7 +307,7 @@ OSI <- function() {
   })
   requests <- Filter(Negate(is.null), requests) 
   
-  if (length(requests != 0)) {
+  if (length(requests) != 0) {
     res <- ecmwfr::wf_request_batch(requests, 
                                     retry = 1,
                                     workers = 20,
@@ -316,7 +316,7 @@ OSI <- function() {
   
   files_year <- vapply(years, FUN.VALUE = character(1), \(year) {
     
-    in_file <- file.path(dir, paste0("OSI_", year))
+    in_file <- file.path(dir, paste0("OSI_", year, ".zip"))
     out_file <- file.path(dir, paste0(year, "merged"))
     
     if (file.exists(out_file)) {
