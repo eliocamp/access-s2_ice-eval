@@ -261,24 +261,39 @@ range_max_lag <- hindcast_extent[mday(time) == 2, .SD[which.max(lag)], by = .(fo
 ```{r fig-hindcast-extent}
 #| fig-cap: Pan-Antarctic median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month with the median sea ice extent of +CDR in the left column and the median difference in the right column. The +CDR climatology is computed in the period corresponding to each hindcast. Circles represent the initial conditions at the first of every month and triangles represent the median value at the first of every month forecasted with the largest possible lead time. Colours indicate the initialisation month of the forecast. 
 
-hindcast_bias_extent <- hindcast_extent |> 
-  _[, median_ci(aice), by = .(forecast_time = update(forecast_time, year = 2001),
-                              lag = as.numeric(as.Date(time) - forecast_time),
-                              model)] |> 
+
+hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |> 
+  extent_daily[i = _, on = c("time")] |> 
+  _[, Difference := Forecast - aice] |> 
+  _[, aice := NULL] |> 
+  tidyfast::dt_pivot_longer(cols = c(Forecast, Difference)) |> 
+  _[, median_ci(value), 
+    by = .(dataset, 
+           model, 
+           measure = name,
+           forecast_time = update(forecast_time, year = 2001),
+           lag = as.numeric(as.Date(time) - forecast_time))] |> 
   _[, time := forecast_time + lag] |>
   _[, time2 := update(time, year = 2001)] |>
   _[, month := lubridate::month(forecast_time, label = TRUE)] |> 
+  _[, model := factor(model, levels = c("S1", "S2"))] |> 
+  _[, measure := factor(measure, levels = c("Forecast", "Difference"))] |> 
+  
   ggplot(aes(time2, mid)) +
-  geom_line(data = extent_climatology[dataset == which_dataset], 
+  geom_line(data = extent_climatology[dataset == which_dataset] |> 
+              _[, measure := factor("Forecast", levels = c("Forecast", "Difference"))], 
             aes(x = as.Date(time),
                 group = dataset)) + 
-  geom_line(aes(color = month, group = interaction(forecast_time, time != time2))) +
   
-  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], by = .(forecast_time, model)], 
-             aes(fill = month), 
+  geom_hline(data = data.table(y = 0, measure = factor("Difference", levels = c("Forecast", "Difference"))), aes(yintercept = 0)) +
+  geom_line(aes(colour = month, 
+                group = interaction(forecast_time, time != time2))) +
+  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], 
+                           by = .(forecast_time, model, measure)], 
+             aes(fill = lubridate::month(time2, label = TRUE)), 
              shape = 24, size = 2.2) +
-  
-  geom_point(data = \(x) x[lag == 1], aes(fill = month), 
+  geom_point(data = \(x) x[lag == 1], 
+             aes(fill = lubridate::month(time2, label = TRUE)), 
              shape = 21, size = 2) +
   
   scale_x_date(NULL, date_breaks = "1 month", 
@@ -286,25 +301,7 @@ hindcast_bias_extent <- hindcast_extent |>
   scale_y_continuous(NULL, labels = labels_extent) +
   scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"), 
                      aesthetics = c("fill", "color"), guide = "none") +
-  facet_wrap(~ model, ncol = 1, labeller = labeller(model = labels_models)) +
-  tag_facets() 
-
-hindcast_bias_extent_dif <- copy(hindcast_bias_extent)
-
-
-hindcast_bias_extent_dif$layers[[1]] <- geom_hline(yintercept = 0) 
-hindcast_bias_extent_dif$data <- extent_daily[hindcast_extent, on = c("time")] |> 
-  _[, median_ci(i.aice - aice), 
-    by = .(forecast_time = update(forecast_time, year = 2001),
-           lag = as.numeric(as.Date(time) - forecast_time),
-           model)] |> 
-  _[, time := forecast_time + lag] |>
-  _[, time2 := update(time, year = 2001)] |>
-  _[, month := lubridate::month(forecast_time, label = TRUE)] 
-
-hindcast_bias_extent +
-  hindcast_bias_extent_dif
-
+  facet_grid(measure ~ model, scales = "free_y")
 ```
 
 @fig-hindcast-extent a shows the median sea ice extent (left column) and median difference with respect of +CDR for the +S2 and +S1 hindcasts (right column).
