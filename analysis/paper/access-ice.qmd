@@ -113,9 +113,10 @@ source(here::here("R/ggplot.R"))
 ```
 
 ```{r mirai_daemons}
-if (!mirai::daemons_set()) invisible(daemons(6))
+if (!mirai::daemons_set()) {
+  invisible(daemons(6))
+}
 ```
-
 
 # Abstract
 
@@ -124,7 +125,7 @@ balbalbal
 # Introduction
 
 Accurately modelling Antarctic sea ice is essential for understanding processes and improving climate projections to inform adaptation strategies.
-Accurate seasonal to sub-seasonal forecasts are also crucial for operation contingency planning in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020]. 
+Accurate seasonal to sub-seasonal forecasts are also crucial for operation contingency planning in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020].
 Improvements in modelled sea-ice might also help improve weather forecasts over and away from sea-ice regions [@rinke2006; @wang2024 @semmler2016].
 
 However, producing accurate Antarctic sea-ice forecasts has been challenging due to model biases, inherent large variability and complexity, and they have lagged behind Arctic sea-ice forecasts[@zampieri2019; @gao2024a].
@@ -135,9 +136,9 @@ Exploring seasonal predictions of Arctic sea-ice, @guemas2016 found that sea-ice
 @day2014 also found seasonally-varying differences in the effect of initialisation, noting that accurate Arctic sea-ice thickness lead to improved sea-ice forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, @holland2013 studied the initial-value predictability of Antarctic sea-ice in a perfect model study using the CCSM3 model.
-They found that sea-ice and ocean initial conditions provide predictive information to forecast sea-ice edge location several months in advance and that some predictability is retained for up to two years thanks to ocean heat content anomalies that are advected eastward. 
+They found that sea-ice and ocean initial conditions provide predictive information to forecast sea-ice edge location several months in advance and that some predictability is retained for up to two years thanks to ocean heat content anomalies that are advected eastward.
 This is in contrast with @marchi2020, who ran perfect model experiments to argue that uncertainty in the predicted atmospheric state and evolution is the main driver of uncertainty in Antarctic sea-ice extent prediction on seasonal timescales, with sea-ice and ocean initial conditions having lesser importance.
-More recently, @morioka2022 studied decadal forecasts of Antarctic sea-ice and found that initialising ocean and sea-ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea. 
+More recently, @morioka2022 studied decadal forecasts of Antarctic sea-ice and found that initialising ocean and sea-ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea.
 It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks: @holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September and @morioka2022 run forecasts only from the 1st of March.
 @marchi2020 also used a coupled ocean–sea-ice model instead of a fully coupled model like @holland2013 did.
 @morioka2022 used observed sea ice initial conditions and compared with observations, while @marchi2020 and @holland2013 are perfect model studies.
@@ -150,7 +151,7 @@ Since model configuration is identical between ACCESS-S1 and ACCESS-S2, they for
 This provides an opportunity to test the effect of sea-ice initial conditions on the forecast of sea-ice concentrations and the climate.
 
 In this study we compare sea-ice hindcasts produced by +S1 and +S2.
-We focus on seasonality of errors and biases and the effect of the data assimilation system. 
+We focus on seasonality of errors and biases and the effect of the data assimilation system.
 This comparison will also inform future work with the prediction system as a research tool to better understand the dynamics and variability of the Antarctic sea ice and its impacts on the climate system as well as to explore the potential of using its sea-ice forecasts for decision-making.
 The work will also serve as a benchmark for future prediction systems to attempt to improve upon.
 
@@ -177,14 +178,13 @@ The +S2 hindcast used in this study runs for the period 1981--2018.
 Each forecast consists of 9 ensemble members built from three consecutive 3-member forecasts initialised at the first of every month and the two previous days and run from 279 days.
 The +S1 hindcast is built in the same manner (albeit with 217-day runs) for the period 1990--2012.
 
-Anomalies for each hindcast are taken with respect to a climatology specific to each initalisation date for the period 1990--2012. 
+Anomalies for each hindcast are taken with respect to a climatology specific to each initalisation date for the period 1990--2012.
 This serves as a first-order correction of model drift.
 
 ## Verification datasets
 
 ```{r datasets}
-datasets <- list(cdr = CDR(),
-                 osi = OSI())
+datasets <- list(cdr = CDR(), osi = OSI())
 which_dataset <- "cdr"
 ```
 
@@ -200,7 +200,7 @@ The data has a resolution of 25 by 25 km and daily from 1978 onwards.
 
 The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility (OSI SAF) [@OSISAF] is another satellite-derived sea ice concentration product.
 It is based on mostly the same sensors as the NOAA CDR but computed independently using different algorithms.
-Figures prepared with this dataset are provided in the supplementary material and don't differ significantly from the ones prepared using CDR. 
+Figures prepared with this dataset are provided in the supplementary material and don't differ significantly from the ones prepared using CDR.
 
 ## Error measures
 
@@ -230,91 +230,119 @@ extent_daily <- datasets |>
   lapply(extent) |>
   lapply(\(x) ReadNetCDF(x, "aice")) |>
   rbindlist(idcol = "dataset") |>
-  _[, let(lon = NULL, lat = NULL)] |> 
-  _[, anom  := aice - mean(aice, na.rm = TRUE), by  = .(yday(time), dataset)] |>
+  _[, let(lon = NULL, lat = NULL)] |>
+  _[, anom := aice - mean(aice, na.rm = TRUE), by = .(yday(time), dataset)] |>
   # some values before 2010 are zero or extremely low. likely due to missing values.
-  _[year(time) < 2010 & anom < -2.5e12, aice := NA] |>  
+  _[year(time) < 2010 & anom < -2.5e12, aice := NA] |>
   _[, anom := NULL]
 ```
 
 ```{r hindcast_extent}
-hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |> 
-  _[, model := relevel(factor(model), "S2")] |> 
-  _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |> 
-  _[lag > 0] |> 
-  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")]  # This member is wrong
+hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |>
+  _[, model := relevel(factor(model), "S2")] |>
+  _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |>
+  _[lag > 0] |>
+  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")] # This member is wrong
 ```
 
 ```{r extent_climatology}
 ranges <- hindcast_extent[, .(range = list(range(time))), by = model]
 
 extent_climatology <- purrr::pmap(ranges, \(model, range) {
-  extent_daily |>  
-    _[time %between% range] |> 
-    _[aice == 0, aice := NA] |> 
-    _[!(month(time) == 2 & mday(time) == 29)] |> 
-    _[, time := update(time, year = 2001)] |> 
-    _[, average(aice), by = .(time, dataset)] |> 
-    _[, model := model] |> 
+  extent_daily |>
+    _[time %between% range] |>
+    _[aice == 0, aice := NA] |>
+    _[!(month(time) == 2 & mday(time) == 29)] |>
+    _[, time := update(time, year = 2001)] |>
+    _[, average(aice), by = .(time, dataset)] |>
+    _[, model := model] |>
     _[]
-}) |> 
+}) |>
   rbindlist()
 ```
 
 ```{r range_max_lag}
-range_max_lag <- hindcast_extent[mday(time) == 2, .SD[which.max(lag)], 
-                                 by = .(forecast_time, model)] |> 
-  _[, .(max = max(lag),
-        min = min(lag)),
-    by = model]
+range_max_lag <- hindcast_extent[
+  mday(time) == 2,
+  .SD[which.max(lag)],
+  by = .(forecast_time, model)
+] |>
+  _[, .(max = max(lag), min = min(lag)), by = model]
 ```
 
 ```{r fig-hindcast-extent}
-#| fig-cap: Pan-Antarctic median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month with the median sea ice extent of +CDR in the left column and the median difference in the right column. The +CDR climatology is computed in the period corresponding to each hindcast. Circles represent the initial conditions at the first of every month and triangles represent the median value at the first of every month forecasted with the largest possible lead time. Colours indicate the initialisation month of the forecast. 
+#| fig-cap: Pan-Antarctic median sea ice extent for al hindcasts initialised the first of the month for +S2 and +S1 in colours representing the start month with the median sea ice extent of +CDR in the left column and the median difference in the right column. The +CDR climatology is computed in the period corresponding to each hindcast. Circles represent the initial conditions at the first of every month and triangles represent the median value at the first of every month forecasted with the largest possible lead time. Colours indicate the initialisation month of the forecast.
 
-
-hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |> 
-  extent_daily[i = _, on = c("time")] |> 
-  _[, Difference := Forecast - aice] |> 
-  _[, aice := NULL] |> 
-  tidyfast::dt_pivot_longer(cols = c(Forecast, Difference)) |> 
-  _[, average(value), 
-    by = .(dataset, 
-           model, 
-           measure = name,
-           forecast_time = update(forecast_time, year = 2001),
-           lag = as.numeric(as.Date(time) - forecast_time))] |> 
+hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
+  extent_daily[i = _, on = c("time")] |>
+  _[, Difference := Forecast - aice] |>
+  _[, aice := NULL] |>
+  tidyfast::dt_pivot_longer(cols = c(Forecast, Difference)) |>
+  _[,
+    average(value),
+    by = .(
+      dataset,
+      model,
+      measure = name,
+      forecast_time = update(forecast_time, year = 2001),
+      lag = as.numeric(as.Date(time) - forecast_time)
+    )
+  ] |>
   _[, time := forecast_time + lag] |>
   _[, time2 := update(time, year = 2001)] |>
-  _[, month := lubridate::month(forecast_time, label = TRUE)] |> 
-  _[, model := factor(model, levels = c("S1", "S2"))] |> 
-  _[, measure := factor(measure, levels = c("Forecast", "Difference"))] |> 
-  
+  _[, month := lubridate::month(forecast_time, label = TRUE)] |>
+  _[, model := factor(model, levels = c("S1", "S2"))] |>
+  _[, measure := factor(measure, levels = c("Forecast", "Difference"))] |>
+
   ggplot(aes(time2, estimate)) +
-  geom_line(data = extent_climatology[dataset == which_dataset] |> 
-              _[, measure := factor("Forecast", levels = c("Forecast", "Difference"))], 
-            aes(x = as.Date(time), colour = dataset, 
-                group = dataset)) + 
-  
-  geom_hline(data = data.table(y = 0, measure = factor("Difference", levels = c("Forecast", "Difference"))), aes(yintercept = 0)) +
-  geom_line(aes(group = interaction(forecast_time, time != time2), colour = model)) +
-  geom_point(data = \(x) x[mday(time) == 2, .SD[which.max(lag)], 
-                           by = .(forecast_time, model, measure)], 
-             aes(fill = model), 
-             shape = 24, size = 2.2) +
-  geom_point(data = \(x) x[lag == 1], 
-             aes(fill = model), 
-             shape = 21, size = 2) +
-  
-  scale_x_date(NULL, date_breaks = "1 month", 
-               date_labels = "%b", expand = c(0, 0)) +
+  geom_line(
+    data = extent_climatology[dataset == which_dataset] |>
+      _[, measure := factor("Forecast", levels = c("Forecast", "Difference"))],
+    aes(x = as.Date(time), colour = dataset, group = dataset)
+  ) +
+
+  geom_hline(
+    data = data.table(
+      y = 0,
+      measure = factor("Difference", levels = c("Forecast", "Difference"))
+    ),
+    aes(yintercept = 0)
+  ) +
+  geom_line(aes(
+    group = interaction(forecast_time, time != time2),
+    colour = model
+  )) +
+  geom_point(
+    data = \(x) {
+      x[
+        mday(time) == 2,
+        .SD[which.max(lag)],
+        by = .(forecast_time, model, measure)
+      ]
+    },
+    aes(fill = model),
+    shape = 24,
+    size = 2.2
+  ) +
+  geom_point(data = \(x) x[lag == 1], aes(fill = model), shape = 21, size = 2) +
+
+  scale_x_date(
+    NULL,
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = c(0, 0)
+  ) +
   scale_y_continuous(NULL, labels = labels_extent) +
-  scale_color_models + 
+  scale_color_models +
   scale_fill_models +
   guides(colour = "none", fill = "none") +
-  # scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"), 
+  # scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"),
   #                    aesthetics = c("fill", "color"), guide = "none") +
-  facet_grid(measure ~ model, scales = "free_y", labeller = labeller(model = labels_models)) +
+  facet_grid(
+    measure ~ model,
+    scales = "free_y",
+    labeller = labeller(model = labels_models)
+  ) +
   tag_facets(tag = "rc") +
   coord_cartesian(clip = "off")
 ```
@@ -335,91 +363,119 @@ From May to October, in +S2 circles are closer to observations than to the trian
 The rest of the year there is little if any difference between circles and triangles in +S2, indicating that the ocean and atmosphere data assimilation is not affecting sea ice and that this component of the model is virtually free-running.
 
 ```{r extent-delta-compute}
-n <- 366*3
+n <- 366 * 3
 w <- 11
 
-dif_hindcast <- hindcast_extent |> 
-  copy() |> 
-  _[order(time)] |> 
-  _[, .(aice = mean(aice)), by = .(model, forecast_time, time)] |> 
-  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), 
-    by = .(model, forecast_time)] |> 
-  _[, dif := frollmean(dif, n = w, align = "center"), by = .(model, forecast_time)] |> 
-  na.omit() |> 
-  _[, average(dif), by = .(model, month(forecast_time), time = update(time, year = 2000))]
+dif_hindcast <- hindcast_extent |>
+  copy() |>
+  _[order(time)] |>
+  _[, .(aice = mean(aice)), by = .(model, forecast_time, time)] |>
+  _[,
+    dif := c(NA, diff(aice) / diff(as.numeric(as.Date(time)))),
+    by = .(model, forecast_time)
+  ] |>
+  _[,
+    dif := frollmean(dif, n = w, align = "center"),
+    by = .(model, forecast_time)
+  ] |>
+  na.omit() |>
+  _[,
+    average(dif),
+    by = .(model, month(forecast_time), time = update(time, year = 2000))
+  ]
 
-dif_extent <- extent_daily |> 
-  _[order(time)] |> 
-  _[, dif := c(NA, diff(aice)/diff(as.numeric(as.Date(time)))), by = .(dataset)] |> 
-  na.omit() |> 
-  _[, dif := frollmean(dif, n = w, align = "center"), by = .(dataset)] |> 
-  _[, average(dif), by = .(dataset, time = update(time, year = 2000))] |> 
+dif_extent <- extent_daily |>
+  _[order(time)] |>
+  _[,
+    dif := c(NA, diff(aice) / diff(as.numeric(as.Date(time)))),
+    by = .(dataset)
+  ] |>
+  na.omit() |>
+  _[, dif := frollmean(dif, n = w, align = "center"), by = .(dataset)] |>
+  _[, average(dif), by = .(dataset, time = update(time, year = 2000))] |>
   _[dataset == which_dataset]
 
 ```
 
 ```{r fig-mean-growth}
-#| fig-cap: Median daily sea ice extent growth of +S1 and +S2 hindcasts and observations computed as the median daily differences in sea ice extent for each date and all lead times. Values are smoothed with a 11-day running mean. 
+#| fig-cap: Median daily sea ice extent growth of +S1 and +S2 hindcasts and observations computed as the median daily differences in sea ice extent for each date and all lead times. Values are smoothed with a 11-day running mean.
 
-dif_extent |> 
-  copy() |> 
+dif_extent |>
+  copy() |>
   ggplot(aes(time, estimate)) +
   geom_hline(yintercept = 0, color = "gray50", linewidth = 0.2) +
   geom_line(aes(color = dataset)) +
-  geom_line(data = dif_hindcast,
-            aes(color = model, group = interaction(model, month, month > month(time)))) +
-  scale_x_datetime(NULL, date_breaks = "1 month", 
-                   date_labels = "%b", expand = c(0, 0)) +
-  scale_y_continuous(NULL, labels = \(x) labels_extent(x, units = "M km²/day")) +
+  geom_line(
+    data = dif_hindcast,
+    aes(color = model, group = interaction(model, month, month > month(time)))
+  ) +
+  scale_x_datetime(
+    NULL,
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = c(0, 0)
+  ) +
+  scale_y_continuous(NULL, labels = \(x) {
+    labels_extent(x, units = "M km²/day")
+  }) +
   scale_color_models +
   coord_cartesian(xlim = as.POSIXct(c("2000-01-01", "2000-12-31"), tz = "UTC"))
 ```
 
 ```{r hindcast_clim}
 zeropad <- function(x, n = 2) formatC(x, width = 2, flag = "0")
-monnb <- function(d) { lt <- as.POSIXlt(as.Date(d, origin="1900-01-01")); 
-lt$year*12 + lt$mon } 
-mondf <- function(d1, d2) { monnb(d2) - monnb(d1) }
+monnb <- function(d) {
+  lt <- as.POSIXlt(as.Date(d, origin = "1900-01-01"))
+  lt$year * 12 + lt$mon
+}
+mondf <- function(d1, d2) {
+  monnb(d2) - monnb(d1)
+}
 
 months <- 1:12
 
 hindcast_clim <- lapply(setNames(months, months), \(month) {
   lapply(c("S1", "S2"), \(model) {
-    here::here(glue::glue("data/derived/climatology/{model}/{zeropad(month)}/em.nc")) |> 
-      cdo_selmonth(month) |> 
-      cdo_execute() |> 
-      ReadNetCDF("aice")  |> 
+    here::here(glue::glue(
+      "data/derived/climatology/{model}/{zeropad(month)}/em.nc"
+    )) |>
+      cdo_selmonth(month) |>
+      cdo_execute() |>
+      ReadNetCDF("aice") |>
       _[, model := model]
-  }) |> 
+  }) |>
     rbindlist()
-}) |> 
-  rbindlist(idcol = "forecast_month") |> 
+}) |>
+  rbindlist(idcol = "forecast_month") |>
   _[, forecast_month := as.numeric(forecast_month)]
 
 
-hindcast_clim <- hindcast_clim |> 
-  copy() |> 
-  _[, .(aice = mean(aice)), by = .(month(time), ygrid, xgrid, forecast_month, model)] |> 
+hindcast_clim <- hindcast_clim |>
+  copy() |>
+  _[,
+    .(aice = mean(aice)),
+    by = .(month(time), ygrid, xgrid, forecast_month, model)
+  ] |>
   _[forecast_month == month]
 
-obs_clim <- CDR() |> 
-  climatology() |> 
+obs_clim <- CDR() |>
+  climatology() |>
   cdo_ymonmean() |>
-  cdo_execute() |> 
-  ReadNetCDF(c(obs = "aice")) |> 
+  cdo_execute() |>
+  ReadNetCDF(c(obs = "aice")) |>
   _[, month := month(time)]
 
-hindcast_clim <- hindcast_clim |> 
+hindcast_clim <- hindcast_clim |>
   merge(obs_clim)
 ```
 
 ```{r fig-bias}
 #| fig-width: 6
 #| fig-height: 6
-#| fig-cap: Mean difference between monthly sea ice concentrations at 0-month lead time +S2 forecast and observations. 
+#| fig-cap: Mean difference between monthly sea ice concentrations at 0-month lead time +S2 forecast and observations.
 #| fig-subcap:
 #|   - "+S1"
-#|   - "+S2" 
+#|   - "+S2"
 #| layout-ncol: 1
 
 # ice_shelves_nsicd <- fread(here::here("data/derived/antarctic_ice_shelves_nsidc.csv"))
@@ -427,49 +483,54 @@ hindcast_clim <- hindcast_clim |>
 s <- lapply(c("S1", "S2"), \(x) {
   g <- hindcast_clim |>
     _[model == x] |>
-    # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |> 
+    # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |>
     # setnames(which_dataset, "obs") |>
     ggplot(aes(xgrid, ygrid)) +
-    geom_contour_fill(aes(z = aice - obs, fill = after_stat(level)), 
-                      breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
-    scale_fill_divergent_discretised(paste0("Bias with respect to ",
-                                            labels_models[which_dataset]),
-                                     low = trans_pink,
-                                     high = trans_blue) +
+    geom_contour_fill(
+      aes(z = aice - obs, fill = after_stat(level)),
+      breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)
+    ) +
+    scale_fill_divergent_discretised(
+      paste0("Bias with respect to ", labels_models[which_dataset]),
+      low = trans_pink,
+      high = trans_blue
+    ) +
     # geom_polygon(data = ice_shelves_nsicd, aes(X, Y, group = group),
     #              colour = "black", fill = "#FAFAFA") +
     geomcoord_antarctica +
     geom_antarctica_fill +
-    facet_wrap(~ month + model , labeller = labeller(month = labels_month)) +
+    facet_wrap(~ month + model, labeller = labeller(month = labels_month)) +
     wide_legend +
-    tag_facets() 
-  
+    tag_facets()
+
   print(g)
-  
 })
 
 ```
 
-@fig-bias shows the difference of monthly mean sea ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest lead time
-From October to May, the model underestimates sea ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea ice concentrations saturate to 1 both in the observations and forecasts.
+@fig-bias shows the difference of monthly mean sea ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest lead time From October to May, the model underestimates sea ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea ice concentrations saturate to 1 both in the observations and forecasts.
 In winter, the differences are mostly on the sea ice edge with light positive bias in the African sector of East Antarctica and negative bias around the Indian Ocean sector which partially compensate, resulting in the near-zero extent bias seen in those months ([Fig. @fig-hindcast-extent]).
 
 ## RMSE
 
 ```{r fig-extent-anom}
-#| fig-cap: Monthly mean sea ice extent anomalies of the observation (black) and forecasts from +S1 (right column) and ACCESS-S2 (left column) at lead times of 0, 2, 4, and 6 months. The RMSE and correlation coefficient and their 95% confidence intervals during the overlapping period of ACCESS-S1 and S2 hindcasts (1990–2013) is shown on the top left and lower right corner of each panel. 
-
+#| fig-cap: Monthly mean sea ice extent anomalies of the observation (black) and forecasts from +S1 (right column) and ACCESS-S2 (left column) at lead times of 0, 2, 4, and 6 months. The RMSE and correlation coefficient and their 95% confidence intervals during the overlapping period of ACCESS-S1 and S2 hindcasts (1990–2013) is shown on the top left and lower right corner of each panel.
 
 months_difference <- function(x, y) {
   lubridate::interval(y, x) %/% months(1)
 }
 
-monthly_extent <- extent_daily |> 
-  _[dataset == which_dataset] |> 
-  _[aice == 0, aice := NA]  |> 
-  _[, .(aice = mean(aice)), by = .(dataset, time = as.Date(round_date(time, "month")))] |>
-  _[, aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE),
-    by = .(month(time), dataset)] |>
+monthly_extent <- extent_daily |>
+  _[dataset == which_dataset] |>
+  _[aice == 0, aice := NA] |>
+  _[,
+    .(aice = mean(aice)),
+    by = .(dataset, time = as.Date(round_date(time, "month")))
+  ] |>
+  _[,
+    aice := Anomaly(aice, year(time) %between% c(1981, 2011), na.rm = TRUE),
+    by = .(month(time), dataset)
+  ] |>
   _[]
 
 N <- uniqueN(monthly_extent$time)
@@ -478,207 +539,255 @@ s1_range <- hindcast_extent[model == "S1"][, range(time)]
 s2_range <- hindcast_extent[model == "S2"][, range(time)]
 
 
-hindast_extent_monthly <- hindcast_extent |> 
-  copy() |> 
-  _[, aice := aice - mean(aice[year(time) %between% c(1981, 2011)]),
-    by = .(lag, model, time = update(time, year = 2000))] |>
-  _[, .(forecast = mean(aice)),
-    by = .(model, forecast_time, time = as.Date(round_date(time, "month")))] |> 
-  _[, lag := months_difference(time, forecast_time)] 
+hindast_extent_monthly <- hindcast_extent |>
+  copy() |>
+  _[,
+    aice := aice - mean(aice[year(time) %between% c(1981, 2011)]),
+    by = .(lag, model, time = update(time, year = 2000))
+  ] |>
+  _[,
+    .(forecast = mean(aice)),
+    by = .(model, forecast_time, time = as.Date(round_date(time, "month")))
+  ] |>
+  _[, lag := months_difference(time, forecast_time)]
 
-hindast_extent_monthly |> 
-  _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |> 
+hindast_extent_monthly |>
+  _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |>
   _[lag %in% (c(1, 3, 5, 7) - 1)] |>
-  _[time %between% s2_range] |> 
+  _[time %between% s2_range] |>
   ggplot(aes(time)) +
   geom_line(aes(y = aice, group = dataset, color = dataset)) +
-  geom_line(aes(y = forecast, color = model))  +
-  geom_text(data = \(x) x[time %between% s1_range, 
-                          rmse(aice, forecast, signif = 2, scale = 1e12),
-                          by = .(lag, model)],
-            aes(label = text),
-            x = -Inf, y = Inf,
-            vjust = 1.2, hjust = 0) +
-  
-  geom_text(data = \(x) x[time %between% s1_range, 
-                          correlate(aice, forecast),
-                          by = .(lag, model)],
-            aes(label = text),
-            vjust = 0, hjust = 1.2,
-            x = Inf, y = -Inf) +
-  
-  
-  scale_y_continuous(NULL,
-                     labels = labels_extent) +
+  geom_line(aes(y = forecast, color = model)) +
+  geom_text(
+    data = \(x) {
+      x[
+        time %between% s1_range,
+        rmse(aice, forecast, signif = 2, scale = 1e12),
+        by = .(lag, model)
+      ]
+    },
+    aes(label = text),
+    x = -Inf,
+    y = Inf,
+    vjust = 1.2,
+    hjust = 0
+  ) +
+
+  geom_text(
+    data = \(x) {
+      x[time %between% s1_range, correlate(aice, forecast), by = .(lag, model)]
+    },
+    aes(label = text),
+    vjust = 0,
+    hjust = 1.2,
+    x = Inf,
+    y = -Inf
+  ) +
+
+  scale_y_continuous(NULL, labels = labels_extent) +
   scale_x_date(NULL, expand = c(0, 0)) +
-  facet_grid(lag ~ model, labeller = labeller(lag = \(x) paste0("Month: ", x))) +
+  facet_grid(
+    lag ~ model,
+    labeller = labeller(lag = \(x) paste0("Month: ", x))
+  ) +
   scale_color_models +
   scale_fill_models
 ```
 
-@fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lead times. 
-Compared with +S1, +S2 anomaly forecast is relatively poor (large RMSE) even for the first month (lead time 0), whereas +S1 has lower RMSE at 6 month lead time than +S2 has at zero lead time. 
+@fig-extent-anom shows monthly sea ice extent anomalies forecasted at selected lead times.
+Compared with +S1, +S2 anomaly forecast is relatively poor (large RMSE) even for the first month (lead time 0), whereas +S1 has lower RMSE at 6 month lead time than +S2 has at zero lead time.
 +S2 shows much larger interannual variability than observations --particularly at short lead times-- with dramatic lows between 1995 and 2007, and highs between 2007 and 2015.
 
-Strangely, for +S2, RMSE improves with lead time, even though the correlation degrades with lead time. This is puzzling behaviour that goes contrary to what is usually seen in prediction models. 
-The explanation seems to be the mentioned increased interannual variability. 
-@fig-extent-sd shows monthly mean sea ice extent of the forecasts as a function of lead time compared with observations. 
-+S1 standard deviation lies within the observed regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at 9 month lead time. 
+Strangely, for +S2, RMSE improves with lead time, even though the correlation degrades with lead time.
+This is puzzling behaviour that goes contrary to what is usually seen in prediction models.
+The explanation seems to be the mentioned increased interannual variability.
+@fig-extent-sd shows monthly mean sea ice extent of the forecasts as a function of lead time compared with observations.
++S1 standard deviation lies within the observed regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at 9 month lead time.
 
 ```{r fig-exent-sd}
-#| fig-cap: Standard deviation and 95% interval of monthly mean sea ice extent of observations and forecast for +S1 and +S2 at different lead times. 
+#| fig-cap: Standard deviation and 95% interval of monthly mean sea ice extent of observations and forecast for +S1 and +S2 at different lead times.
 
-obs_sd <- monthly_extent[time %between% s1_range,
-                                   sd_ci(aice, na.rm = TRUE),
-                                   by = .(month(time), dataset)] |> 
+obs_sd <- monthly_extent[
+  time %between% s1_range,
+  sd_ci(aice, na.rm = TRUE),
+  by = .(month(time), dataset)
+] |>
   _[, .(dataset, month, obs_sd = estimate)]
 
-hindcast_extent_sd <- hindast_extent_monthly[time %between% s1_range, 
-                       sd_ci(forecast, na.rm = TRUE), 
-                       by = .(model, lag, month(time))]
-  
+hindcast_extent_sd <- hindast_extent_monthly[
+  time %between% s1_range,
+  sd_ci(forecast, na.rm = TRUE),
+  by = .(model, lag, month(time))
+]
 
-hindcast_extent_sd |> 
-  _[obs_sd, on = .NATURAL] |> 
+
+hindcast_extent_sd |>
+  _[obs_sd, on = .NATURAL] |>
   ggplot(aes(lag, estimate / obs_sd)) +
   # geom_rect(data = obs_sd, inherit.aes = FALSE,
   #            aes(ymin = low, ymax = high,  fill = dataset, xmin = -Inf, xmax = Inf),
   #               alpha = 0.5) +
   # geom_hline(data = obs_sd, aes(yintercept = estimate, color = dataset)) +
-  geom_ribbon(aes(ymin = low/obs_sd, ymax = high/obs_sd, fill = model), alpha = 0.5) +
+  geom_ribbon(
+    aes(ymin = low / obs_sd, ymax = high / obs_sd, fill = model),
+    alpha = 0.5
+  ) +
   geom_line(aes(color = model)) +
-  
+
   scale_y_continuous("Standardised sea ice extent standard deviation") +
-  scale_x_continuous("Lead time", breaks = c(0:9), expand = c(0, 0), 
-                     trans = scales::reverse_trans()) +
+  scale_x_continuous(
+    "Lead time",
+    breaks = c(0:9),
+    expand = c(0, 0),
+    trans = scales::reverse_trans()
+  ) +
   scale_color_models +
   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month))
+  facet_wrap(~month, labeller = labeller(month = labels_month))
 
 ```
-
 
 ```{r forecast_example}
 mlag <- 0
 sample_date <- "2008-05-02"
-forecast_date <- as.Date(sample_date) 
+forecast_date <- as.Date(sample_date)
 month(forecast_date) <- month(sample_date) - mlag
 mday(forecast_date) <- 1
 
-aice_forecast_example <- c(lapply(c("S1", "S2"), \(model) {
-  month_clim <- formatC(month(forecast_date), width = 2, flag = "0")
-  
-  hindcast(forecast_date, model, 1) |> 
-    cdo_ydaysub(here::here(glue::glue("data/derived/climatology/{model}/{month_clim}/em.nc"))) |>
-    cdo_execute() |> 
-    ReadNetCDF("aice", subset = list(time = sample_date)) |> 
-    _[, model := model]
+aice_forecast_example <- c(
+  lapply(c("S1", "S2"), \(model) {
+    month_clim <- formatC(month(forecast_date), width = 2, flag = "0")
+
+    hindcast(forecast_date, model, 1) |>
+      cdo_ydaysub(here::here(glue::glue(
+        "data/derived/climatology/{model}/{month_clim}/em.nc"
+      ))) |>
+      cdo_execute() |>
+      ReadNetCDF("aice", subset = list(time = sample_date)) |>
+      _[, model := model]
   }),
-  list(CDR() |> 
-       anomalies() |>
-       ReadNetCDF("aice", subset = list(time = sample_date)) |> 
-       _[, model := "cdr"])) |> 
-  rbindlist() 
+  list(
+    CDR() |>
+      anomalies() |>
+      ReadNetCDF("aice", subset = list(time = sample_date)) |>
+      _[, model := "cdr"]
+  )
+) |>
+  rbindlist()
 
 
-thickness_example <- c(S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/hi/daily/e01/di_hi_{format(forecast_date, '%Y%m%d')}_e01.nc",
-  S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/e01/di_ice_{format(forecast_date, '%Y%m%d')}_e01.nc") |> 
+thickness_example <- c(
+  S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/hi/daily/e01/di_hi_{format(forecast_date, '%Y%m%d')}_e01.nc",
+  S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/e01/di_ice_{format(forecast_date, '%Y%m%d')}_e01.nc"
+) |>
   purrr::imap(\(f, model) {
-    f |> 
-      glue::glue() |> 
-      cdo_selname("hi") |> 
-      remap_cdr() |> 
-      cdo_execute(cache = TRUE) |> 
+    f |>
+      glue::glue() |>
+      cdo_selname("hi") |>
+      remap_cdr() |>
+      cdo_execute(cache = TRUE) |>
       ReadNetCDF("hi", subset = list(time = sample_date))
-
-  }) |> 
+  }) |>
   rbindlist(idcol = "model")
 
 ```
 
 +S2 forecasts of sea-ice extent anomalies seem to align moderately well align with observations (leading to moderately high correlation) but their magnitude is overestimated (leading to large errors).
-This suggests that +S2 sea-ice is much more sensitive to atmospheric and oceanic forcing, perhaps due to different thickness. 
-@fig-forecast-example shows sea-ice concentration anomalies (top row) and sea-ice thickness and the difference between the two models (bottom row) for the `r format(as.Date(sample_date), "%e of %B %Y")` initialised one day prior; being that close to initialisation date, these are very approximately the initial conditions. 
+This suggests that +S2 sea-ice is much more sensitive to atmospheric and oceanic forcing, perhaps due to different thickness.
+@fig-forecast-example shows sea-ice concentration anomalies (top row) and sea-ice thickness and the difference between the two models (bottom row) for the `r format(as.Date(sample_date), "%e of %B %Y")` initialised one day prior; being that close to initialisation date, these are very approximately the initial conditions.
 +S1 sea-ice concentrations anomalies are very close to observations as expected from the system assimilating these data.
 +S2 sea-ice concentration anomalies, which are not assimilated, are not as close, but the general pattern is not terrible.
-The system simulates large positive anomalies in the Weddell and Ross seas and slight negative anomalies in the Amundsen and Bellingshausen seas. 
-The fact that +S2 can simulate this pattern without assimilating sea-ice data suggests that atmospheric and oceanic forcing was the dominant factor. 
-However, the magnitude of these anomalies is too big. 
-As shown in @fig-forecast-example bottom row, +S2's sea-ice was thinner than +S1's, even in regions of large positive se-ice concentration anomalies. 
+The system simulates large positive anomalies in the Weddell and Ross seas and slight negative anomalies in the Amundsen and Bellingshausen seas.
+The fact that +S2 can simulate this pattern without assimilating sea-ice data suggests that atmospheric and oceanic forcing was the dominant factor.
+However, the magnitude of these anomalies is too big.
+As shown in @fig-forecast-example bottom row, +S2's sea-ice was thinner than +S1's, even in regions of large positive se-ice concentration anomalies.
 
 ```{r fig-forecast-example}
 #| fig.cap: +S1 and +S2 hindcasts for the 2 of May 2008. Top row shows sea-ice concentration anomalies forecasted by each system and the observations. Bottom row shows forecasted sea-ice thickness and the difference between +S1 and +S2.
 #| fig.height: 7
 #| fig.width: 5.5
 b <- seq(-0.5, 0.5, by = 0.1)
-b <- b[b!= 0]
+b <- b[b != 0]
 
-aice_forecast_example |> 
+aice_forecast_example |>
   ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = aice, fill = ..level..),
-                    breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)) +
-  scale_fill_divergent_discretised("Sea-ice concentration anomaly",
-                                   low = trans_pink,
-                                   high = trans_blue) +
-  geom_antarctica_fill + 
+  geom_contour_fill(
+    aes(z = aice, fill = ..level..),
+    breaks = AnchorBreaks(binwidth = 0.1, exclude = 0)
+  ) +
+  scale_fill_divergent_discretised(
+    "Sea-ice concentration anomaly",
+    low = trans_pink,
+    high = trans_blue
+  ) +
+  geom_antarctica_fill +
   geomcoord_antarctica +
-  facet_wrap(~model, labeller = labeller(model = labels_models))  +
-  wide_legend  +
+  facet_wrap(~model, labeller = labeller(model = labels_models)) +
+  wide_legend +
 
-
-thickness_example |> 
-  _[, model := factor(model, levels = c("S1", "S2", "Difference"))] |> 
-  ggplot(aes(xgrid, ygrid)) +
-  geom_contour_fill(aes(z = hi, fill = ..level..), 
-                    breaks = c(AnchorBreaks(exclude = 0, binwidth = 0.25)(c(0, 2)), Inf)) +
-  # as.discretised_scale(scale_fill_viridis_c)("Sea ice thickness", 
-  #                                            guide = guide_colorsteps(order = 9)) + 
-  scale_fill_divergent_discretised("Sea-ice thickness",
-                                   high = scales::muted("#5ab4ac"),
-                                   guide = guide_colorsteps(order = 9)) +
+  thickness_example |>
+    _[, model := factor(model, levels = c("S1", "S2", "Difference"))] |>
+    ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(
+    aes(z = hi, fill = ..level..),
+    breaks = c(AnchorBreaks(exclude = 0, binwidth = 0.25)(c(0, 2)), Inf)
+  ) +
+  # as.discretised_scale(scale_fill_viridis_c)("Sea ice thickness",
+  #                                            guide = guide_colorsteps(order = 9)) +
+  scale_fill_divergent_discretised(
+    "Sea-ice thickness",
+    high = scales::muted("#5ab4ac"),
+    guide = guide_colorsteps(order = 9)
+  ) +
   ggnewscale::new_scale_fill() +
-  
-  geom_contour_fill(data = \(x) x |> 
-                      dcast(time + xgrid + ygrid ~ model, value.var = "hi") |> 
-                      _[, model := factor("Difference", levels = c("S1", "S2", "Difference"))], 
-                    aes(z = S1 - S2, fill = ..level..), breaks = c(-Inf, b, Inf)) +
-  
-  scale_fill_divergent_discretised("Sea-ice thickness difference",
-                                   guide = guide_colorsteps(order = 0)) +
-  geom_antarctica_fill + 
+
+  geom_contour_fill(
+    data = \(x) {
+      x |>
+        dcast(time + xgrid + ygrid ~ model, value.var = "hi") |>
+        _[, model := factor("Difference", levels = c("S1", "S2", "Difference"))]
+    },
+    aes(z = S1 - S2, fill = ..level..),
+    breaks = c(-Inf, b, Inf)
+  ) +
+
+  scale_fill_divergent_discretised(
+    "Sea-ice thickness difference",
+    guide = guide_colorsteps(order = 0)
+  ) +
+  geom_antarctica_fill +
   geomcoord_antarctica +
   wide_legend +
-  facet_wrap(~ model) +
+  facet_wrap(~model) +
   plot_layout(ncol = 1)
 
 ```
 
-The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times (@fig-exent-sd) suggests that this is an effect of the data assimilation. 
-It is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses in the initial states which then subside at longer lead times when the model is balanced. 
+The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times (@fig-exent-sd) suggests that this is an effect of the data assimilation.
+It is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses in the initial states which then subside at longer lead times when the model is balanced.
 
 ```{r}
-giomas <- here::here("data/derived/giomas.csv") |> 
-  fread() |> 
-  _[, time := as.Date(time)] |> 
+giomas <- here::here("data/derived/giomas.csv") |>
+  fread() |>
+  _[, time := as.Date(time)] |>
   _[, .(thickness = mean(thickness)), by = month(time)]
 ```
-
 
 ```{r}
 
 mean_thickness <- function(concentration, thickness, cell_area = NULL) {
   if (is.null(cell_area)) {
-    cell_area <- concentration |> 
+    cell_area <- concentration |>
       rcdo::cdo_gridarea()
   }
 
   volume <- thickness |>
     rcdo::cdo_mul(concentration) |>
-    rcdo::cdo_mul(cell_area) |> 
+    rcdo::cdo_mul(cell_area) |>
     rcdo::cdo_fldsum()
 
   area <- concentration |>
-    rcdo::cdo_mul(cell_area) |> 
+    rcdo::cdo_mul(cell_area) |>
     rcdo::cdo_fldsum()
 
   rcdo::cdo_div(volume, area) |>
@@ -686,27 +795,42 @@ mean_thickness <- function(concentration, thickness, cell_area = NULL) {
 }
 
 mean_thickness_access <- \(forecast_time, model) {
-  concentration <- hindcast(forecast_time, model = model, members = "em", variable = "aice")
-  thickness <- hindcast(forecast_time, model = model, members = "em", variable = "hi")
-  
-  if (length(thickness) == 0) return(NA_character_)
-  if (length(concentration) == 0) return(NA_character_)
+  concentration <- hindcast(
+    forecast_time,
+    model = model,
+    members = "em",
+    variable = "aice"
+  )
+  thickness <- hindcast(
+    forecast_time,
+    model = model,
+    members = "em",
+    variable = "hi"
+  )
+
+  if (length(thickness) == 0) {
+    return(NA_character_)
+  }
+  if (length(concentration) == 0) {
+    return(NA_character_)
+  }
 
   rcdo::cdo_cache_set(here::here("data/temp/cache/"))
-  cell_area <- thickness |> 
-      rcdo::cdo_gridarea() 
+  cell_area <- thickness |>
+    rcdo::cdo_gridarea()
 
   mean_thickness(concentration, thickness, cell_area)
 }
 
 ```
 
-
 ```{r}
 
 get_dir_part <- function(path, n = 1) {
-  if (n == 1) return(basename(path))
-  
+  if (n == 1) {
+    return(basename(path))
+  }
+
   return(get_dir_part(dirname(path), n = n - 1))
 }
 
@@ -717,100 +841,121 @@ get_model <- function(path) {
 file <- "sithick_SImon_MCM-UA-1-0_historical_r1i1p1f1_gn_185001-201412.nc"
 dates <- function(path) {
   file <- get_dir_part(path, 1)
-  l <- 6+1+6+3
+  l <- 6 + 1 + 6 + 3
   n <- nchar(file)
-  s <- n-l+1
+  s <- n - l + 1
 
   date_start <- substr(file, start = s, s + 5)
-  date_end <- substr(file, start = s+7, n-3)
-  list(start = lubridate::ym(date_start),
-       end = lubridate::ym(date_end))
+  date_end <- substr(file, start = s + 7, n - 3)
+  list(start = lubridate::ym(date_start), end = lubridate::ym(date_end))
 }
 
-thick <- "/g/data/oi10/replicas/CMIP6/CMIP/*/*/historical/r1i1p1f1/SImon/sithick/gn/*/*" |> 
-  Sys.glob() 
-  
-thick <- data.table(thickness = thick) |> 
-    _[, model := get_model(thickness)] |> 
-    _[, c("start", "end") := dates(thickness)] |> 
-    _[]
+thick <- "/g/data/oi10/replicas/CMIP6/CMIP/*/*/historical/r1i1p1f1/SImon/sithick/gn/*/*" |>
+  Sys.glob()
 
-conc <- "/g/data/oi10/replicas/CMIP6/CMIP/*/*/historical/r1i1p1f1/SImon/siconc/gn/*/*" |> 
-  Sys.glob() 
+thick <- data.table(thickness = thick) |>
+  _[, model := get_model(thickness)] |>
+  _[, c("start", "end") := dates(thickness)] |>
+  _[]
+
+conc <- "/g/data/oi10/replicas/CMIP6/CMIP/*/*/historical/r1i1p1f1/SImon/siconc/gn/*/*" |>
+  Sys.glob()
 
 
-conc <- data.table(concentration = conc) |> 
-  _[, model := get_model(concentration)] |> 
+conc <- data.table(concentration = conc) |>
+  _[, model := get_model(concentration)] |>
   _[, c("start", "end") := dates(concentration)]
 
 cmip <- merge(conc, thick, by = c("model", "start", "end"))
 
 
-
-
 ```
-
 
 ```{r}
 hindcast_thickness <- CJ(model = c("S2", "S1")) |>
-  _[, .(forecast_time = get_forecast_times(model)), by = model] |> 
-  _[mday(forecast_time) == 1] |> 
-  _[, thickness := unlist(mirai_map(data.frame(forecast_time, model), 
-                                    mean_thickness_access,
-                                    hindcast = hindcast, mean_thickness = mean_thickness)[.progress])] |> 
+  _[, .(forecast_time = get_forecast_times(model)), by = model] |>
+  _[mday(forecast_time) == 1] |>
+  _[,
+    thickness := unlist(mirai_map(
+      data.frame(forecast_time, model),
+      mean_thickness_access,
+      hindcast = hindcast,
+      mean_thickness = mean_thickness
+    )[.progress])
+  ] |>
   na.omit()
 
 ```
 
-
 ```{r}
-giomas_thickness <- "data/raw/giomas_thickness.nc" |> 
-  cdo_selindexbox(1, 360, 1, 71) |> 
+giomas_thickness <- "data/raw/giomas_thickness.nc" |>
+  cdo_selindexbox(1, 360, 1, 71) |>
   cdo_setvrange(0, 500)
 
-giomas_concentration <- "data/raw/giomas_concentration.nc" |> 
-  cdo_selindexbox(1, 360, 1, 71) |> 
+giomas_concentration <- "data/raw/giomas_concentration.nc" |>
+  cdo_selindexbox(1, 360, 1, 71) |>
   cdo_setvrange(0, 2)
 
-giomas_cellarea <- "data/raw/giomas_cell-area.nc" |> 
-  cdo_selindexbox(1, 360, 1, 71) 
+giomas_cellarea <- "data/raw/giomas_cell-area.nc" |>
+  cdo_selindexbox(1, 360, 1, 71)
 
-giomas <- mean_thickness(giomas_concentration, giomas_thickness, giomas_cellarea) |> 
-  cdo_ymonmean() |> 
-  cdo_execute() |> 
-  ReadNetCDF(c(thickness = "heff")) |> 
+giomas <- mean_thickness(
+  giomas_concentration,
+  giomas_thickness,
+  giomas_cellarea
+) |>
+  cdo_ymonmean() |>
+  cdo_execute() |>
+  ReadNetCDF(c(thickness = "heff")) |>
   _[, month := 1:12]
 
 ```
+
 ```{r}
-hindcast_mean_thickness <- hindcast_thickness |> 
-  _[, thickness |> cdo_monmean() |> cdo_execute(), by = .(model, forecast_time)] |>
-  _[, metR::ReadNetCDF(V1, c(thickness = "hi")), by = .(model, forecast_time)] |> 
-  _[, time := as.Date(update(time, day = 1))] |> 
-  _[, lag :=  months_difference(time, forecast_time)] 
+hindcast_mean_thickness <- hindcast_thickness |>
+  _[,
+    thickness |> cdo_monmean() |> cdo_execute(),
+    by = .(model, forecast_time)
+  ] |>
+  _[,
+    metR::ReadNetCDF(V1, c(thickness = "hi")),
+    by = .(model, forecast_time)
+  ] |>
+  _[, time := as.Date(update(time, day = 1))] |>
+  _[, lag := months_difference(time, forecast_time)]
 ```
 
 ```{r}
-cmip |> 
-  _[model %in% unique(model)[1:10]] |> 
-  _[, mean_thickness(cdo_sellonlatbox(concentration, 0, 360, -90, -40),
-                     cdo_sellonlatbox(thickness, 0, 360, -90, -40)), 
-            by = .(model, start, end)] |> 
-    _[, .(thickness = V1 |> cdo_mergetime() |> cdo_execute()), by = .(model)] |> 
-    _[, ReadNetCDF(thickness, "sithick")[, .(time, sithick)], by = .(model)] |> 
-    _[, .(sithick = mean(sithick)), by = .(model, month(time))] |> 
-    ggplot(aes(month, sithick)) +
-    geom_line(aes(group = model, color = "CMIP6 models")) +
-    geom_line(data = giomas, aes(y = thickness, color = "GIOMAS"), linewidth = 1.4) +
-    scale_color_manual(values = c("CMIP6 models" = "black", GIOMAS =  "#1a7e21")) +
-    scale_y_continuous("Mean sea-ice thickness") +
-    scale_x_continuous(NULL, breaks = 1:12, labels = labels_month)
+cmip |>
+  _[model %in% unique(model)[1:10]] |>
+  _[,
+    mean_thickness(
+      cdo_sellonlatbox(concentration, 0, 360, -90, -40),
+      cdo_sellonlatbox(thickness, 0, 360, -90, -40)
+    ),
+    by = .(model, start, end)
+  ] |>
+  _[, .(thickness = V1 |> cdo_mergetime() |> cdo_execute()), by = .(model)] |>
+  _[, ReadNetCDF(thickness, "sithick")[, .(time, sithick)], by = .(model)] |>
+  _[, .(sithick = mean(sithick)), by = .(model, month(time))] |>
+  ggplot(aes(month, sithick)) +
+  geom_line(aes(group = model, color = "CMIP6 models")) +
+  geom_line(
+    data = giomas,
+    aes(y = thickness, color = "GIOMAS"),
+    linewidth = 1.4
+  ) +
+  scale_color_manual(values = c("CMIP6 models" = "black", GIOMAS = "#1a7e21")) +
+  scale_y_continuous("Mean sea-ice thickness") +
+  scale_x_continuous(NULL, breaks = 1:12, labels = labels_month)
 ```
 
 ```{r}
-hindcast_mean_thickness[time %between% s1_range,
-                          average(thickness), 
-                          keyby = .(lag, model, month(time))] |> 
+hindcast_mean_thickness[
+  time %between% s1_range,
+  average(thickness),
+  keyby = .(lag, model, month(time))
+] |>
   ggplot(aes(lag, estimate)) +
   geom_ribbon(aes(ymin = low, ymax = high, fill = model), alpha = 0.5) +
   geom_line(aes(color = model)) +
@@ -818,23 +963,26 @@ hindcast_mean_thickness[time %between% s1_range,
   scale_color_models +
   scale_fill_models +
   scale_y_continuous("Mean sea-ice thickness") +
-  scale_x_continuous("Lead time", breaks = c(0:9), expand = c(0, 0), 
-                     trans = scales::reverse_trans()) +
-  facet_wrap(~ month, labeller = labeller(month = labels_month))
+  scale_x_continuous(
+    "Lead time",
+    breaks = c(0:9),
+    expand = c(0, 0),
+    trans = scales::reverse_trans()
+  ) +
+  facet_wrap(~month, labeller = labeller(month = labels_month))
 
 ```
 
-
 ```{r}
-hindcast_mean_thickness |> 
-  _[, .(thickness = mean(thickness)), by = .(model, lag, month(time))] |> 
-  _[lag %in% c(0)] |> 
-  ggplot(aes(month, thickness)) + 
+hindcast_mean_thickness |>
+  _[, .(thickness = mean(thickness)), by = .(model, lag, month(time))] |>
+  _[lag %in% c(0)] |>
+  ggplot(aes(month, thickness)) +
   geom_line(aes(color = model, group = interaction(model, lag))) +
   geom_line(data = giomas) +
   scale_color_models +
   scale_y_continuous("Mean sea-ice thickness") +
-  scale_x_continuous(NULL, breaks = 1:12, labels = labels_month) 
+  scale_x_continuous(NULL, breaks = 1:12, labels = labels_month)
 ```
 
 To assess +S2 forecasts quantitatively, we compute error measures for all hindcasts started on the 1st of every month.
@@ -843,81 +991,79 @@ To assess +S2 forecasts quantitatively, we compute error measures for all hindca
 errors <- rbind(
   readRDS(here::here("data/derived/rmse.Rds")),
   readRDS(here::here("data/derived/iiee.Rds"))
-) |> 
-  _[value < 0.01, value := NA] |> 
-  _[value > 3e13, value := NA] |> 
-  _[, time := as.Date(time)] |> 
-  _[, lag := as.numeric(time - time_forecast)] |> 
+) |>
+  _[value < 0.01, value := NA] |>
+  _[value > 3e13, value := NA] |>
+  _[, time := as.Date(time)] |>
+  _[, lag := as.numeric(time - time_forecast)] |>
   _[version == "persistence", member := "0em"] |>
-  _[member == "0em"] |> 
-  _[lag > 0] |> 
-  _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]  # This member is wrong
+  _[member == "0em"] |>
+  _[lag > 0] |>
+  _[!(month(time_forecast) == 1 & member == "07" & version == "S1")] # This member is wrong
 
 ```
 
 ```{r clim_std}
-clim_std <- datasets |> 
-  _[1] |> 
-  lapply(\(x) x |> 
-           anomalies(climatology(x)) |> 
-           cdo_sqr() |> 
-           cdo_fldmean() |> 
-           cdo_sqrt() |> 
-           cdo_execute() |> 
-           ReadNetCDF(c(climatology = "aice")) |> 
-           _[, let(lat = NULL, lon = NULL)]
-  ) |> 
-  rbindlist(idcol = "obs_dataset") |> 
-  _[, time := as.Date(time)] |> 
-  _[climatology == 0, climatology := NA] |> 
-  _[climatology < 0.05, climatology := NA] 
+clim_std <- datasets |>
+  _[1] |>
+  lapply(\(x) {
+    x |>
+      anomalies(climatology(x)) |>
+      cdo_sqr() |>
+      cdo_fldmean() |>
+      cdo_sqrt() |>
+      cdo_execute() |>
+      ReadNetCDF(c(climatology = "aice")) |>
+      _[, let(lat = NULL, lon = NULL)]
+  }) |>
+  rbindlist(idcol = "obs_dataset") |>
+  _[, time := as.Date(time)] |>
+  _[climatology == 0, climatology := NA] |>
+  _[climatology < 0.05, climatology := NA]
 
 ```
 
-
 ```{r clim_std2}
-clim_std2 <- clim_std[errors, on = .NATURAL] |> 
-  _[, let(climatology = NULL,
-          value = climatology)] |> 
-  na.omit() |> 
+clim_std2 <- clim_std[errors, on = .NATURAL] |>
+  _[, let(climatology = NULL, value = climatology)] |>
+  na.omit() |>
   _[, version := "climatology"]
 ```
 
-
-
 ```{r t_test}
 t_test <- function(x, y, ...) {
-  
   test <- t.test(x, y, ...)
-  
-  list(low = test[["conf.int"]][1],
-       high = test[["conf.int"]][2], 
-       estimate = -diff(test$estimate), 
-       p.value = test[["p.value"]]
+
+  list(
+    low = test[["conf.int"]][1],
+    high = test[["conf.int"]][2],
+    estimate = -diff(test$estimate),
+    p.value = test[["p.value"]]
   )
 }
 
 max_lag <- errors[version == "S1", max(lag)]
 
-dif <- errors |> 
-  na.omit() |> 
+dif <- errors |>
+  na.omit() |>
   _[obs_dataset == which_dataset] |>
-  _[measure == "rmse"] |> 
-  _[version != "persistence"] |> 
-  _[lag <= max_lag] |> 
-  dcast(time + time_forecast + member + lag ~ version, value.var = "value") |> 
-  _[, t_test(na.omit(S1), na.omit(S2)), 
-    by = .(lag, month(time_forecast))] |> 
-  _[p.value > 0.01] |> 
-  _[, .SD[which.min(lag)], by = month] |> 
+  _[measure == "rmse"] |>
+  _[version != "persistence"] |>
+  _[lag <= max_lag] |>
+  dcast(time + time_forecast + member + lag ~ version, value.var = "value") |>
+  _[, t_test(na.omit(S1), na.omit(S2)), by = .(lag, month(time_forecast))] |>
+  _[p.value > 0.01] |>
+  _[, .SD[which.min(lag)], by = month] |>
   _[order(month), .(month, lag)]
 
-labels_month_significant <- setNames(paste0(month.abb, " (", dif$lag, ")"),
-                                     1:12)
+labels_month_significant <- setNames(
+  paste0(month.abb, " (", dif$lag, ")"),
+  1:12
+)
 ```
 
 ```{r fig-rmse}
-#| fig-cap: Median RMSE of sea ice concentration anomalies as a function of forecast lead time for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown. 
+#| fig-cap: Median RMSE of sea ice concentration anomalies as a function of forecast lead time for all forecast initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown.
 #| fig.height: 5
 #| fig.width: 9
 
@@ -925,53 +1071,67 @@ month_from_lag <- function(day = 1, step = 2) {
   force(day)
   force(step)
   function(x) {
-    unique(x[, .(lag, month)])[, time := make_date(month = month, day = 1) + lag] |> 
-      _[mday(time) == day, .(lag, month, 
-                             month2 = lubridate::month(time, label = TRUE)
-      )] |> 
+    unique(x[, .(lag, month)])[,
+      time := make_date(month = month, day = 1) + lag
+    ] |>
+      _[
+        mday(time) == day,
+        .(lag, month, month2 = lubridate::month(time, label = TRUE))
+      ] |>
       _[, .SD[((seq_len(.N) + 1) %% step) == 0], by = month]
   }
 }
 
-errors2 <- clim_std2 |> 
+errors2 <- clim_std2 |>
   rbind(errors) |>
   _[measure == "rmse"] |>
-  _[, time2 := update(time, year = 2000)] |> 
+  _[, time2 := update(time, year = 2000)] |>
   # merge(clim_std) |>
-  _[obs_dataset ==  which_dataset] |> 
-  _[, average(value),
-    by = .(lag, version, measure, month(time_forecast), obs_dataset)] 
+  _[obs_dataset == which_dataset] |>
+  _[,
+    average(value),
+    by = .(lag, version, measure, month(time_forecast), obs_dataset)
+  ]
 
-errors2 |> 
-  _[lag <= 120] |> 
+errors2 |>
+  _[lag <= 120] |>
   ggplot(aes(lag, estimate)) +
-  
-  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-             colour = "gray50", linewidth = 0.1) +
-  
-  geom_text(data = month_from_lag(15, 1), aes(y = Inf, label = month2),
-            size = 2.5,
-            vjust = 1) +
-  
-  geom_text(data = month_from_lag(1, 1), aes(y = -Inf, label = lag), 
-            size = 2.5,
-            vjust = 0) +
-  
-  # geom_ribbon(aes(ymin = low, 
-  #                 ymax = high, 
-  #                 color = version, 
+
+  geom_vline(
+    data = month_from_lag(1, 1),
+    aes(xintercept = lag),
+    colour = "gray50",
+    linewidth = 0.1
+  ) +
+
+  geom_text(
+    data = month_from_lag(15, 1),
+    aes(y = Inf, label = month2),
+    size = 2.5,
+    vjust = 1
+  ) +
+
+  geom_text(
+    data = month_from_lag(1, 1),
+    aes(y = -Inf, label = lag),
+    size = 2.5,
+    vjust = 0
+  ) +
+
+  # geom_ribbon(aes(ymin = low,
+  #                 ymax = high,
+  #                 color = version,
   #                 fill = version,
   #                 group = interaction(obs_dataset, version)),
   #             alpha = 0.1) +
   geom_line(aes(color = version, group = interaction(obs_dataset, version))) +
-  
+
   # geom_line(aes(y = clim_std)) +
   scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
-  labs(y = "RMSE", 
-       x = "Lead time (days)") +
+  labs(y = "RMSE", x = "Lead time (days)") +
   scale_color_models +
   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) +
+  facet_wrap(~month, labeller = labeller(month = labels_month_significant)) +
   coord_cartesian(clip = "off")
 ```
 
@@ -983,177 +1143,241 @@ The only exception is around February, where the model has lower RMSE than the p
 ```{r lead-time-window}
 #| fig-cap: Minimum lead time at which each forecast's mean RMSE becomes lower than the 95% confidence interval of persistence forecast RMSE (black lines) and maximum lead time at which each forecast's mean RMSE remains lower than the 95% confidence interval of climatological forecast RMSE (gray lines). Green shading indicates the window where forecasts outperform both persistence (lead times longer than black line) and climatology (lead times shorter than gray line). Text labels show the date corresponding to the maximum lead time at which each forecast outperforms climatology.
 
-rbind(errors2 |> 
-  copy() |> 
-    _[obs_dataset ==  which_dataset] |> 
-  _[, base := low[version == "persistence"], by = .(lag, measure, month, obs_dataset)] |> 
-  _[version != "persistence"] |> 
-  _[version != "climatology"] |> 
-  _[estimate < base] |> 
-  _[, .SD[which.min(lag)], by = .(version, measure, month, obs_dataset)] |> 
-  _[, .(version, month, obs_dataset, lag, benchmark = "persistence")],
-  
-errors2 |> 
-  copy() |> 
-  _[obs_dataset ==  which_dataset] |> 
-  _[, base := low[version == "climatology"], by = .(lag, measure, month, obs_dataset)] |> 
-  _[version != "climatology"] |> 
-  _[version != "persistence"] |> 
-  # _[lag > 2] |> 
-  _[, rle(estimate < base), by= .(version, measure, month, obs_dataset)] |> 
-  _[, .SD[1], by = .(version, measure, month, obs_dataset)] |> 
-  tidyr::complete(version, measure, month, obs_dataset, values, fill = list(lengths = 0)) |> 
-  as.data.table() |> 
-  _[values == TRUE] |> 
-  _[, .(version, month, obs_dataset, lag = lengths, benchmark = "climatology")] 
-) |> 
-  _[, time := make_date(2000, month, 1) + lag] |> 
-  # _[benchmark == "climatology" & version == "S1"] |> 
+rbind(
+  errors2 |>
+    copy() |>
+    _[obs_dataset == which_dataset] |>
+    _[,
+      base := low[version == "persistence"],
+      by = .(lag, measure, month, obs_dataset)
+    ] |>
+    _[version != "persistence"] |>
+    _[version != "climatology"] |>
+    _[estimate < base] |>
+    _[, .SD[which.min(lag)], by = .(version, measure, month, obs_dataset)] |>
+    _[, .(version, month, obs_dataset, lag, benchmark = "persistence")],
+
+  errors2 |>
+    copy() |>
+    _[obs_dataset == which_dataset] |>
+    _[,
+      base := low[version == "climatology"],
+      by = .(lag, measure, month, obs_dataset)
+    ] |>
+    _[version != "climatology"] |>
+    _[version != "persistence"] |>
+    # _[lag > 2] |>
+    _[, rle(estimate < base), by = .(version, measure, month, obs_dataset)] |>
+    _[, .SD[1], by = .(version, measure, month, obs_dataset)] |>
+    tidyr::complete(
+      version,
+      measure,
+      month,
+      obs_dataset,
+      values,
+      fill = list(lengths = 0)
+    ) |>
+    as.data.table() |>
+    _[values == TRUE] |>
+    _[, .(
+      version,
+      month,
+      obs_dataset,
+      lag = lengths,
+      benchmark = "climatology"
+    )]
+) |>
+  _[, time := make_date(2000, month, 1) + lag] |>
+  # _[benchmark == "climatology" & version == "S1"] |>
   ggplot(aes(month, lag)) +
-  ggbraid::geom_braid(data = \(x) dcast(x, month + lag + version ~ benchmark, value.var = "lag"),
-                      alpha = 0.3,
-                      aes(ymin = persistence, ymax = climatology,
-                          fill = climatology > persistence)) +
+  ggbraid::geom_braid(
+    data = \(x) dcast(x, month + lag + version ~ benchmark, value.var = "lag"),
+    alpha = 0.3,
+    aes(
+      ymin = persistence,
+      ymax = climatology,
+      fill = climatology > persistence
+    )
+  ) +
   geom_line(aes(color = benchmark)) +
   # geom_point(aes(color = time), data = \(x) x[lag != 0]) +
-  geom_text(data = \(x) x[, .SD[which.max(lag)], by = .(version, month, obs_dataset)] |> 
-              _[benchmark == "climatology"],
-            aes(label = format(time, "%d %b")),
-            vjust = -0.4) +
-  geom_point(data = \(x) x[, .SD[which.max(lag)], by = .(version, month, obs_dataset)] |> 
-               _[benchmark == "climatology"],
-             aes(color = benchmark)) +
+  geom_text(
+    data = \(x) {
+      x[, .SD[which.max(lag)], by = .(version, month, obs_dataset)] |>
+        _[benchmark == "climatology"]
+    },
+    aes(label = format(time, "%d %b")),
+    vjust = -0.4
+  ) +
+  geom_point(
+    data = \(x) {
+      x[, .SD[which.max(lag)], by = .(version, month, obs_dataset)] |>
+        _[benchmark == "climatology"]
+    },
+    aes(color = benchmark)
+  ) +
   scale_color_models +
   scale_y_continuous("Lead time (days)") +
-  scale_x_continuous("Forecast month", breaks = 1:12, labels = month.abb, minor_breaks = NULL) +
-  scale_fill_manual(guide = "none", values = c(`TRUE` = "seagreen", `FALSE` = "#FFFFFF00")) +
-  facet_wrap(~ version, ncol = 1, labeller = labeller(version = labels_models)) +
+  scale_x_continuous(
+    "Forecast month",
+    breaks = 1:12,
+    labels = month.abb,
+    minor_breaks = NULL
+  ) +
+  scale_fill_manual(
+    guide = "none",
+    values = c(`TRUE` = "seagreen", `FALSE` = "#FFFFFF00")
+  ) +
+  facet_wrap(~version, ncol = 1, labeller = labeller(version = labels_models)) +
   coord_cartesian(clip = "off") +
   tag_facets()
-  
+
 ```
 
-
 ```{r topo_lonlat}
-topo_lonlat <- here::here("data/raw/ETOPO.nc") |> 
-  ReadNetCDF() |> 
-  na.omit() 
+topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
+  ReadNetCDF() |>
+  na.omit()
 ```
 
 ```{r}
-clim_std_lon <- datasets |> 
-  # _[1] |> 
-  lapply(\(x) x |> 
-           anomalies(climatology(x)) |> 
-           cdo_sqr() |> 
-           cdo_remapmean("r15x360") |>
-           cdo_mermean() |>
-           cdo_sqrt() |> 
-           cdo_execute() |> 
-           ReadNetCDF(c(climatology = "aice")) |> 
-           _[, let(lat = NULL, lon = lon + 12)]
-  ) |> 
-  rbindlist(idcol = "obs_dataset") |> 
-  _[, time := as.Date(time)] |> 
-  _[climatology == 0, climatology := NA] |> 
-  _[climatology < 0.05, climatology := NA] 
+clim_std_lon <- datasets |>
+  # _[1] |>
+  lapply(\(x) {
+    x |>
+      anomalies(climatology(x)) |>
+      cdo_sqr() |>
+      cdo_remapmean("r15x360") |>
+      cdo_mermean() |>
+      cdo_sqrt() |>
+      cdo_execute() |>
+      ReadNetCDF(c(climatology = "aice")) |>
+      _[, let(lat = NULL, lon = lon + 12)]
+  }) |>
+  rbindlist(idcol = "obs_dataset") |>
+  _[, time := as.Date(time)] |>
+  _[climatology == 0, climatology := NA] |>
+  _[climatology < 0.05, climatology := NA]
 
 ```
 
-
 ```{r rmse_lon_mean}
-rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |> 
-  readRDS() |> 
-  _[version == "persistence", member := "0em"] |> 
-  _[member == "0em"] |> 
-  _[, lon := lon + 12] |> 
-  _[, time := update(time, hour = 0)] |> 
-  _[, time := as.Date(time)] 
+rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
+  readRDS() |>
+  _[version == "persistence", member := "0em"] |>
+  _[member == "0em"] |>
+  _[, lon := lon + 12] |>
+  _[, time := update(time, hour = 0)] |>
+  _[, time := as.Date(time)]
 
-# base_rmse_lon <- clim_std_lon[rmse_lon_mean[version == "persistence"], on = .NATURAL] |> 
-#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |> 
+# base_rmse_lon <- clim_std_lon[rmse_lon_mean[version == "persistence"], on = .NATURAL] |>
+#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
 #   _[, .(climatology = mean(climatology, na.rm = TRUE),
 #         value = mean(value, na.rm = TRUE)),
-#     by = .(lag, lon, obs_dataset, month = factor(month(time_forecast)))] |> 
+#     by = .(lag, lon, obs_dataset, month = factor(month(time_forecast)))] |>
 #   _[, base := climatology] |>
 #   _[, let(climatology = NULL, value = NULL)] |>
 #   _[]
 ```
 
 ```{r rmse_lon_mean2}
-# rmse_lon_mean <- rmse_lon_mean |> 
-#   copy() |> 
-#   # _[version != "S2"] |> 
-#   _[version != "persistence"] |> 
-#   _[member == "0em"] |> 
-#   _[base_rmse_lon, on = .NATURAL] |> 
-#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |> 
+# rmse_lon_mean <- rmse_lon_mean |>
+#   copy() |>
+#   # _[version != "S2"] |>
+#   _[version != "persistence"] |>
+#   _[member == "0em"] |>
+#   _[base_rmse_lon, on = .NATURAL] |>
+#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
 #   _[, .(dif = mean(value - base, na.rm = TRUE)),
 #     by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]
 ```
 
-
 ```{r fig-rmse_lon, fig.height=7, fig.width=10}
 #| fig-cap: !expr glue::glue"Median difference between RMSE of +S2 forecasts and persistence forecast computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}º wide. Antarctica's coastline is shown at the bottom of each panel for reference.")
-#| fig-subcap: 
+#| fig-subcap:
 #|  - ACCESS-S1
 #|  - ACCESS-S2
 
 binwidth <- 0.015
-gdata <- rmse_lon_mean |> 
-    _[obs_dataset == which_dataset] |> 
-    _[version != "persistence"] |> 
-    _[, lag := as.numeric(as.Date(time) - time_forecast)] |> 
-    clim_std_lon[i = _, on = .NATURAL] |>
-    _[, .(dif = mean(value - climatology, na.rm = TRUE)),
-      by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))] 
+gdata <- rmse_lon_mean |>
+  _[obs_dataset == which_dataset] |>
+  _[version != "persistence"] |>
+  _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
+  clim_std_lon[i = _, on = .NATURAL] |>
+  _[,
+    .(dif = mean(value - climatology, na.rm = TRUE)),
+    by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))
+  ]
 ```
-
 
 ```{r fig-rmse_lon, fig.height=7, fig.width=10}
 lapply(c("S1", "S2"), \(x) {
-  
-  g <- gdata |> 
-    _[version == x] |> 
-    _[, dif := Smooth2D(lag, lon, dif, method = smooth_svd(.1)), by = .(month, version)] |>
+  g <- gdata |>
+    _[version == x] |>
+    _[,
+      dif := Smooth2D(lag, lon, dif, method = smooth_svd(.1)),
+      by = .(month, version)
+    ] |>
     ggplot(aes(lon, lag)) +
-    geom_contour_fill(aes(z = dif, fill = after_stat(level)),
-                      breaks = AnchorBreaks(0, binwidth = binwidth))  +
-    geom_contour_tanaka(aes(z = dif), range = c(0.01, 0.2),
-                        breaks = AnchorBreaks(0, binwidth = binwidth)) +
-    
-    geom_contour_fill(data = topo_lonlat,
-                      aes(lon, scales::rescale(lat, c(-60, 1)), 
-                          z = z, 
-                          fill = NULL),
-                      fill = "#FAFAFA",
-                      breaks = c(0, Inf)) +
-    
-    geom_contour2(data = topo_lonlat,
-                  aes(lon, scales::rescale(lat, c(-60, 1)), z = z),
-                  breaks = 0) +
-    geom_hline(data = month_from_lag(1, 1), aes(yintercept = lag),
-               colour = "gray50", linewidth = 0.1) +
+    geom_contour_fill(
+      aes(z = dif, fill = after_stat(level)),
+      breaks = AnchorBreaks(0, binwidth = binwidth)
+    ) +
+    geom_contour_tanaka(
+      aes(z = dif),
+      range = c(0.01, 0.2),
+      breaks = AnchorBreaks(0, binwidth = binwidth)
+    ) +
 
-    geom_text(data = month_from_lag(15, 1), aes(x = 361, label = month2),
-              size = 2.5,
-              hjust = 0) +
+    geom_contour_fill(
+      data = topo_lonlat,
+      aes(lon, scales::rescale(lat, c(-60, 1)), z = z, fill = NULL),
+      fill = "#FAFAFA",
+      breaks = c(0, Inf)
+    ) +
 
-    geom_text(data = month_from_lag(1, 1), aes(x = -2, label = lag),
-              size = 2.5,
-              hjust = 1) +
+    geom_contour2(
+      data = topo_lonlat,
+      aes(lon, scales::rescale(lat, c(-60, 1)), z = z),
+      breaks = 0
+    ) +
+    geom_hline(
+      data = month_from_lag(1, 1),
+      aes(yintercept = lag),
+      colour = "gray50",
+      linewidth = 0.1
+    ) +
+
+    geom_text(
+      data = month_from_lag(15, 1),
+      aes(x = 361, label = month2),
+      size = 2.5,
+      hjust = 0
+    ) +
+
+    geom_text(
+      data = month_from_lag(1, 1),
+      aes(x = -2, label = lag),
+      size = 2.5,
+      hjust = 1
+    ) +
     scale_fill_divergent_discretised(low = trans_blue, high = trans_pink) +
     scale_x_longitude(ticks = 60, expand = c(0.08, 0)) +
-    
+
     scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
-    labs(fill = NULL, 
-         y = "Lead time (days)") +
+    labs(fill = NULL, y = "Lead time (days)") +
     wide_legend +
-    facet_wrap(~ month, labeller = labeller(month = labels_month)) +
-    theme(panel.background = element_blank(), panel.grid = element_blank(),
-          tagger.panel.tag.background = element_rect(colour = "white", fill = "white")) +
-    tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1)) 
-  
+    facet_wrap(~month, labeller = labeller(month = labels_month)) +
+    theme(
+      panel.background = element_blank(),
+      panel.grid = element_blank(),
+      tagger.panel.tag.background = element_rect(
+        colour = "white",
+        fill = "white"
+      )
+    ) +
+    tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1))
+
   print(g)
 }) -> sink
 ```
@@ -1162,7 +1386,7 @@ Even though +S2 is no better than persistence at forecasting pan-Antarctic sea i
 To analyse the spatial distribution of the model error, we computed sea ice concentration anomalies RMSE on `r uniqueN(rmse_lon_mean$lon)` meridional slices `r diff(unique(rmse_lon_mean$lon))[1]`º wide.
 The median difference between the forecast and persistence RMSE is shown on @fig-rmse_lon, where negative values indicate that the model has lower RMSE than the benchmark.
 
-The skill shown by +S2 at February-March forecasts is observed 
+The skill shown by +S2 at February-March forecasts is observed
 
 by a band of negative values across almost all longitudes.
 The only region where February-March sea ice is not well forecasted is east of the Antarctic Peninsula, which is the only region with consistent summer sea ice.
@@ -1174,70 +1398,99 @@ These two regions are also relatively well forecasted from other months.
 Notably, May forecasts of Weddell sea ice concentration anomalies ([Fig. @fig-rmse_lon] panel e) are skilful after about 20 days and remain so until December.
 The Weddell Sea is also the region with the maximum error --around June regardless of initialisation date.
 
-
 <!-- ```{r errors_ensemble} -->
+
 <!-- errors_ensemble <- readRDS(here::here("data/derived/rmse.Rds")) |>  -->
+
 <!--   _[version != "persistence"] |>  -->
+
 <!--   _[member != "0em"] |>  -->
+
 <!--   _[obs_dataset == which_dataset] |>  -->
+
 <!--   _[value < 0.01, value := NA] |>  -->
+
 <!--   _[value > 3e13, value := NA] |>  -->
+
 <!--   _[!is.na(value)] |>  -->
+
 <!--   _[, time := as.Date(time)] |>  -->
+
 <!--   _[, lag := as.numeric(time - time_forecast)] |>  -->
+
 <!--   _[lag > 0] |>  -->
+
 <!--   _[!(month(time_forecast) == 1 & member == "07" & version == "S1")] -->
+
 <!-- ``` -->
 
 <!-- ```{r fig-spread-errors} -->
+
 <!-- #| fig-cap: Total spread in RMSE, including ensemble spread and forecast spread, as a function of forecast lead time for ACCESS-S1 and ACCESS-S2 hindcasts.  -->
 
 <!-- errors_ensemble |>  -->
-<!--   _[, var(value, na.rm = TRUE),  -->
-<!--     by = .(lag, version, measure, obs_dataset, time_forecast))] |>  -->
-<!--   ggplot(aes(lag, V1)) + -->
-<!--   geom_line(aes(color = version)) + -->
-<!--   scale_color_models + -->
-<!--   scale_y_continuous("RSME ensemble variance") + -->
-<!--   facet_wrap(~ month, labeller = labeller(month = labels_month))  -->
-<!-- ``` -->
 
+<!--   _[, var(value, na.rm = TRUE),  -->
+
+<!--     by = .(lag, version, measure, obs_dataset, time_forecast))] |>  -->
+
+<!--   ggplot(aes(lag, V1)) + -->
+
+<!--   geom_line(aes(color = version)) + -->
+
+<!--   scale_color_models + -->
+
+<!--   scale_y_continuous("RSME ensemble variance") + -->
+
+<!--   facet_wrap(~ month, labeller = labeller(month = labels_month))  -->
+
+<!-- ``` -->
 
 ```{r fig-initial-spread}
 #| fig-cap: Decomposition of forecast error spread at one-day lead time for ACCESS-S1 and ACCESS-S2 hindcasts across initialization months. The top panel shows the mean variance of RMSE errors across ensemble members, while the bottom panel shows the variance of the ensemble mean RMSE error.
 
 which_lags <- c(1, 3, 30)
-rbind(mean_variance = errors_ensemble |>
-        _[lag %in% which_lags] |> 
-        _[measure == "rmse"] |>
-        _[obs_dataset == which_dataset] |>
-        _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-        _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-      
-      variance_of_mean = clim_std2 |> 
-        rbind(errors) |>
-        _[measure == "rmse"] |> 
-        _[lag %in% which_lags] |> 
-        _[measure == "rmse"] |>
-        # _[version != "persistence"] |> 
-        _[obs_dataset == which_dataset] |>
-        _[, .(value = var(value, na.rm = TRUE)),
-          by = .(version, 
-                 month(time_forecast),
-                 lag)],
-      idcol = "component") |> 
+rbind(
+  mean_variance = errors_ensemble |>
+    _[lag %in% which_lags] |>
+    _[measure == "rmse"] |>
+    _[obs_dataset == which_dataset] |>
+    _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |>
+    _[,
+      .(value = mean(V1, na.rm = TRUE)),
+      by = .(version, month(time_forecast), lag)
+    ],
+
+  variance_of_mean = clim_std2 |>
+    rbind(errors) |>
+    _[measure == "rmse"] |>
+    _[lag %in% which_lags] |>
+    _[measure == "rmse"] |>
+    # _[version != "persistence"] |>
+    _[obs_dataset == which_dataset] |>
+    _[,
+      .(value = var(value, na.rm = TRUE)),
+      by = .(version, month(time_forecast), lag)
+    ],
+  idcol = "component"
+) |>
   ggplot(aes(month, sqrt(value))) +
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous("Standard deviation") +
   # scale_color_models +
   scale_x_continuous("Month", breaks = 1:12, labels = month.abb, ) +
   scale_color_models +
-  facet_grid(lag ~ component,
-             labeller = labeller(component = c(mean_variance = "Mean standard deviation of errors in ensemble members",
-                                               variance_of_mean = "Standard deviation of ensemble mean error."))) +
+  facet_grid(
+    lag ~ component,
+    labeller = labeller(
+      component = c(
+        mean_variance = "Mean standard deviation of errors in ensemble members",
+        variance_of_mean = "Standard deviation of ensemble mean error."
+      )
+    )
+  ) +
   tag_facets(tag = "rc")
 ```
-
 
 Also evident in @fig-initial-spread is the difference in the error spread at short lead times between +S2 and +S1.
 In all months +S1 has much narrower error spread at the first day of the forecasts.
@@ -1247,51 +1500,60 @@ For +S2, this is true only between July and October.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it is not constant.
 
 ```{r fig-iiee}
-#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lead time for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lead time at which the mean error of each model is not statistically significant at a 1% level using a two-sided t-test. 
+#| fig-cap: Median and 95% coverage of Integrated Ice Edge Error as a function of forecast lead time for all forecast initialised on the first of each month for +S1 and +S2 hindcasts. For each month, the number in parenthesis indicates the minimum lead time at which the mean error of each model is not statistically significant at a 1% level using a two-sided t-test.
 
-errors |> 
+errors |>
   _[measure == "iiee"] |>
   _[obs_dataset == which_dataset] |>
-  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |> 
-  _[, median_ci(value), 
-    by = .(lag, version, measure, obs_dataset, month(time_forecast))] |> 
+  # _[, month := lubridate::month(time_forecast, label = TRUE)]  |>
+  _[,
+    median_ci(value),
+    by = .(lag, version, measure, obs_dataset, month(time_forecast))
+  ] |>
   ggplot(aes(lag, estimate)) +
-  
-  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-             colour = "gray50", linewidth = 0.1) +
-  
-  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
-            size = 2.5,
-            vjust = 1) +
-  
-  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
-            size = 2.5,
-            vjust = 0) +
-  
-  geom_ribbon(aes(ymin = low, 
-                  ymax = high, 
-                  color = version, 
-                  fill = version), alpha = 0.1) +
+
+  geom_vline(
+    data = month_from_lag(1, 1),
+    aes(xintercept = lag),
+    colour = "gray50",
+    linewidth = 0.1
+  ) +
+
+  geom_text(
+    data = month_from_lag(15, 2),
+    aes(y = Inf, label = month2),
+    size = 2.5,
+    vjust = 1
+  ) +
+
+  geom_text(
+    data = month_from_lag(1, 2),
+    aes(y = -Inf, label = lag),
+    size = 2.5,
+    vjust = 0
+  ) +
+
+  geom_ribbon(
+    aes(ymin = low, ymax = high, color = version, fill = version),
+    alpha = 0.1
+  ) +
   geom_line(aes(color = version), linewidth = 1) +
-  
-  
-  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == "S1"], 
-  #              aes(x = lag, 
+
+  # geom_errorbar(data = \(x) x[dif, on = .NATURAL][version == "S1"],
+  #              aes(x = lag,
   #                  ymin = estimate - (high - low), ymax = estimate + (high - low))) +
-  
+
   # geom_point(data = \(x) x[dif, on = .NATURAL][version == "S1"],
   # aes(lag, estimate), size = 3, shape = 21) +
-  
-  
+
   scale_y_continuous(labels = labels_extent) +
   scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
   scale_color_models +
   scale_fill_models +
-  labs(y = NULL, 
-       x = "Lead time (days)") +
+  labs(y = NULL, x = "Lead time (days)") +
   #   scale_color_models +
   #   scale_fill_models +
-  facet_wrap(~ month, labeller = labeller(month = labels_month_significant)) 
+  facet_wrap(~month, labeller = labeller(month = labels_month_significant))
 ```
 
 To compare +S2 with +S1, we computed the IIEE for both models.
@@ -1308,7 +1570,7 @@ For +S2, this is true only between July and October.
 For all other months, the error spread is more or less stable throughout the forecast window, indicating that not only the initial error is high, but it is not constant.
 
 ```{r fig-iiee-variance}
-#| fig-cap: Mean spread of IIEE at different lead times for different models. 
+#| fig-cap: Mean spread of IIEE at different lead times for different models.
 #| fig.height: 6
 #| fig.width: 8
 labels_extent_2 <- function(x) {
@@ -1318,44 +1580,67 @@ labels_extent_2 <- function(x) {
   x
 }
 
-rbind(mean_variance = errors |>
-        _[measure == "iiee"] |>
-        _[obs_dataset == which_dataset] |>
-        _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-        _[, .(value = mean(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-      
-      variance_of_mean = errors |>
-        _[measure == "iiee"] |>
-        _[obs_dataset == which_dataset] |>
-        _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |> 
-        _[, .(value = var(V1, na.rm = TRUE)), by = .(version, month(time_forecast), lag)],
-      idcol = "component") |> 
-  
+rbind(
+  mean_variance = errors |>
+    _[measure == "iiee"] |>
+    _[obs_dataset == which_dataset] |>
+    _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |>
+    _[,
+      .(value = mean(V1, na.rm = TRUE)),
+      by = .(version, month(time_forecast), lag)
+    ],
+
+  variance_of_mean = errors |>
+    _[measure == "iiee"] |>
+    _[obs_dataset == which_dataset] |>
+    _[, mean(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |>
+    _[,
+      .(value = var(V1, na.rm = TRUE)),
+      by = .(version, month(time_forecast), lag)
+    ],
+  idcol = "component"
+) |>
+
   ggplot(aes(lag, value)) +
-  
-  
-  geom_vline(data = month_from_lag(1, 1), aes(xintercept = lag), 
-             colour = "gray50", linewidth = 0.1) +
-  
-  geom_text(data = month_from_lag(15, 2), aes(y = Inf, label = month2), 
-            size = 2.5,
-            vjust = 1) +
-  
-  geom_text(data = month_from_lag(1, 2), aes(y = -Inf, label = lag), 
-            size = 2.5,
-            vjust = 0) +
-  
+
+  geom_vline(
+    data = month_from_lag(1, 1),
+    aes(xintercept = lag),
+    colour = "gray50",
+    linewidth = 0.1
+  ) +
+
+  geom_text(
+    data = month_from_lag(15, 2),
+    aes(y = Inf, label = month2),
+    size = 2.5,
+    vjust = 1
+  ) +
+
+  geom_text(
+    data = month_from_lag(1, 2),
+    aes(y = -Inf, label = lag),
+    size = 2.5,
+    vjust = 0
+  ) +
+
   geom_line(aes(color = version), linewidth = 1) +
-  scale_y_continuous("Variance", 
-                     labels = labels_extent_2) +
+  scale_y_continuous("Variance", labels = labels_extent_2) +
   # scale_color_models +
   scale_x_continuous("Lead time (days)", breaks = NULL) +
   scale_color_models +
-  ggh4x::facet_nested_wrap(month ~ component, ncol = 6, 
-                           remove_labels = "all",
-                           labeller = labeller(month = labels_month, 
-                                               component = c(mean_variance = "Mean variance",
-                                                             variance_of_mean = "Variance of mean"))) 
+  ggh4x::facet_nested_wrap(
+    month ~ component,
+    ncol = 6,
+    remove_labels = "all",
+    labeller = labeller(
+      month = labels_month,
+      component = c(
+        mean_variance = "Mean variance",
+        variance_of_mean = "Variance of mean"
+      )
+    )
+  )
 ```
 
 The large initial error spread could be due either to large spread of ensemble members or to large spread of individual forecasts.
