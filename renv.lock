@@ -156,6 +156,26 @@
       ],
       "Hash": "543776ae6848fde2f48ff3816d0628bc"
     },
+    "broom": {
+      "Package": "broom",
+      "Version": "1.0.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "backports",
+        "dplyr",
+        "generics",
+        "glue",
+        "lifecycle",
+        "purrr",
+        "rlang",
+        "stringr",
+        "tibble",
+        "tidyr"
+      ],
+      "Hash": "8fcc818f3b9887aebaf206f141437cc9"
+    },
     "bslib": {
       "Package": "bslib",
       "Version": "0.7.0",
@@ -313,6 +333,17 @@
       ],
       "Hash": "d06cd1a942bb17b607df7d57048d6840"
     },
+    "dichromat": {
+      "Package": "dichromat",
+      "Version": "2.0-0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "16e66f2a483e124af5fc6582d26005f7"
+    },
     "digest": {
       "Package": "digest",
       "Version": "0.6.35",
@@ -365,7 +396,7 @@
     },
     "ecmwfr": {
       "Package": "ecmwfr",
-      "Version": "2.0.1",
+      "Version": "2.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -374,9 +405,10 @@
         "getPass",
         "httr",
         "keyring",
-        "memoise"
+        "memoise",
+        "tools"
       ],
-      "Hash": "90f144a435bc55e338aeee1e414eaa18"
+      "Hash": "83d3de5359e050eb69f15985d9b40565"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -514,6 +546,22 @@
       ],
       "Hash": "281e56bcab06202f51be7b50254f2fce"
     },
+    "ggbraid": {
+      "Package": "ggbraid",
+      "Version": "0.2.3",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "nsgrantham",
+      "RemoteRepo": "ggbraid",
+      "RemoteRef": "main",
+      "RemoteSha": "e1018d7a86bc33a46ca85cf6f88a5149256e1598",
+      "Requirements": [
+        "R",
+        "ggplot2"
+      ],
+      "Hash": "e3cdf279aa32ddb7b18a2154162d88a7"
+    },
     "ggh4x": {
       "Package": "ggh4x",
       "Version": "0.2.8",
@@ -547,6 +595,16 @@
       ],
       "Hash": "8c66cab1c405c580ff5f5bede2b3d91e"
     },
+    "ggnewscale": {
+      "Package": "ggnewscale",
+      "Version": "0.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "ggplot2"
+      ],
+      "Hash": "0e4714a05e572eacd7c232fde675558e"
+    },
     "ggperiodic": {
       "Package": "ggperiodic",
       "Version": "1.0.3",
@@ -563,7 +621,7 @@
     },
     "ggplot2": {
       "Package": "ggplot2",
-      "Version": "3.5.1",
+      "Version": "3.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -584,7 +642,7 @@
         "vctrs",
         "withr"
       ],
-      "Hash": "44c6a2f8202d5b7e878ea274b1092426"
+      "Hash": "7ad64861e028a777d7d67ff83231b548"
     },
     "globals": {
       "Package": "globals",
@@ -844,6 +902,31 @@
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
     },
+    "mapproj": {
+      "Package": "mapproj",
+      "Version": "1.2.12",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "maps",
+        "stats"
+      ],
+      "Hash": "4faf18bb114cb1eeeeea9872ba5deb42"
+    },
+    "maps": {
+      "Package": "maps",
+      "Version": "3.4.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "utils"
+      ],
+      "Hash": "fd17b77df6edadecf2fe08382c5a2eb1"
+    },
     "markdown": {
       "Package": "markdown",
       "Version": "1.13",
@@ -926,6 +1009,17 @@
       ],
       "Hash": "18e9c28c1d3ca1560ce30658b22ce104"
     },
+    "mirai": {
+      "Package": "mirai",
+      "Version": "2.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "nanonext"
+      ],
+      "Hash": "197314588929cab57dcc02b7c1f59e82"
+    },
     "munsell": {
       "Package": "munsell",
       "Version": "0.5.1",
@@ -936,6 +1030,16 @@
         "methods"
       ],
       "Hash": "4fd8900853b746af55b81fda99da7695"
+    },
+    "nanonext": {
+      "Package": "nanonext",
+      "Version": "1.6.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "3616336d212a29d0ef856f387aa4983b"
     },
     "ncdf4": {
       "Package": "ncdf4",
@@ -977,6 +1081,24 @@
         "utils"
       ],
       "Hash": "bd93354f4a2ee4e096e3d7ad33e08b72"
+    },
+    "pals": {
+      "Package": "pals",
+      "Version": "1.10",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "colorspace",
+        "dichromat",
+        "grDevices",
+        "graphics",
+        "mapproj",
+        "maps",
+        "methods",
+        "stats"
+      ],
+      "Hash": "ef746a417596d661828bde99cd6c36aa"
     },
     "parallelly": {
       "Package": "parallelly",
@@ -1057,6 +1179,28 @@
       ],
       "Hash": "bd54ba8a0a5faded999a7aab6e46b374"
     },
+    "progressr": {
+      "Package": "progressr",
+      "Version": "0.15.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "digest",
+        "utils"
+      ],
+      "Hash": "f8e9876b6ffff900e83f171081cacd6f"
+    },
+    "proj4": {
+      "Package": "proj4",
+      "Version": "1.0-14",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "1e3f9f3e86ddcb8542794fec82eee6e2"
+    },
     "proxy": {
       "Package": "proxy",
       "Version": "0.4-27",
@@ -1096,21 +1240,21 @@
     },
     "rcdo": {
       "Package": "rcdo",
-      "Version": "0.1.0.9000",
+      "Version": "0.3.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "eliocamp",
       "RemoteRepo": "rcdo",
       "RemoteRef": "main",
-      "RemoteSha": "891489a2ca3834ac07e67c5056e5a1e6ed440a57",
+      "RemoteSha": "a84aad7d2ade35bae74bf1d6391c088e9183f60f",
       "Requirements": [
         "R",
         "R6",
         "cli",
         "rlang"
       ],
-      "Hash": "d9d424bf0cc49d9ab3bb90fa172d625d"
+      "Hash": "fd604b5f9e3c94932086c60346036449"
     },
     "renv": {
       "Package": "renv",
@@ -1230,6 +1374,20 @@
       ],
       "Hash": "c19df082ba346b0ffa6f833e92de34d1"
     },
+    "scattermore": {
+      "Package": "scattermore",
+      "Version": "1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "ggplot2",
+        "grDevices",
+        "graphics",
+        "grid",
+        "scales"
+      ],
+      "Hash": "d316e4abb854dd1677f7bd3ad08bc4e8"
+    },
     "sf": {
       "Package": "sf",
       "Version": "1.0-16",
@@ -1346,6 +1504,41 @@
         "vctrs"
       ],
       "Hash": "a84e2cc86d07289b3b6f5069df7a004c"
+    },
+    "tidyfast": {
+      "Package": "tidyfast",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cpp11",
+        "data.table"
+      ],
+      "Hash": "b1f239394f01d099fbf25f96a92047b3"
+    },
+    "tidyr": {
+      "Package": "tidyr",
+      "Version": "1.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cli",
+        "cpp11",
+        "dplyr",
+        "glue",
+        "lifecycle",
+        "magrittr",
+        "purrr",
+        "rlang",
+        "stringr",
+        "tibble",
+        "tidyselect",
+        "utils",
+        "vctrs"
+      ],
+      "Hash": "915fb7ce036c22a6a33b5a8adb712eb1"
     },
     "tidyselect": {
       "Package": "tidyselect",

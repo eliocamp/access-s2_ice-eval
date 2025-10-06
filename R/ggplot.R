@@ -25,8 +25,9 @@ ggplot2::theme_set(ggplot2::theme_minimal() +
                      ))
 wide_legend <- ggplot2::theme(legend.key.width = grid::unit(1, 'null'))
 
-trans_pink <- "#D07C8E"
-trans_blue <- "#0AA3CE"
+
+trans_pink <- scales::muted("#F7A8B8", l = 60, c = 100)
+trans_blue <- scales::muted("#55CDFC", l = 60, c = 100)
 
 
 

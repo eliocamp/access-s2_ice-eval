@@ -3,7 +3,7 @@ library(data.table)
 library(metR)
 source(here::here("R/datasets.R"))
 
-future::plan("multicore", workers = 12)
+future::plan("multicore", workers = 20)
 
 file <- get_forecast_times("S2") |> 
   Filter(f = \(x) lubridate::day(x) == 1 & lubridate::month(x) == 1) |> 
@@ -24,26 +24,11 @@ compute_clim <- function(model, month) {
   dates <- get_forecast_times(model) |> 
     Filter(f = \(x) lubridate::day(x) == 1 & lubridate::month(x) == month & lubridate::year(x) %between% year_clim) 
   
-  # the 7th member has some weird jumps and inconsistencies. 
-  if (model == "S1" && month == 1) {
-    members <- c(1:6, 8:9)
-  } else {
-    members <- 1:9
-  }
-  forecasts <- hindcast(dates, model, 1)
-  
-  # Some forecast have less than the correct number of days. 
-  # Throw them out
-  size <- forecasts |> 
-    file.size()
-  
-  ndays <- floor(size/bytes_per_day)
-  
-  forecasts[ndays >= 215] |> 
+  hindcast(dates, model, members = "em") |> 
     cdo_mergetime() |> 
     cdo_ydaymean() |> 
     cdo_setyear(2000) |> 
-    cdo_execute(output = file, options = "-L")
+    cdo_execute(output = file, options = "-L -O", cache = TRUE)
 }
 
 

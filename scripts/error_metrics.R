@@ -1,4 +1,6 @@
-logfile <- here::here("logs/error_metrics.log")
+chunk <- as.numeric(Sys.getenv("CHUNK", 0))
+
+logfile <- here::here(glue::glue("logs/error_metrics{chunk}.log"))
 log <- function(text) {
   messg <- paste0(format(lubridate::now()), ": ", text)
   if (interactive()) {
@@ -7,7 +9,6 @@ log <- function(text) {
     write(messg, logfile, append = TRUE)    
   }
 }
-on.exit(log("exiting"))
 writeLines("", logfile)
 log("Booting up")
 
@@ -157,6 +158,7 @@ compute_metrics <- function(forecast_time, member, version, obs_dataset) {
   tick <- lubridate::now()
   cdo_options_set(c("-L"))
   
+  log(glue::glue("Trying to get {forecast_time} forecast for {version} member {member}"))
   file <- hindcast(forecast_time, model = version, members = member)
 
   if (length(file) == 0) {
@@ -289,68 +291,47 @@ obs_dataset  <-  all_files[i, ]$obs_dataset
 version  <-  all_files[i, ]$version
 member  <-  all_files[i, ]$member
 
-future_pwalk(all_files, compute_metrics, .options = furrr_options(seed = NULL))
-
-
-read_measures <- function(dir) {
-  files <- list.files(dir, include.dirs = FALSE, recursive = TRUE, full.names = TRUE) 
+if (chunk != 0) {
+  log("Filtering..")
+  n <- floor(seq(1, nrow(all_files), length.out = 11))
   
-  dates <- paste0(here::here("data/derived"), "/(\\w*)/(\\w*)/(\\w*)/di_aice_(\\d{8})_e([\\dm]{2}).nc") |>
-    utils::strcapture(files,
-                      proto = list(
-                        measure = character(),
-                        version = character(),
-                        obs_dataset = character(),
-                        time_forecast = character(),
-                        member = character()
-                      ), perl = TRUE
-    ) |>
-    data.table::as.data.table() |>
-    _[, time_forecast := as.Date(time_forecast, format = "%Y%m%d")] |>
-    _[]
+  select <- seq(n[chunk], n[chunk+1])
   
-  # rmse_lon is 360 times larger than the other measures, so it 
-  # just doesnt fit into memory. :( 
-  # if (dates$measure[1] == "rmse_lon") {
-  #   which_read <- dates[, which(obs_dataset == "cdr")]
-  #   files <- files[which_read]
-  #   dates <- dates[which_read]
-  # }
+  all_files <- all_files[select]
   
-  future_map(seq_along(files), \(i) {
-    ncfile <- ncdf4::nc_open(files[[i]])
-    on.exit(ncdf4::nc_close(ncfile))
-    data <- try(metR::ReadNetCDF(ncfile, vars = c(value = "aice")), silent = TRUE)
-    
-    if (inherits(data, "try-error")) {
-      file.remove(files[[i]])
-      warning("file ", basename(files[[i]]), " deleted")
-      return(NULL)
-    }
-    
-    data |>
-      _[, let(lat = NULL)] |>
-      cbind(dates[i]) |>
-      _[]
-  }) |>
-    data.table::rbindlist()
 }
 
-log("Reading RMSE")
-rmse_dir |> 
-  read_measures() |>
-  _[, lon := NULL] |>
-  saveRDS(here::here("data/derived", "rmse.Rds"))
+log("Computing members")
+future_pwalk(all_files, compute_metrics, .options = furrr_options(seed = NULL))
+log("Finishes computing members")
 
-log("Reading IIEE")
-iiee_dir |> 
-  read_measures() |>
-  _[, lon := NULL] |>
-  saveRDS(here::here("data/derived", "iiee.Rds"))
 
-log("Reading RMSE_lon")
-rmse_lon_dir |> 
-  read_measures() |>
-  _[, let(measure = NULL)] |>
-  saveRDS(here::here("data/derived", "rmse_lon.Rds"))
+em_files <- data.table::CJ(
+  forecast_time = forecast_times_s1,
+  member = "em",
+  version = c("S1"),
+  obs_dataset = names(obs$data)
+) |>
+  rbind(
+    data.table::CJ(
+      forecast_time = forecast_times_s2,
+      member = "em",
+      version = c("S2"),
+      obs_dataset = names(obs$data)
+    )
+  ) |>
+  _[mday(forecast_time) == 1]
 
+if (chunk != 0) {
+  log("Filtering..")
+  n <- floor(seq(1, nrow(all_files), length.out = 11))
+
+  select <- seq(n[chunk], n[chunk+1])
+
+  em_files <- em_files[select]
+
+}
+
+log("Computing ensemble mean")
+future_pwalk(em_files, compute_metrics, .options = furrr_options(seed = NULL))
+0

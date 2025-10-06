@@ -220,57 +220,15 @@ S2_reanalysis <- function() {
     rcdo::cdo_execute(output = file, options = "-L")
 }
 
-hindcast <- function(forecast_times, model, members = 1:9) {
-  if (model == "S2") {
-    S2_hindcast(forecast_times, members)
-  } else {
-    S1_hindcast(forecast_times, members)
-  }
-}
-
-S2_hindcast <- function(forecast_times, members = 1:9) {
+hindcast <- function(forecast_times, model, members = 1:9, variable = "aice") {
+  members <- ifelse(members == "em", members, formatC(as.numeric(members), width = 2, flag = "0"))
+  
   data <- data.table::CJ(forecast_time = forecast_times, member = members)
   
-  raw_files <- here::here("data/derived/hindcast/S2/",
+  raw_files <- here::here("data/derived/hindcast", variable, model, 
                           data$forecast_time, 
                           paste0(formatC(data$member, width = 2, flag = "0"), ".nc"))
   raw_files[file.exists(raw_files)]
-}
-
-
-S1_hindcast <- function(forecast_times, members = 1:9) {
-  data <- data.table::CJ(forecast_time = forecast_times, member = members)
-  
-  raw_files <- paste0(
-    "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/e0",
-    data$member,
-    "/di_ice_",
-    format(as.Date(data$forecast_time), "%Y%m%d"),
-    "_e0",
-    data$member,
-    ".nc"
-  )
-  
-  exists <- file.exists(raw_files)
-  stopifnot(all(exists))
-  
-  files <- here::here("data/derived/hindcast/S1/", 
-                      data$forecast_time,
-                      paste0(formatC(data$member, width = 2, flag = "0"), ".nc"))
-  
-  furrr::future_map_chr(seq_along(files), \(f) {
-    if (file.exists(files[f])) {
-      return(files[f])
-    }
-    
-    dir.create(dirname(files[f]), showWarnings = FALSE, recursive = TRUE)
-    raw_files[f] |>
-      rcdo::cdo_selname("aice") |>
-      remap_cdr() |>
-      cdo_del29feb() |>
-      rcdo::cdo_execute(output = files[f], options = "-L")
-  })
-  files
 }
 
 OSI <- function() {
