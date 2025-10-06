@@ -1,4 +1,7 @@
 ---
+editor:
+  markdown:
+    wrap: sentence
 title: Evaluation of +S2 sea ice forecast and some other better title
 pdf-engine: pdflatex
 journal:
