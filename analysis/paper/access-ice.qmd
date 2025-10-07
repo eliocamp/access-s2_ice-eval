@@ -1,81 +1,56 @@
 ---
-editor:
-  markdown:
-    wrap: sentence
-title: Evaluation of +S2 sea ice forecast and some other better title
-pdf-engine: pdflatex
-journal:
-  name: tc
+title: Quarto Template for Springer Nature
+format:
+  nature-pdf:
+    # journal.cite-style is included in the tex file but ignored by pandoc if 
+    # cite-method is not `natbib`.
+    journal:
+      cite-style: sn-nature
+    # `citeproc` is the pandoc default. Set `cite-method: natbib` if required
+    # to use the bst styles from the upstream template.
+    cite-method: natbib
+    keep-tex: true
+    equal-margins: false
+    classoption: referee
 author:
-  - given_name: Elio 
-    surname: Campitelli
-    affiliation: "1,2"
-    email: elio.campitelli@monash.edu
-    corresponding: true
-  - given_name: Ariaan 
-    surname: Purich
-    affiliation: "1,2"
-  - given_name: Julie
-    surname: Arblaster
-    affiliation: "1,2"
-  - given_name: Eun-Pa
-    surname: Lim
-    affiliation: "3"
-  - given_name: Matthew
-    surname: Wheeler
-    affiliation: "3"
-  - given_name: Phillip
-    surname: Reid
-    affiliation: "3"        
-  
-affiliation:
-  - code: 1
-    address: School of Earth, Atmosphere and Environment, Monash University, Australia
-  - code: 2
-    address: Securing Antarctica’s Environmental Future, Monash University, Australia
-  - code: 3
-    address: Bureau of Meteorology
-
-abstract: The abstract goes here.
-bibliography: references.bib
-running:
-  title: +S2 sea ice forecast
-  author: Campitelli et al.
-# This section is mandatory even if you declare that no competing interests are present.
-competinginterests: The authors declare no competing interests.
-# See https://publications.copernicus.org/for_authors/licence_and_copyright.html, normally used for transferring the copyright, if needed. 
-# Note: additional copyright statements for affiliated software or data need to be placed in the data availability section. 
-copyrightstatement: The author's copyright for this publication is transferred to institution/company. 
-### The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
-### It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
-### Note: unless stated otherwise, software and data affiliated with the manuscript are assumed to be published under the same licence as the article (currently Creative Commons 4.0)
-availability:
-  #code: |
-  #  use this to add a statement when having only software code available
-  #data: |
-  #  use this to add a statement when having only data sets available
-  codedata: use this to add a statement when having data sets and software code available
-  sample: use this section when having geoscientific samples available
-  videosupplement: use this section when having video supplements available
-  authorcontribution: Contributions
-  disclaimer: We like Copernicus.
-  acknowledgements: Acknowledgements will gohere
-  appendix: |
-    \section{Figures and tables in appendices}
-    Regarding figures and tables in appendices, the following two options are possible depending on your general handling of figures and tables in the manuscript environment:
-    \subsection{Option 1}
-    If you sorted all figures and tables into the sections of the text, please also sort the appendix figures and appendix tables into the respective appendix sections.
-    They will be correctly named automatically.
-    \subsection{Option 2}
-    If you put all figures after the reference list, please insert appendix tables and figures after the normal tables and figures.
-    
-    To rename them correctly to A1, A2, etc., please add the following commands in front of them:
-    `\appendixfigures` needs to be added in front of appendix figures
-    `\appendixtables` needs to be added in front of appendix tables
-    
-    Please add `\clearpage` between each table and/or figure.
-    
-format: pdf
+  - name: Author One
+    affiliations:
+      - name: Harvard University
+        id: 1
+        department: Department of Government
+        address: 1737 Cambridge Street
+        city: Cambridge
+        state: MA
+        postal-code: 02138
+      - name: Harvard University
+        id: 2
+        department: Department of Statistics
+        address: 1 Oxford Street
+        city: Cambridge
+        state: MA
+        postal-code: 02138
+    attributes:
+      equal-contributor: true
+  - name: Author Two
+    affiliations:
+      - name: Yale University
+        id: 3
+        department: Department of Political Science
+        address: 115 Prospect Street
+        city: New Haven
+        state: CT
+        postal-code: 06511
+    email: corresponding@email.com
+    attributes:
+      equal-contributor: true
+      corresponding: true
+  - name: Author Three
+    affiliations:
+      - ref: 1
+abstract: |
+  The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. Authors are advised to check the author instructions for the journal they are submitting to for word limits and if structural elements like subheadings, citations, or equations are permitted.
+keywords: [template, demo]
+bibliography: bibliography.bib  
 
 execute: 
   echo: false
@@ -91,6 +66,7 @@ search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
+
 ---
 
 ```{r setup, include=FALSE, cache = FALSE}
@@ -167,7 +143,6 @@ The atmosphere has a N216 horizontal resolution (\~60 km in the mid-latitudes) w
 The land model uses the same horizontal grid as the atmosphere with four soil levels.
 The ocean component has a nominal horizontal resolution of 1/4º with 75 vertical levels.
 The sea-ice component, based on CICE version 4.1, has the same resolution as the ocean component and five sea-ice thickness categories as well as an open water category.
-
 
 Both systems take atmospheric initial conditions derived from ERA-interim [@dee2011] for their hindcasts.
 The main difference between the hindcasts of the two systems are the ocean and sea-ice initial conditions.
