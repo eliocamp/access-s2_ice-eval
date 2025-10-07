@@ -1319,6 +1319,7 @@ To analyse the spatial distribution of the model error, we computed the RMSE of 
 We control for some areas being naturally easier to forecast than others by computing the RMSE skill score with the climatological forecast RMSE as reference. 
 
 For +S1 forecasts (@fig-rmse_lon-1), skill tends to be lower off the coast of Eastern Antarctica even at short lead times; for instance, the skill score for forecasts initialised in May and June are negative between 0° and 120°E even at almost zero lead time. 
+This mirrors @libera2022 findings of a “winter predictability barrier”, although they focus on the Weddell sea and here we show that the effect seems to be stronger more to the East. 
 In western Antarctica there is a hint of easterly-propagating skill in forecasts initialised in February and March. 
 This is consistent with @holland2013 findings that memory of sea-ice anomalies are stored in ocean heat content anomalies that are transported east by the Antarctic Circumpolar Current. 
 
@@ -1405,26 +1406,37 @@ At longer lead times, the spread of +S1 and persistence forecast standard deviat
 
 ## Conclusions
 
-Sea ice forecasts from the +S2 model show a significant low extent bias, particularly during late summer and early autumn.
-This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April.
-This underestimation during the minimum and early freezing season is a common issue in many seasonal-to-subseasonal (S2S) systems, suggesting potential problems either with the model's thermodynamic representation or with short wave radiation forcing, as shown in other climate models [@zampieri2019; @roach2020].
-Even though +S2 shares the same model formulation with +S1, the latter does not suffer from this bias.
-This is due to the assimilation of sea ice concentrations into the initial conditions, which successfully corrects for the negative bias in the model.
-Our analysis suggests that the data assimilation system in +S2 is only effectively influencing sea ice initial conditions from June to October, while the rest of the year, the sea ice component runs virtually free, reverting to its biased equilibrium state.
+Sea-ice forecasts from the +S2 system show a significant low extent bias, particularly during late summer and early autumn. 
+This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April. 
+This underestimation during the minimum and early freezing season is a common issue in many seasonal-to-subseasonal (S2S) systems, suggesting potential problems either with the model’s thermodynamic representation or with short wave radiation forcing, as shown in other climate models [@zampieri2019; @roach2020].
+Even though +S2 shares the same model formulation with +S1, the latter does not suffer from this bias, indicating that assimilating sea-ice concentrations successfully corrects for the negative bias that exists in the free-running model.
+
+Ensemble spread grows quickly even when perturbations are only implemented in the atmosphere component (in +S1), indicating that sea-ice is indeed responding quickly to atmospheric perturbations. 
+However, our analysis suggests that the atmosphere and ocean data assimilation implemented in +S2 is only effectively influencing sea-ice initial conditions from June to October, while the rest of the year, the sea-ice component runs virtually free, reverting to its biased equilibrium state. 
 
 Analysis of the error spread shows that +S2 initial conditions from December to May not only have large errors, but that the initial error spread is very large compared with +S1.
 This spread is not due to the perturbation scheme, since the mean error variance for individual forecasts is low and comparable with +S1.
-Instead, it is due to large variance of the mean error of individual forecasts, which is comparable to the climatology spread.
-This is further evidence that individual initial conditions are not being affected by the data assimilation scheme.
+Instead, it is due to large variance of the mean error of individual forecasts, which is comparable to the climatology spread. This is further evidence that individual initial conditions are not being affected by the data assimilation scheme.
 
-Based on the observation that +S2 sea ice initial conditions are essentially not initialised, comparing its forecasts with +S1's allows us to estimate the time-scale for which initial conditions are important.
-This highlights February initial conditions as crucial for determining sea ice evolution at least up to late June.
-Arctic sea ice forecasts also show greater sensitivity to initial conditions in boreal summer compared with boreal winter [@day2014; @bunzel2016], so a similar mechanism might be playing a role.
+Although +S1 only assimilates sea-ice concentration, it is clear that sea-ice thickness is also affected. 
++S1 simulates significantly thicker ice than +S2 and in both systems sea-ice is thicker at shorter lead times than at longer lead times. 
+Both the explicit data assimilation in +S2 and the effects of atmospheric and oceanic data assimilation in +S1 might be nudging simulated sea ice to be thicker than the model equilimbrium state.  
+We believe that the thinner sea-ice in +S2 is a partial cause for the large sea-ice extent variance, but other mechanisms, such as unbalanced initial conditions might be important. 
 
-Although forecasts are not skilful for forecasting pan-Antarctic sea ice concentrations, there are some areas where the model does show skill.
-The Weddell Sea, and the Ross Sea to a lesser extent are particularly well forecasted between June and November for forecasts initialised from January to June.
-These regions have been recognised as a region of high predictability thanks to persistent and eastwardly advected upper ocean heat content anomalies [@bushuk2021].
-Sea surface temperatures are assimilated by +S2 only in areas with temperatures greater than 0°C and errors don't show a clear easterly-propagating signal, so it is not clear if +S2 is leveraging the same source of predictability..
+Given that +S2 sea-ice extent is essentially not initialised by the observations, comparing its forecasts with those of +S1 allows us to estimate the time-scale for which initial conditions are important. 
+We find that initial conditions affect Antarctic sea-ice forecasts in ther order of a few months, but that effect is seasonally dependent. 
+January to April initial conditions improve forecasts for up to 3 months with, February initial conditions in particular are shown to be crucial for determining sea-ice evolution at least up to May. 
+Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal Summer, compared with boreal Winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
+
+Forecasts initialised in winter have very little skill and +S1 and +S2 forecast errors are not statistically different after just 2 weeks. 
+This is consistent with @libera2022's finding of a “winter predictability barrier” in the Weddell sea, although they describe the barrier as sharp loss of predictability in July, and here we find a gradual reduction in skill compared with climatology around June. 
+This difference might be due to our use of pan-Antarctic RMSE, since our regional analysis indicates that the degraded skill is most dramatic in the King Haakon sea. 
+
+These findings have important implications for both operational forecasting, model development and predictability studies.
+For operational centers, our results suggest that efforts to improve sea-ice data assimilation should prioritize the summer and autumn months when initial conditions have the greatest impact on forecast skill. 
+Additionally, the substantial bias in +S2 highlights the need for improved model physics, particularly in the representation of sea-ice thermodynamics and radiation processes. 
+Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
+Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
 
 ------------------------------------------------------------------------
 
