@@ -113,7 +113,7 @@ source(here::here("R/datasets.R"))
 source(here::here("R/ggplot.R"))
 ```
 
-```{r mirai_daemons}
+```{r mirai_daemons, cache = FALSE}
 if (!mirai::daemons_set()) {
   invisible(daemons(6))
 }
