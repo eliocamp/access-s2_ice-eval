@@ -1,5 +1,5 @@
 ---
-title: Quarto Template for Springer Nature
+title: Evaluating Seasonal Predictability of Antarctic Sea Ice and the importance of initial conditions with fully coupled models
 format:
   nature-pdf:
     # journal.cite-style is included in the tex file but ignored by pandoc if 
@@ -13,44 +13,45 @@ format:
     equal-margins: false
     classoption: referee
 author:
-  - name: Author One
+  - name: Elio Campitelli
     affiliations:
-      - name: Harvard University
+      - name: Monash University, Australia,
         id: 1
-        department: Department of Government
-        address: 1737 Cambridge Street
-        city: Cambridge
-        state: MA
-        postal-code: 02138
-      - name: Harvard University
+        department: School of Earth, Atmosphere and Environment
+        # address: 1737 Cambridge Street
+        # city: Cambridge
+        # state: MA
+        # postal-code: 02138
+      - name: Monash University, Australia
         id: 2
-        department: Department of Statistics
-        address: 1 Oxford Street
-        city: Cambridge
-        state: MA
-        postal-code: 02138
+        department: Securing Antarctica’s Environmental Future
+        # address: 1 Oxford Street
+        # city: Cambridge
+        # state: MA
+        # postal-code: 02138
+    email: elio.campitelli@monash.edu
     attributes:
-      equal-contributor: true
-  - name: Author Two
-    affiliations:
-      - name: Yale University
-        id: 3
-        department: Department of Political Science
-        address: 115 Prospect Street
-        city: New Haven
-        state: CT
-        postal-code: 06511
-    email: corresponding@email.com
-    attributes:
-      equal-contributor: true
       corresponding: true
-  - name: Author Three
+  - name: Ariaan Purich
     affiliations:
       - ref: 1
-abstract: |
-  The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. Authors are advised to check the author instructions for the journal they are submitting to for word limits and if structural elements like subheadings, citations, or equations are permitted.
-keywords: [template, demo]
-bibliography: bibliography.bib  
+      - ref: 2
+  - name: Julie Arblaster
+    affiliations:
+      - ref: 1
+      - ref: 2
+  - name: Eun-Pa Lim
+    affiliations:
+      - department: Research, Bureau of Meteorology
+        id: 3
+  - name: Mathew Wheeler
+    affiliations:
+      - ref: 3      
+  - name: Phillip Reid
+    affiliations:
+      - ref: 3      
+keywords: [sea ice, predictabilty, initial conditions, forecasting]
+bibliography: references.bib  
 
 execute: 
   echo: false
@@ -59,9 +60,10 @@ execute:
   cache: true
 
 filters:
-  - ../../_extensions/pandoc-ext/abstract-section/abstract-section.lua
+  - _extensions/ute/search-replace/search-replace.lua
+  - _extensions/pandoc-ext/abstract-section/abstract-section.lua
   # - ../../_extensions/mloubout/critic-markup/critic-markup.lua
-  - ../../_extensions/ute/search-replace/search-replace.lua
+  
 search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
@@ -97,7 +99,15 @@ if (!mirai::daemons_set()) {
 
 # Abstract
 
-balbalbal
+Accurate Antarctic sea-ice forecasts are crucial for climate monitoring and operational planning, yet they remain challenging due to model biases and complex ice-ocean-atmosphere interactions. 
+We investigate the role of initial conditions on Antarctic sea-ice forecasts by comparing hindcasts from two versions of the Australian Bureau of Meteorology's ACCESS seasonal forecast system: +S1 and +S2. 
+They use identical model configuration and differ only in their initial conditions; primarily in that +S2 does not assimilate sea-ice observations. 
+Our analysis reveals that both systems experience an extended melt season and delayed growth phase. 
+This leads to a significant negative sea-ice extent bias which is corrected only in +S1 by the data assimilation system. 
+The impact of the initial conditions on forecast errors varies dramatically by season: summer and autumn initial conditions (January-April) provide predictive skill for up to three months, with February initial conditions being particularly crucial. 
+In contrast, winter forecasts off the two systems are statistically indistinguishable after only two weeks. 
+Regional analysis of forecast skill suggests that this winter predictability barrier is most dramatic over Eastern Antarctica, where evern +S1 shows negative skill. 
+These findings highlight the critical importance of comprehensive year-round sampling in predictability studies and suggest that operational sea-ice data assimilation efforts should prioritize the summer-autumn period when initial conditions have maximum impact on forecast skill.
 
 # Introduction
 
@@ -608,7 +618,7 @@ The explanation seems to be the mentioned increased interannual variability.
 @fig-extent-sd shows monthly mean sea-ice extent of the forecasts as a function of lead time compared with observations.
 +S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at 9 month lead time for most months.
 
-```{r fig-exent-sd}
+```{r fig-extent-sd}
 #| fig-cap: Interannual standard deviation with 95% confidence interval of monthly mean sea-ice extent forecasted for each month divided by that month’s sea-ice extent observation standard deviation. +S1 and +S2 at different lead times. Each panel indicates the target month. Note the reverse horizontal axis.
 
 obs_sd <- monthly_extent[
@@ -697,7 +707,7 @@ thickness_example <- c(
 +S2 forecasts of sea-ice extent anomalies seem to align moderately well with observations (leading to moderately high correlation) but their magnitude is overestimated (leading to large errors).
 This could be caused by +S2 sea ice being much more sensitive to atmospheric and oceanic forcing, perhaps due to lower thickness. 
 
-As an example, @fig-forecast-exampleshows sea-ice concentration anomalies (top row) and sea-ice thickness and the difference between the two models (bottom row) for `r format(as.Date(sample_date), "%e %B %Y")` initialised one day prior; being that close to initialisation date, these are very approximately the initial conditions. 
+As an example, @fig-forecast-example shows sea-ice concentration anomalies (top row) and sea-ice thickness and the difference between the two models (bottom row) for `r format(as.Date(sample_date), "%e %B %Y")` initialised one day prior; being that close to initialisation date, these are very approximately the initial conditions. 
 +S1 sea-ice concentrations anomalies are very close to observations as expected from the system assimilating these data. 
 +S2 sea-ice concentration anomalies, which are not assimilated, are not as close, but the large-scale pattern is aligned with observations.
 The system simulates large positive anomalies in the Weddell and Ross seas and slight negative anomalies in the Amundsen and Bellingshausen seas.
@@ -874,7 +884,7 @@ Supporting the idea that thinner ice is what causes the increased extent variabi
 However, in both systems, forecasted sea-ice is thicker at shorter lead times and then decreases, particularly in the summer months.
 If thinner ice were a sufficient cause of increased variability, then we would expect variability to increase with lead time in both forecasting systems.
 
-The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-exent-sd]) suggests that the data assimilation procedure is partly to blame. 
+The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-extent-sd]) suggests that the data assimilation procedure is partly to blame. 
 It is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses that are amplified by the thin ice in the initial states which then subside at longer lead times when the model is balanced. 
 
 To assess +S2 forecasts in more detail, we compute error measures for all hindcasts started on the 1st of every month.
@@ -955,7 +965,7 @@ labels_month_significant <- setNames(
 ```
 
 ```{r fig-rmse}
-#| fig-cap: Mean RMSE of sea-ice concentration anomalies as a function of forecast lead time for all forecasts initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown.
+#| fig-cap: Mean RMSE of sea-ice concentration anomalies as a function of forecast lead time for all forecasts initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown. In parenthersis, the shortest time at which +S1 and +S2 mean RMSE is not statistically different at the 99% confidence level.
 #| fig.height: 5
 #| fig.width: 9
 
@@ -1038,7 +1048,7 @@ The lead time at which +S1 forecast error is higher than the climatological fore
 +S2 forecasts never have lower error than climatology, on the other hand, except marginally in October forecasts. 
 
 @fig-lead-time-window summarises the lead time window in which each hindcast is better than both the persistence forecast and the climatological forecast as a function of forecast month. 
-+S1 forecasts have a wider lead time window in the Summer than the other seasons and is not better than both benchmarks at forecasting June sea-ice concentration anomalies. 
++S1 forecasts have a wider lead time window in the summer than the other seasons and is not better than both benchmarks at forecasting June sea-ice concentration anomalies. 
 Forecasts initialised in May and June are particularly poor, and July cannot be forecasted better than the benchmarks. 
 This is consistent with the mid-winter loss of predictability observed by @libera2022, who attributed it to deep warm water entraining into the mixed layer. 
 
@@ -1401,7 +1411,7 @@ We believe that the thinner sea-ice in +S2 is a partial cause for the large sea-
 Given that +S2 sea-ice extent is essentially not initialised by the observations, comparing its forecasts with those of +S1 allows us to estimate the time-scale for which initial conditions are important. 
 We find that initial conditions affect Antarctic sea-ice forecasts in ther order of a few months, but that effect is seasonally dependent. 
 January to April initial conditions improve forecasts for up to 3 months with, February initial conditions in particular are shown to be crucial for determining sea-ice evolution at least up to May. 
-Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal Summer, compared with boreal Winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
+Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal summer, compared with boreal winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
 
 Forecasts initialised in winter have very little skill and +S1 and +S2 forecast errors are not statistically different after just 2 weeks. 
 This is consistent with @libera2022's finding of a “winter predictability barrier” in the Weddell sea, although they describe the barrier as sharp loss of predictability in July, and here we find a gradual reduction in skill compared with climatology around June. 
