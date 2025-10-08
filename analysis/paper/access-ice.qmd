@@ -5,13 +5,14 @@ format:
     # journal.cite-style is included in the tex file but ignored by pandoc if 
     # cite-method is not `natbib`.
     journal:
-      cite-style: sn-nature
+      cite-style: sn-mathphys-num
     # `citeproc` is the pandoc default. Set `cite-method: natbib` if required
     # to use the bst styles from the upstream template.
     cite-method: natbib
     keep-tex: true
     equal-margins: false
     classoption: referee
+    fig-width: 5  
 author:
   - name: Elio Campitelli
     affiliations:
@@ -68,7 +69,6 @@ search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
-
 ---
 
 ```{r setup, include=FALSE, cache = FALSE}
@@ -113,7 +113,7 @@ These findings highlight the critical importance of comprehensive year-round sam
 
 Accurately modelling Antarctic sea ice is essential for understanding processes and improving climate projections to inform adaptation strategies.
 Accurate seasonal to sub-seasonal forecasts are also crucial for operation contingency planning in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020].
-Improvements in modelled sea-ice might also help improve weather forecasts over and away from sea-ice regions [@rinke2006; @wang2024 @semmler2016].
+Improvements in modelled sea-ice might also help improve weather forecasts over and away from sea-ice regions [@rinke2006; @wang2024; @semmler2016].
 
 However, producing accurate Antarctic sea-ice forecasts has been challenging due to model biases, inherent large variability and complexity, and they have lagged behind Arctic sea-ice forecasts[@zampieri2019; @gao2024a].
 Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023] and machine learning approaches [e.g. @dong2024; @lin2025], which also underscores the need for better understanding of sea-ice dynamics, and drivers of its variability.
@@ -282,6 +282,7 @@ range_max_lag <- hindcast_extent[
 
 ```{r fig-hindcast-extent}
 #| fig-cap: "Row a: Pan-Antarctic mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S1 (column 2; purple). Mean sea-ice extent from NOAA/NSIDC CDRV4 in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the end of forecasts (i.e., the longest possible lead time)."
+#| fig-height: 4
 
 hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
   extent_daily[i = _, on = c("time")] |>
@@ -338,7 +339,7 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
 
   scale_x_date(
     NULL,
-    date_breaks = "1 month",
+    date_breaks = "2 month",
     date_labels = "%b",
     expand = c(0, 0)
   ) +
@@ -410,6 +411,7 @@ dif_extent <- extent_daily |>
 
 ```{r fig-mean-growth}
 #| fig-cap:  Mean daily sea-ice extent growth (10^6 km^2/day) in +S1 (green) and +S2 (purple) hindcasts and observations (black), computed as the mean daily differences in sea-ice extent between each date and the next for each forecast month. Values are smoothed with a 11-day running mean.
+#| fig-height: 4
 
 dif_extent |>
   copy() |>
@@ -480,19 +482,10 @@ hindcast_clim <- hindcast_clim |>
   merge(obs_clim)
 ```
 
-```{r fig-bias}
-#| fig-width: 6
-#| fig-height: 6
-#| fig-cap: Ensemble mean difference between monthly sea-ice concentration of ACCESS-S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations .
-#| fig-subcap:
-#|   - "+S1"
-#|   - "+S2"
-#| layout-ncol: 1
-
-# ice_shelves_nsicd <- fread(here::here("data/derived/antarctic_ice_shelves_nsidc.csv"))
-
-s <- lapply(c("S1", "S2"), \(x) {
-  g <- hindcast_clim |>
+```{r}
+#| label: plot_bias
+plot_bias <- lapply(c("S2", "S1"), \(x) {
+  hindcast_clim |>
     _[model == x] |>
     # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |>
     # setnames(which_dataset, "obs") |>
@@ -513,11 +506,25 @@ s <- lapply(c("S1", "S2"), \(x) {
     facet_wrap(~month, labeller = labeller(month = labels_month)) +
     wide_legend +
     tag_facets()
-
-  print(g)
 })
 
 ```
+
+```{r fig-bias-1}
+#| fig-cap: Ensemble mean difference between monthly sea-ice concentration of +S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations.
+#| fig-height: 6
+
+plot_bias[[1]]
+```
+
+
+```{r fig-bias-2}
+#| fig-cap: Same as @fig-bias-1 but for +S1
+#| fig-height: 6
+
+plot_bias[[2]]
+```
+
 
 To further understand the bias in +S2, @fig-bias-1 shows spatial patterns of the differences of monthly mean sea-ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest monthly lead time.
 From October to May, the model underestimates sea-ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea-ice concentrations saturate to 1 both in the observations and forecasts.
@@ -529,7 +536,8 @@ The largest values are found between April and June, when the faster growth resu
 ## RMSE
 
 ```{r fig-extent-anom}
-#| fig-cap: Monthly mean sea-ice extent anomalies of the observations (black) and forecasts from +S1 (right column; purple) and +S2(left column; green) at lead times of 0, 2, 4, and 6 months. The RMSE and correlation during the overlapping period of +S1 and +S2 hindcasts(1990–2013) is shown on the top left and bottom right of each panel respectively.
+#| fig-cap: Monthly mean sea-ice extent anomalies of the observations (black) and forecasts from +S1 (right column; purple) and +S2 (left column; green) at lead times of 0, 2, 4, and 6 months. The RMSE and correlation during the overlapping period of +S1 and +S2 hindcasts (1990–2013) is shown on the top left and bottom left of each panel respectively.
+#| fig-height: 6
 
 months_difference <- function(x, y) {
   lubridate::interval(y, x) %/% months(1)
@@ -583,6 +591,7 @@ hindast_extent_monthly |>
     aes(label = paste0("RMSE: ", text)),
     x = -Inf,
     y = Inf,
+    size = 3,
     vjust = 1.2,
     hjust = 0
   ) +
@@ -592,9 +601,10 @@ hindast_extent_monthly |>
       x[time %between% s1_range, correlate(aice, forecast), by = .(lag, model)]
     },
     aes(label = paste0("cor: ", text)),
-    vjust = 0,
-    hjust = 1.2,
-    x = Inf,
+    vjust = -0.8,
+    hjust = 0,
+    size = 3,
+    x = -Inf,
     y = -Inf
   ) +
 
@@ -620,6 +630,7 @@ The explanation seems to be the mentioned increased interannual variability.
 
 ```{r fig-extent-sd}
 #| fig-cap: Interannual standard deviation with 95% confidence interval of monthly mean sea-ice extent forecasted for each month divided by that month’s sea-ice extent observation standard deviation. +S1 and +S2 at different lead times. Each panel indicates the target month. Note the reverse horizontal axis.
+#| fig-height: 5
 
 obs_sd <- monthly_extent[
   time %between% s1_range,
@@ -717,8 +728,8 @@ However, the magnitude of the sea-ice anomalies is too big. It is plausible that
 
 ```{r fig-forecast-example}
 #| fig.cap: +S1 and +S2 hindcasts for 2 May 2008 at one day lead time. Top row shows sea-ice concentration anomalies forecasted by each system and the observations. Bottom row shows forecasted sea-ice thickness and the difference between +S1 and +S2.
-#| fig.height: 7
-#| fig.width: 5.5
+#| fig-height: 6
+
 b <- seq(-0.5, 0.5, by = 0.1)
 b <- b[b != 0]
 
@@ -858,6 +869,8 @@ hindcast_mean_thickness <- hindcast_thickness |>
 ```{r}
 #| label: fig-mean-thickness
 #| fig-cap: Mean and 95% interval of monthly mean sea-ice thickness for +S1 and +S2 at different lead times. Each panel indicates the target month. Note the reverse horizontal axis.
+#| fig-height: 5
+
 hindcast_mean_thickness[
   time %between% s1_range,
   average(thickness),
@@ -966,8 +979,7 @@ labels_month_significant <- setNames(
 
 ```{r fig-rmse}
 #| fig-cap: Mean RMSE of sea-ice concentration anomalies as a function of forecast lead time for all forecasts initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown. In parenthersis, the shortest time at which +S1 and +S2 mean RMSE is not statistically different at the 99% confidence level.
-#| fig.height: 5
-#| fig.width: 9
+#| fig-height: 5
 
 month_from_lag <- function(day = 1, step = 2) {
   force(day)
@@ -1033,7 +1045,11 @@ errors2 |>
   labs(y = "RMSE", x = "Lead time (days)") +
   scale_color_models +
   scale_fill_models +
-  facet_wrap(~month, labeller = labeller(month = labels_month_significant)) +
+  facet_wrap(
+    ~month,
+    labeller = labeller(month = labels_month_significant),
+    ncol = 3
+  ) +
   coord_cartesian(clip = "off")
 ```
 
@@ -1056,6 +1072,7 @@ This is consistent with the mid-winter loss of predictability observed by @liber
 
 ```{r fig-lead-time-window}
 #| fig-cap: Minimum lead time at which each forecast's mean RMSE becomes larger than the lower bound of the 95% confidence interval of persistence forecast RMSE (black lines) and maximum lead time at which each forecast's mean RMSE remains lower than the lower bound of the 95% confidence interval of climatological forecast RMSE (gray lines). Green shading indicates the window where forecasts outperform both persistence (lead times longer than black line) and climatology (lead times shorter than gray line). Text labels show the date corresponding to the maximum lead time at which each forecast outperforms climatology.
+#| fig-height: 4
 
 rbind(
   errors2 |>
@@ -1115,7 +1132,7 @@ rbind(
   ) +
   geom_line(aes(color = benchmark)) +
   # geom_point(aes(color = time), data = \(x) x[lag != 0]) +
-  geom_text(
+  ggrepel::geom_text_repel(
     data = \(x) {
       x[, .SD[which.max(lag)], by = .(version, month, obs_dataset)] |>
         _[benchmark == "climatology"]
@@ -1223,13 +1240,9 @@ gdata <- rmse_lon_mean |>
 ```
 
 ```{r, fig.height=7, fig.width=10}
-#| label: fig-rmse_lon
-#| fig-cap: !expr glue::glue("RMSE skill score of model forecasts with climatological forecast as reference computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}º wide as a function of lead time and longitude. Antarctica’s coastline is shown at the bottom of each panel for reference.")
-#| fig-subcap:
-#|  - +S1
-#|  - +S2
+#| label: rmse_lon_plots
 binwidth <- 0.1
-lapply(c("S1", "S2"), \(x) {
+rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
   g <- gdata |>
     _[version == x] |>
     # _[,
@@ -1263,7 +1276,8 @@ lapply(c("S1", "S2"), \(x) {
       data = month_from_lag(1, 1),
       aes(yintercept = lag),
       colour = "gray50",
-      linewidth = 0.1
+      alpha = 0.5,
+      linewidth = 0.2
     ) +
 
     geom_text(
@@ -1285,7 +1299,7 @@ lapply(c("S1", "S2"), \(x) {
     scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
     labs(fill = NULL, y = "Lead time (days)") +
     wide_legend +
-    facet_wrap(~month, labeller = labeller(month = labels_month)) +
+    facet_wrap(~month, labeller = labeller(month = labels_month), ncol = 3) +
     theme(
       panel.background = element_blank(),
       panel.grid = element_blank(),
@@ -1295,9 +1309,23 @@ lapply(c("S1", "S2"), \(x) {
       )
     ) +
     tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1))
+})
+```
 
-  print(g)
-}) -> sink
+```{r}
+#| label: fig-rmse_lon-1
+#| fig-cap: !expr glue::glue("RMSE skill score of +S1 forecasts with climatological forecast as reference computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}º wide as a function of lead time and longitude. Antarctica’s coastline is shown at the bottom of each panel for reference.")
+#| fig-height: 7
+rmse_lon_plots[[1]]
+
+```
+
+
+```{r}
+#| label: fig-rmse_lon-2
+#| fig-cap: Same as @fig-rmse_lon-1 but for +S2
+#| fig-height: 7
+rmse_lon_plots[[2]]
 ```
 
 To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
@@ -1331,7 +1359,7 @@ errors_ensemble <- readRDS(here::here("data/derived/rmse.Rds")) |>
 
 ```{r fig-initial-spread}
 #| fig-cap: Decomposition of forecast error spread at 1, 5 and 30 days lead time for +S1 and +S2 hindcasts across initialization months. The left column shows the mean standard deviation of RMSE errors across ensemble members, while the right column shows the standard deviation of the ensemble mean RMSE error and the spread of the persistence and climatology forecasts errors.
-
+#| fig-height: 4
 which_lags <- c(1, 3, 30)
 rbind(
   mean_variance = errors_ensemble |>
@@ -1361,14 +1389,16 @@ rbind(
   geom_line(aes(color = version), linewidth = 1) +
   scale_y_continuous("Standard deviation") +
   # scale_color_models +
-  scale_x_continuous("Month", breaks = 1:12, labels = month.abb, ) +
+  scale_x_continuous("Month", breaks = seq(1, 12, by = 2), labels = \(x) {
+    month.abb[x]
+  }) +
   scale_color_models +
   facet_grid(
     lag ~ component,
     labeller = labeller(
       component = c(
-        mean_variance = "Mean standard deviation of errors in ensemble members",
-        variance_of_mean = "Standard deviation of ensemble mean error."
+        mean_variance = "Mean standard deviation\nof errors in ensemble members",
+        variance_of_mean = "Standard deviation\nof ensemble mean error."
       )
     )
   ) +
