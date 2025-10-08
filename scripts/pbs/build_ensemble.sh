@@ -4,12 +4,12 @@
 #PBS -q normal
 #PBS -l ncpus=48
 #PBS -l mem=64GB
-#PBS -l walltime=03:00:00
+#PBS -l walltime=12:00:00
 #PBS -l wd
 #PBS -l jobfs=400GB
 #PBS -o logs/
 #PBS -e logs/
-#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo70+scratch/lo70
+#PBS -l storage=gdata/ux62+scratch/k10+gdata/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo70+scratch/lo70
 #PBS -N build_ensemble
 
 # Load module, always specify version number.

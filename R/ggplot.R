@@ -84,18 +84,18 @@ topo <- here::here("data/raw/ETOPO.nc") |>
   metR::ReadNetCDF("z") |>
   _[, .(x = xgrid, y = ygrid, z)]
 
-# get_proj <- function(x) {
-#   x <- ncdf4::nc_open(x)
-#   on.exit(ncdf4::nc_close(x))
-#   x |>
-#     ncdf4::ncatt_get(varid = "crs") |>
-#     _[["proj_params"]]
-# }
+get_proj <- function(x) {
+  x <- ncdf4::nc_open(x)
+  on.exit(ncdf4::nc_close(x))
+  x |>
+    ncdf4::ncatt_get(varid = "crs") |>
+    _[["proj_params"]]
+}
 
-# sic_projection <- CDR() |>
-#   get_proj()
+sic_projection <- CDR() |>
+  get_proj()
 
-sic_projection <- "+proj=stere +lat_0=-90 +lat_ts=-70 +lon_0=0 +k=1 +x_0=0 +y_0=0 +a=6378273 +b=6356889.449 +units=m +no_defs"
+# sic_projection <- "+proj=stere +lat_0=-90 +lat_ts=-70 +lon_0=0 +k=1 +x_0=0 +y_0=0 +a=6378273 +b=6356889.449 +units=m +no_defs"
 
 contour_antarctica <- ggplot2::StatContour$compute_group(topo, breaks = 0)
 geom_antarctica_path <- ggplot2::geom_path(
@@ -114,13 +114,12 @@ geom_antarctica_fill <- ggplot2::geom_polygon(
 )
 
 geomcoord_antarctica <- list(
-  NULL,
+  ggplot2::coord_equal(),
   # ggplot2::coord_sf(
   #   crs = sic_projection,
   #   lims_method = "box",
   #   label_axes = "----"
   # ),
   ggplot2::scale_x_continuous(name = NULL, expand = c(0, 0), labels = NULL),
-  ggplot2::scale_y_continuous(name = NULL, expand = c(0, 0), labels = NULL),
-  geom_antarctica_path
+  ggplot2::scale_y_continuous(name = NULL, expand = c(0, 0), labels = NULL)
 )
