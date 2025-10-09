@@ -45,7 +45,7 @@ author:
     affiliations:
       - department: Research, Bureau of Meteorology
         id: 3
-  - name: Mathew Wheeler
+  - name: Matthew Wheeler
     affiliations:
       - ref: 3      
   - name: Phillip Reid
@@ -1241,9 +1241,11 @@ gdata <- rmse_lon_mean |>
 
 ```{r, fig.height=7, fig.width=10}
 #| label: rmse_lon_plots
+range <- range(gdata$skill)
 binwidth <- 0.1
+breaks <- AnchorBreaks(0, binwidth = binwidth)(range)
 rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
-  g <- gdata |>
+  gdata |>
     _[version == x] |>
     # _[,
     #   skill := Smooth2D(lag, lon, skill, method = smooth_svd(0.05)),
@@ -1252,12 +1254,12 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
     ggplot(aes(lon, lag)) +
     geom_contour_fill(
       aes(z = skill, fill = after_stat(level)),
-      breaks = AnchorBreaks(0, binwidth = binwidth)
+      breaks = breaks
     ) +
     geom_contour_tanaka(
       aes(z = skill),
-      range = c(0.01, 0.2),
-      breaks = AnchorBreaks(0, binwidth = binwidth)
+      range = c(0.005, 0.05),
+      breaks = breaks
     ) +
 
     geom_contour_fill(
@@ -1270,11 +1272,13 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
     geom_contour2(
       data = topo_lonlat,
       aes(lon, scales::rescale(lat, c(-60, 1)), z = z),
+      linewidth = 0.2,
       breaks = 0
     ) +
-    geom_hline(
+
+    geom_segment(
       data = month_from_lag(1, 1),
-      aes(yintercept = lag),
+      aes(y = lag, yend = lag, x = 7.5, xend = 360 - 7.5),
       colour = "gray50",
       alpha = 0.5,
       linewidth = 0.2
@@ -1282,19 +1286,19 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
 
     geom_text(
       data = month_from_lag(15, 1),
-      aes(x = 361, label = month2),
-      size = 2.5,
-      hjust = 0
+      aes(x = 360, label = month2),
+      size = 1.5,
+      hjust = 0.2
     ) +
 
     geom_text(
       data = month_from_lag(1, 1),
-      aes(x = -2, label = lag),
-      size = 2.5,
-      hjust = 1
+      aes(x = 0, label = lag),
+      size = 1.5,
+      hjust = 0.8
     ) +
     scale_fill_divergent_discretised(low = trans_blue, high = trans_pink) +
-    scale_x_longitude(ticks = 60, expand = c(0.08, 0)) +
+    scale_x_longitude(ticks = 90, expand = c(0.08, 0)) +
 
     scale_y_continuous(breaks = NULL, expand = c(0, 0)) +
     labs(fill = NULL, y = "Lead time (days)") +
@@ -1308,7 +1312,7 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
         fill = "white"
       )
     ) +
-    tag_facets(position = list(x = 0.08, y = 1, hjust = 0, vjust = 1))
+    tag_facets(position = list(x = 0.08, y = 0, hjust = 0, vjust = 0))
 })
 ```
 
@@ -1326,6 +1330,7 @@ rmse_lon_plots[[1]]
 #| fig-cap: Same as @fig-rmse_lon-1 but for +S2
 #| fig-height: 7
 rmse_lon_plots[[2]]
+
 ```
 
 To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
