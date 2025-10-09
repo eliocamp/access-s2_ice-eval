@@ -13,6 +13,9 @@ format:
     equal-margins: false
     classoption: referee
     fig-width: 5  
+    fig-pos: "!htb"
+header-includes: | 
+   \usepackage[section]{placeins}
 author:
   - name: Elio Campitelli
     affiliations:
@@ -69,6 +72,7 @@ search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
+
 ---
 
 ```{r setup, include=FALSE, cache = FALSE}
@@ -282,7 +286,7 @@ range_max_lag <- hindcast_extent[
 ```
 
 ```{r fig-hindcast-extent}
-#| fig-cap: "Row a: Pan-Antarctic mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S1 (column 2; purple). Mean sea-ice extent from NOAA/NSIDC CDRV4 in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the end of forecasts (i.e., the longest possible lead time)."
+#| fig-cap: "Row a: Pan-Antarctic mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S1 (column 2; purple). Observed mean sea-ice extent in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the end of forecasts (i.e., the longest possible lead time)."
 #| fig-height: 4
 
 hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
@@ -537,6 +541,8 @@ In winter, the differences are limited to a narrow band around the sea-ice edge 
 
 +S1 has a comparatively smaller overall bias (@fig-bias-2). 
 The largest values are found between April and June, when the faster growth resutls in large positive bias along the sea-ice edge, and in January, when the faster melt leads to large negative bias in the Weddell and Admunsen seas. 
+
+\FloatBarrier
 
 ## RMSE
 
@@ -1416,6 +1422,7 @@ At one day lead time, +S2 ensemble mean error standard deviation is much larger 
 At longer lead times, the spread of +S1 and persistence forecast standard deviation increases to eventually be comparable to +S2 and the standard deviation in climatological forecast errors. 
 +S2 error standard deviation is fairly independent of lead time and similar to the climatological forecast error standard deviation at all lead times. 
 
+\FloatBarrier
 
 ## Conclusions
 
@@ -1451,16 +1458,20 @@ Additionally, the substantial bias in +S2 highlights the need for improved model
 Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
 Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
 
-------------------------------------------------------------------------
 
 # References
 
 ::: {#refs}
 :::
 
-# Supplementary figures
 
-## ERA5
+\appendix  
+\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{figure}{0} 
+
+# Supplementary figures {.appendix}
+
+The following are the same figures from the main paper but using the OSI dataset instead of CDR.
 
 ```{r dataset_era}
 which_dataset <- "osi"
@@ -1510,6 +1521,7 @@ which_dataset <- "osi"
 ```{r, rmse_lon_plots-osi, ref.label=I("rmse_lon_plots")}
 
 ```
+
 
 ```{r, fig-rmse_lon-1-osi, ref.label=I("fig-rmse_lon-1")}
 
