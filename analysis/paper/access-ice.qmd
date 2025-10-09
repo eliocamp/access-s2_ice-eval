@@ -1461,6 +1461,17 @@ Additionally, the substantial bias in +S2 highlights the need for improved model
 Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
 Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
 
+# Acknowledgments
+
+This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s Environmental Future.
+
+
+# Code and data availability 
+
+The underlying code for this study is available on github and can be accessed via this link https://github.com/eliocamp/access-s2_ice-eval.
+
+Raw data of +S1 and +S2 forecast are not available due to size. 
+Derived datasets required to reproduce the results are available in this zenodo repository: XXXXX
 
 # References
 
