@@ -126,6 +126,7 @@
 %%%%
 
 \raggedbottom
+\usepackage[section]{placeins}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -172,7 +173,7 @@
 \urlstyle{same}
 \hypersetup{
   pdftitle={Evaluating Seasonal Predictability of Antarctic Sea Ice and the importance of initial conditions with fully coupled models},
-  pdfauthor={Elio Campitelli; Ariaan Purich; Julie Arblaster; Eun-Pa Lim; Mathew Wheeler; Phillip Reid},
+  pdfauthor={Elio Campitelli; Ariaan Purich; Julie Arblaster; Eun-Pa Lim; Matthew Wheeler; Phillip Reid},
   pdfkeywords={sea ice, predictabilty, initial conditions, forecasting},
   colorlinks=true,
   linkcolor={blue},
@@ -188,7 +189,7 @@ Seasonal Predictability of Antarctic Sea Ice and the importance of
 initial conditions with fully coupled models}
 
 % author setup
-\author*[1,2]{\fnm{Elio} \sur{Campitelli}}\email{elio.campitelli@monash.edu}\author[1,2]{\fnm{Ariaan} \sur{Purich}}\author[1,2]{\fnm{Julie} \sur{Arblaster}}\author[3]{\fnm{Eun-Pa} \sur{Lim}}\author[3]{\fnm{Mathew} \sur{Wheeler}}\author[3]{\fnm{Phillip} \sur{Reid}}
+\author*[1,2]{\fnm{Elio} \sur{Campitelli}}\email{elio.campitelli@monash.edu}\author[1,2]{\fnm{Ariaan} \sur{Purich}}\author[1,2]{\fnm{Julie} \sur{Arblaster}}\author[3]{\fnm{Eun-Pa} \sur{Lim}}\author[3]{\fnm{Matthew} \sur{Wheeler}}\author[3]{\fnm{Phillip} \sur{Reid}}
 % affil setup
 \affil[1]{\orgdiv{School of Earth, Atmosphere and
 Environment}, \orgname{Monash University, Australia,}}
@@ -464,7 +465,7 @@ thus a skill score of 1.
 
 \subsection{Bias}\label{bias}
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -474,13 +475,13 @@ thus a skill score of 1.
 
 \caption{\label{fig-hindcast-extent}Row a: Pan-Antarctic mean sea-ice
 extent for all hindcasts initialised on the first of each calendar month
-for ACCESS-S1 (column 1; green) and ACCESS-S1 (column 2; purple). Mean
-sea-ice extent from NOAA/NSIDC CDRV4 in each corresponding hindcast
-period is shown in black. Row b: Mean differences between the forecast
-and the observed values. Circles represent the initial conditions at the
-start of forecasts (i.e., the first of every month), and triangles
-represent the mean values at the end of forecasts (i.e., the longest
-possible lead time).}
+for ACCESS-S1 (column 1; green) and ACCESS-S1 (column 2; purple).
+Observed mean sea-ice extent in each corresponding hindcast period is
+shown in black. Row b: Mean differences between the forecast and the
+observed values. Circles represent the initial conditions at the start
+of forecasts (i.e., the first of every month), and triangles represent
+the mean values at the end of forecasts (i.e., the longest possible lead
+time).}
 
 \end{figure}%
 
@@ -526,7 +527,7 @@ indicating that the ocean and atmosphere data assimilation is not
 affecting sea ice and that this component of the model is virtually
 free-running.
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -542,7 +543,7 @@ forecast month. Values are smoothed with a 11-day running mean.}
 
 \end{figure}%
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -557,7 +558,7 @@ at the first of the month) and observations.}
 
 \end{figure}%
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -589,9 +590,11 @@ and June, when the faster growth resutls in large positive bias along
 the sea-ice edge, and in January, when the faster melt leads to large
 negative bias in the Weddell and Admunsen seas.
 
+\FloatBarrier
+
 \subsection{RMSE}\label{rmse}
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -627,7 +630,7 @@ regardless of lead time, while ACCESS-S2 standard deviation is more than
 twice that of observations at zero lead time and only approaches the
 observed value at 9 month lead time for most months.
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -666,7 +669,7 @@ factor. However, the magnitude of the sea-ice anomalies is too big. It
 is plausible that this is due to the thinner ice simulated by ACCESS-S2
 (bottom row).
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -682,7 +685,7 @@ and ACCESS-S2.}
 
 \end{figure}%
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -721,7 +724,7 @@ longer lead times when the model is balanced.
 To assess ACCESS-S2 forecasts in more detail, we compute error measures
 for all hindcasts started on the 1st of every month.
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -774,7 +777,7 @@ benchmarks. This is consistent with the mid-winter loss of
 predictability observed by \citet{libera2022}, who attributed it to deep
 warm water entraining into the mixed layer.
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -795,7 +798,7 @@ forecast outperforms climatology.}
 
 \end{figure}%
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -810,7 +813,7 @@ coastline is shown at the bottom of each panel for reference.}
 
 \end{figure}%
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -857,7 +860,7 @@ atmospheric circulation also suggest the influence of tropical Pacific
 variability. February and March are the only two months that can be
 forecasted with marginally positive skill in large regions.
 
-\begin{figure}
+\begin{figure}[!htb]
 
 \centering{
 
@@ -901,6 +904,8 @@ and the standard deviation in climatological forecast errors. ACCESS-S2
 error standard deviation is fairly independent of lead time and similar
 to the climatological forecast error standard deviation at all lead
 times.
+
+\FloatBarrier
 
 \subsection{Conclusions}\label{conclusions}
 
@@ -981,14 +986,202 @@ dramatic seasonal variations in sea-ice predictability. Future studies
 should therefore use initial conditions through the whole year rather
 than focusing on a limited number of initialisation dates.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \section{References}\label{references}
 
 \renewcommand{\bibsection}{}
 \bibliography{references.bib}
 
+\appendix  
+\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{figure}{0}
+
 \section{Supplementary figures}\label{supplementary-figures}
+
+The following are the same figures from the main paper but using the OSI
+dataset instead of CDR.
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hindcast-extent-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-hindcast-extent-osi}Row a: Pan-Antarctic mean
+sea-ice extent for all hindcasts initialised on the first of each
+calendar month for ACCESS-S1 (column 1; green) and ACCESS-S1 (column 2;
+purple). Observed mean sea-ice extent in each corresponding hindcast
+period is shown in black. Row b: Mean differences between the forecast
+and the observed values. Circles represent the initial conditions at the
+start of forecasts (i.e., the first of every month), and triangles
+represent the mean values at the end of forecasts (i.e., the longest
+possible lead time).}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-growth-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-mean-growth-osi}Mean daily sea-ice extent growth
+(10\^{}6 km\^{}2/day) in ACCESS-S1 (green) and ACCESS-S2 (purple)
+hindcasts and observations (black), computed as the mean daily
+differences in sea-ice extent between each date and the next for each
+forecast month. Values are smoothed with a 11-day running mean.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-1-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-bias-1-osi}Ensemble mean difference between monthly
+sea-ice concentration of ACCESS-S2 ensemble mean forecast at 0-month
+lead time (monthly mean values forecasted from the forecast initialised
+at the first of the month) and observations.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-2-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-bias-2-osi}Same as Figure~\ref{fig-bias-1} but for
+ACCESS-S1}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-anom-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-extent-anom-osi}Monthly mean sea-ice extent
+anomalies of the observations (black) and forecasts from ACCESS-S1
+(right column; purple) and ACCESS-S2 (left column; green) at lead times
+of 0, 2, 4, and 6 months. The RMSE and correlation during the
+overlapping period of ACCESS-S1 and ACCESS-S2 hindcasts (1990--2013) is
+shown on the top left and bottom left of each panel respectively.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-sd-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-extent-sd-osi}Interannual standard deviation with
+95\% confidence interval of monthly mean sea-ice extent forecasted for
+each month divided by that month's sea-ice extent observation standard
+deviation. ACCESS-S1 and ACCESS-S2 at different lead times. Each panel
+indicates the target month. Note the reverse horizontal axis.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-rmse-osi}Mean RMSE of sea-ice concentration
+anomalies as a function of forecast lead time for all forecasts
+initialised on the first of each month compared with a reference
+forecast of persistence of anomalies (black) and climatology (gray).
+Only the first 120 days are shown. In parenthersis, the shortest time at
+which ACCESS-S1 and ACCESS-S2 mean RMSE is not statistically different
+at the 99\% confidence level.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-lead-time-window-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-lead-time-window-osi}Minimum lead time at which each
+forecast's mean RMSE becomes larger than the lower bound of the 95\%
+confidence interval of persistence forecast RMSE (black lines) and
+maximum lead time at which each forecast's mean RMSE remains lower than
+the lower bound of the 95\% confidence interval of climatological
+forecast RMSE (gray lines). Green shading indicates the window where
+forecasts outperform both persistence (lead times longer than black
+line) and climatology (lead times shorter than gray line). Text labels
+show the date corresponding to the maximum lead time at which each
+forecast outperforms climatology.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse_lon-1-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-rmse_lon-1-osi}RMSE skill score of ACCESS-S1
+forecasts with climatological forecast as reference computed on 15
+meridional slices 24º wide as a function of lead time and longitude.
+Antarctica's coastline is shown at the bottom of each panel for
+reference.}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse_lon-2-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-rmse_lon-2-osi}Same as Figure~\ref{fig-rmse_lon-1}
+but for ACCESS-S2}
+
+\end{figure}%
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-initial-spread-osi-1.pdf}}
+
+}
+
+\caption{\label{fig-initial-spread-osi}Decomposition of forecast error
+spread at 1, 5 and 30 days lead time for ACCESS-S1 and ACCESS-S2
+hindcasts across initialization months. The left column shows the mean
+standard deviation of RMSE errors across ensemble members, while the
+right column shows the standard deviation of the ensemble mean RMSE
+error and the spread of the persistence and climatology forecasts
+errors.}
+
+\end{figure}%
 
 
 
