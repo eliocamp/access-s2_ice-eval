@@ -562,24 +562,6 @@
       ],
       "Hash": "e3cdf279aa32ddb7b18a2154162d88a7"
     },
-    "ggh4x": {
-      "Package": "ggh4x",
-      "Version": "0.2.8",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "cli",
-        "ggplot2",
-        "grid",
-        "gtable",
-        "lifecycle",
-        "rlang",
-        "scales",
-        "stats",
-        "vctrs"
-      ],
-      "Hash": "012d7705b4cdc7b5ee89895aeefc1d45"
-    },
     "gglgbtq": {
       "Package": "gglgbtq",
       "Version": "0.2.0",
@@ -643,6 +625,22 @@
         "withr"
       ],
       "Hash": "7ad64861e028a777d7d67ff83231b548"
+    },
+    "ggrepel": {
+      "Package": "ggrepel",
+      "Version": "0.9.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "ggplot2",
+        "grid",
+        "rlang",
+        "scales",
+        "withr"
+      ],
+      "Hash": "3d4156850acc1161f2f24bc61c9217c1"
     },
     "globals": {
       "Package": "globals",
@@ -1043,10 +1041,10 @@
     },
     "ncdf4": {
       "Package": "ncdf4",
-      "Version": "1.22",
+      "Version": "1.24",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "004b5219ae6d8ff53a3dcd2c89e56139"
+      "Hash": "2e2f7c6faeb943039f9f5793eab83482"
     },
     "nlme": {
       "Package": "nlme",
@@ -1266,17 +1264,6 @@
       ],
       "Hash": "397b7b2a265bc5a7a06852524dabae20"
     },
-    "revealjs": {
-      "Package": "revealjs",
-      "Version": "0.9",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "rmarkdown"
-      ],
-      "Hash": "08e30caa337e6d335d83df1a05d5b9f3"
-    },
     "rlang": {
       "Package": "rlang",
       "Version": "1.1.4",
@@ -1390,7 +1377,7 @@
     },
     "sf": {
       "Package": "sf",
-      "Version": "1.0-16",
+      "Version": "1.0-21",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1409,7 +1396,7 @@
         "units",
         "utils"
       ],
-      "Hash": "ad57b543f7c3fca05213ba78ff63df9b"
+      "Hash": "14a8dae2a678fa953907893a9df561c0"
     },
     "sodium": {
       "Package": "sodium",
