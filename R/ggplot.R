@@ -15,7 +15,7 @@ element_grob.element_text_first_line <-
 
 
 ggplot2::theme_set(
-  ggplot2::theme_minimal() +
+  ggplot2::theme_minimal(base_size = 9) +
     ggplot2::theme(
       panel.background = ggplot2::element_rect(fill = "#fafafa", color = NA),
       legend.position = "bottom",
