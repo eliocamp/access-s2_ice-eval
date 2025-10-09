@@ -244,7 +244,8 @@ extent_daily <- datasets |>
   _[, anom := aice - mean(aice, na.rm = TRUE), by = .(yday(time), dataset)] |>
   # some values before 2010 are zero or extremely low. likely due to missing values.
   _[year(time) < 2010 & anom < -2.5e12, aice := NA] |>
-  _[, anom := NULL]
+  _[, anom := NULL] |>
+  _[, time := update(time, hour = 0)]
 ```
 
 ```{r hindcast_extent}
@@ -285,7 +286,7 @@ range_max_lag <- hindcast_extent[
 #| fig-height: 4
 
 hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
-  extent_daily[i = _, on = c("time")] |>
+  extent_daily[i = _, on = c("time"), allow.cartesian = TRUE] |>
   _[, Difference := Forecast - aice] |>
   _[, aice := NULL] |>
   tidyfast::dt_pivot_longer(cols = c(Forecast, Difference)) |>
@@ -304,7 +305,7 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
   _[, month := lubridate::month(forecast_time, label = TRUE)] |>
   _[, model := factor(model, levels = c("S1", "S2"))] |>
   _[, measure := factor(measure, levels = c("Forecast", "Difference"))] |>
-
+  _[dataset == which_dataset] |>
   ggplot(aes(time2, estimate)) +
   geom_line(
     data = extent_climatology[dataset == which_dataset] |>
@@ -404,8 +405,7 @@ dif_extent <- extent_daily |>
   ] |>
   na.omit() |>
   _[, dif := frollmean(dif, n = w, align = "center"), by = .(dataset)] |>
-  _[, average(dif), by = .(dataset, time = update(time, year = 2000))] |>
-  _[dataset == which_dataset]
+  _[, average(dif), by = .(dataset, time = update(time, year = 2000))]
 
 ```
 
@@ -414,7 +414,7 @@ dif_extent <- extent_daily |>
 #| fig-height: 4
 
 dif_extent |>
-  copy() |>
+  _[dataset == which_dataset] |>
   ggplot(aes(time, estimate)) +
   geom_hline(yintercept = 0, color = "gray50", linewidth = 0.2) +
   geom_line(aes(color = dataset)) +
@@ -471,11 +471,15 @@ hindcast_clim <- hindcast_clim |>
   ] |>
   _[forecast_month == month]
 
-obs_clim <- CDR() |>
-  climatology() |>
-  cdo_ymonmean() |>
-  cdo_execute() |>
-  ReadNetCDF(c(obs = "aice")) |>
+
+obs_clim <- lapply(datasets, \(x) {
+  x |>
+    climatology() |>
+    cdo_ymonmean() |>
+    cdo_execute() |>
+    ReadNetCDF(c(obs = "aice"))
+}) |>
+  rbindlist(idcol = "dataset") |>
   _[, month := month(time)]
 
 hindcast_clim <- hindcast_clim |>
@@ -487,6 +491,7 @@ hindcast_clim <- hindcast_clim |>
 plot_bias <- lapply(c("S2", "S1"), \(x) {
   hindcast_clim |>
     _[model == x] |>
+    _[dataset == which_dataset] |>
     # dcast(time + xgrid + ygrid ~ model, value.var = "aice") |>
     # setnames(which_dataset, "obs") |>
     ggplot(aes(xgrid, ygrid)) +
@@ -647,6 +652,7 @@ hindcast_extent_sd <- hindast_extent_monthly[
 
 hindcast_extent_sd |>
   _[obs_sd, on = .NATURAL] |>
+  _[dataset == which_dataset] |>
   ggplot(aes(lag, estimate / obs_sd)) +
   # geom_rect(data = obs_sd, inherit.aes = FALSE,
   #            aes(ymin = low, ymax = high,  fill = dataset, xmin = -Inf, xmax = Inf),
@@ -915,12 +921,10 @@ errors <- rbind(
   _[member == "0em"] |>
   _[lag > 0] |>
   _[!(month(time_forecast) == 1 & member == "07" & version == "S1")] # This member is wrong
-
 ```
 
 ```{r clim_std}
 clim_std <- datasets |>
-  _[1] |>
   lapply(\(x) {
     x |>
       anomalies(climatology(x)) |>
@@ -935,7 +939,6 @@ clim_std <- datasets |>
   _[, time := as.Date(time)] |>
   _[climatology == 0, climatology := NA] |>
   _[climatology < 0.05, climatology := NA]
-
 ```
 
 ```{r clim_std2}
@@ -943,6 +946,8 @@ clim_std2 <- clim_std[errors, on = .NATURAL] |>
   _[, let(climatology = NULL, value = climatology)] |>
   na.omit() |>
   _[, version := "climatology"]
+
+
 ```
 
 ```{r t_test}
@@ -961,20 +966,22 @@ max_lag <- errors[version == "S1", max(lag)]
 
 dif <- errors |>
   na.omit() |>
-  _[obs_dataset == which_dataset] |>
+  # _[obs_dataset == which_dataset] |>
   _[measure == "rmse"] |>
   _[version != "persistence"] |>
   _[lag <= max_lag] |>
-  dcast(time + time_forecast + member + lag ~ version, value.var = "value") |>
-  _[, t_test(na.omit(S1), na.omit(S2)), by = .(lag, month(time_forecast))] |>
+  dcast(
+    obs_dataset + time + time_forecast + member + lag ~ version,
+    value.var = "value"
+  ) |>
+  _[,
+    t_test(na.omit(S1), na.omit(S2)),
+    by = .(obs_dataset, lag, month(time_forecast))
+  ] |>
   _[p.value > 0.01] |>
-  _[, .SD[which.min(lag)], by = month] |>
-  _[order(month), .(month, lag)]
+  _[, .SD[which.min(lag)], by = .(obs_dataset, month)] |>
+  _[order(month), .(month, lag, obs_dataset)]
 
-labels_month_significant <- setNames(
-  paste0(month.abb, " (", dif$lag, ")"),
-  1:12
-)
 ```
 
 ```{r fig-rmse}
@@ -996,18 +1003,23 @@ month_from_lag <- function(day = 1, step = 2) {
   }
 }
 
+labels_month_significant <- setNames(
+  paste0(month.abb, " (", dif[obs_dataset == which_dataset]$lag, ")"),
+  1:12
+)
+
 errors2 <- clim_std2 |>
   rbind(errors) |>
   _[measure == "rmse"] |>
   _[, time2 := update(time, year = 2000)] |>
   # merge(clim_std) |>
-  _[obs_dataset == which_dataset] |>
   _[,
     average(value),
     by = .(lag, version, measure, month(time_forecast), obs_dataset)
   ]
 
 errors2 |>
+  _[obs_dataset == which_dataset] |>
   _[lag <= 120] |>
   ggplot(aes(lag, estimate)) +
 
@@ -1173,7 +1185,6 @@ topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
 
 ```{r}
 clim_std_lon <- datasets |>
-  # _[1] |>
   lapply(\(x) {
     x |>
       anomalies(climatology(x)) |>
@@ -1200,33 +1211,12 @@ rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
   _[, lon := lon + 12] |>
   _[, time := update(time, hour = 0)] |>
   _[, time := as.Date(time)]
-
-# base_rmse_lon <- clim_std_lon[rmse_lon_mean[version == "persistence"], on = .NATURAL] |>
-#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
-#   _[, .(climatology = mean(climatology, na.rm = TRUE),
-#         value = mean(value, na.rm = TRUE)),
-#     by = .(lag, lon, obs_dataset, month = factor(month(time_forecast)))] |>
-#   _[, base := climatology] |>
-#   _[, let(climatology = NULL, value = NULL)] |>
-#   _[]
 ```
 
-```{r rmse_lon_mean2}
-# rmse_lon_mean <- rmse_lon_mean |>
-#   copy() |>
-#   # _[version != "S2"] |>
-#   _[version != "persistence"] |>
-#   _[member == "0em"] |>
-#   _[base_rmse_lon, on = .NATURAL] |>
-#   _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
-#   _[, .(dif = mean(value - base, na.rm = TRUE)),
-#     by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))]
-```
 
 ```{r rmse_lon-gdata}
 
-gdata <- rmse_lon_mean |>
-  _[obs_dataset == which_dataset] |>
+rmse_lon_mean_gdata <- rmse_lon_mean |>
   _[version != "persistence"] |>
   _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
   clim_std_lon[i = _, on = .NATURAL] |>
@@ -1241,11 +1231,14 @@ gdata <- rmse_lon_mean |>
 
 ```{r, fig.height=7, fig.width=10}
 #| label: rmse_lon_plots
-range <- range(gdata$skill)
+
+rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata[obs_dataset == which_dataset]
+
+range <- range(rmse_lon_mean_gdata2$skill)
 binwidth <- 0.1
 breaks <- AnchorBreaks(0, binwidth = binwidth)(range)
 rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
-  gdata |>
+  rmse_lon_mean_gdata2 |>
     _[version == x] |>
     # _[,
     #   skill := Smooth2D(lag, lon, skill, method = smooth_svd(0.05)),
@@ -1314,6 +1307,7 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
     ) +
     tag_facets(position = list(x = 0.08, y = 0, hjust = 0, vjust = 0))
 })
+
 ```
 
 ```{r}
@@ -1321,7 +1315,6 @@ rmse_lon_plots <- lapply(c("S1", "S2"), \(x) {
 #| fig-cap: !expr glue::glue("RMSE skill score of +S1 forecasts with climatological forecast as reference computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}º wide as a function of lead time and longitude. Antarctica’s coastline is shown at the bottom of each panel for reference.")
 #| fig-height: 7
 rmse_lon_plots[[1]]
-
 ```
 
 
@@ -1330,7 +1323,6 @@ rmse_lon_plots[[1]]
 #| fig-cap: Same as @fig-rmse_lon-1 but for +S2
 #| fig-height: 7
 rmse_lon_plots[[2]]
-
 ```
 
 To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
@@ -1351,7 +1343,6 @@ February and March are the only two months that can be forecasted with marginall
 errors_ensemble <- readRDS(here::here("data/derived/rmse.Rds")) |>
   _[version != "persistence"] |>
   _[member != "0em"] |>
-  _[obs_dataset == which_dataset] |>
   _[value < 0.01, value := NA] |>
   _[value > 3e13, value := NA] |>
   _[!is.na(value)] |>
@@ -1359,6 +1350,7 @@ errors_ensemble <- readRDS(here::here("data/derived/rmse.Rds")) |>
   _[, lag := as.numeric(time - time_forecast)] |>
   _[lag > 0] |>
   _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]
+
 ``` 
 
 
@@ -1408,6 +1400,7 @@ rbind(
     )
   ) +
   tag_facets(tag = "rc")
+
 ```
 
 
@@ -1467,62 +1460,67 @@ Future studies should therefore use initial conditions through the whole year ra
 
 # Supplementary figures
 
-<!-- ## ERA5 -->
+## ERA5
 
-<!-- ```{r dataset_era} -->
+```{r dataset_era}
+which_dataset <- "osi"
+```
 
-<!-- which_dataset <- "era5" -->
+```{r fig-hindcast-extent-osi, ref.label=I('fig-hindcast-extent')}
 
-<!-- ``` -->
+```
 
-<!-- ```{r fig-hindcast-extent-era5} -->
 
-<!-- which_dataset <- "era5" -->
+```{r, fig-mean-growth-osi, ref.label=I("fig-mean-growth")}
 
-<!-- <<fig-hindcast-extent>> -->
+```
 
-<!-- ``` -->
+```{r, plot_bias-osi, ref.label=I("plot_bias")}
 
-<!-- ```{r fig-hindcast-extent-bt} -->
+```
 
-<!-- which_dataset <- "bt" -->
+```{r, fig-bias-1-osi, ref.label=I("fig-bias-1")}
 
-<!-- <<fig-hindcast-extent>> -->
+```
 
-<!-- ``` -->
 
-<!-- ```{r fig-mean-growth} -->
+```{r, fig-bias-2-osi, ref.label=I("fig-bias-2")}
 
-<!-- <<fig-mean-growth>> -->
+```
 
-<!-- ``` -->
 
-<!-- ```{r} -->
+```{r, fig-extent-anom-osi, ref.label=I("fig-extent-anom")}
 
-<!-- <<fig-bias>> -->
+```
 
-<!-- ``` -->
 
-<!-- ```{r} -->
+```{r, fig-extent-sd-osi, ref.label=I("fig-extent-sd")}
+```
 
-<!-- <<<fig-extent-anom>> -->
 
-<!-- ``` -->
+```{r, fig-rmse-osi, ref.label=I("fig-rmse")}
 
-<!-- ```{r} -->
+```
 
-<!-- <<fig-rmse>> -->
+```{r, fig-lead-time-window-osi, ref.label=I("fig-lead-time-window")}
 
-<!-- ``` -->
+```
 
-<!-- ```{r} -->
 
-<!-- <<fig-iiee>> -->
+```{r, rmse_lon_plots-osi, ref.label=I("rmse_lon_plots")}
 
-<!-- ``` -->
+```
 
-<!-- ```{r} -->
+```{r, fig-rmse_lon-1-osi, ref.label=I("fig-rmse_lon-1")}
 
-<!-- <<fig-iiee-variance>> -->
+```
 
-<!-- ``` -->
+
+```{r, fig-rmse_lon-2-osi, ref.label=I("fig-rmse_lon-2")}
+
+```
+
+
+```{r, fig-initial-spread-osi, ref.label=I("fig-initial-spread")}
+
+```
