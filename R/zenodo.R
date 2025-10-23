@@ -132,28 +132,31 @@ zenodo_checksum_matches <- function(files) {
   ))
 }
 
-zenodo_upload_data <- function() {
-  files <- readLines(zenodo_files()) |>
-    Filter(f = nzchar)
 
-  if (length(files) == 0) {
+relative_path <- function(path) {
+  root <- here::here("")
+  gsub(root, "", x = path)
+}
+
+zenodo_upload_data <- function() {
+  files <- read.csv(zenodo_files())
+
+  files <- files[!duplicated(files$file)]
+
+  if (nrow(files) == 0) {
     stop("No files in zenodo_files.txt")
   }
 
-  checksum <- zenodo_checksum_matches(files)
+  checksum <- zenodo_checksum_matches(files$files)
 
   if (checksum$matches) {
     message("Remote and local checksum match. Nothing to upload.")
     return(invisible(NULL))
   }
 
-  files <- c(files, zenodo_files())
-  # Use relative paths inside zip
-  root <- here::here("")
-  files <- gsub(root, "", x = files)
-
   zipfile <- file.path(tempdir(), "data.zip")
-  zip(zipfile, files)
+  zip(zipfile, files$file)
+
   zenodo_upload_file(zipfile)
 
   checksum_file <- here::here("data/checksum")
@@ -223,11 +226,11 @@ zenodo_download_data <- function() {
   file_list <- zenodo_files()
 
   if (file.exists(file_list)) {
-    needed_files <- readLines(file_list) |>
+    needed_files <- read.csv(file_list)$file |>
       Filter(f = nzchar)
 
     if (all(file.exists(needed_files))) {
-      checksum <- zenodo_checksum_matches(files)
+      checksum <- zenodo_checksum_matches(needed_files)
       if (checksum$matches) return(invisible(NULL))
     }
   }
@@ -242,21 +245,35 @@ zenodo_download_data <- function() {
 on_gadi <- function() Sys.getenv("ON_GADI", unset = "null") != "null"
 
 
-zenodo <- function(files) {
-  zenodo_one <- function(file) {
-    # On gadi, we mark the file as used.
-    if (on_gadi()) {
-      if (file.exists(file)) {
-        write(file, file = zenodo_files(), append = TRUE)
-      }
-    }
-    return(file)
+zenodo <- function(files, description = rep("", length(files))) {
+  if (on_gadi()) {
+    env <- parent.frame()
+    description <- vapply(
+      description,
+      \(x) glue::glue(x, .envir = env),
+      character(1)
+    )
+    data.frame(file = relative_path(files), description = description) |>
+      write.table(
+        file = zenodo_files(),
+        append = TRUE,
+        sep = ',',
+        row.names = FALSE,
+        col.names = FALSE
+      )
   }
-
-  vapply(files, zenodo_one, character(1))
+  return(files)
 }
 
-zenodo_files <- function() here::here("data/zenodo_files.txt")
-zenodo_init <- function() invisible(file.create(zenodo_files()))
+zenodo_files <- function() here::here("data/zenodo_files.csv")
+
+zenodo_init <- function() {
+  data.frame(
+    file = relative_path(zenodo_files()),
+    description = "This table of files"
+  ) |>
+    write.table(zenodo_files(), row.names = FALSE, sep = ",") |>
+    invisible()
+}
 
 ## End of zenodo helpers

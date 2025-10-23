@@ -194,7 +194,12 @@ Besides sea-ice concentration, we also analyse mean sea-ice thickness, which we 
 ## Verification datasets
 
 ```{r datasets}
-datasets <- list(cdr = CDR(), osi = OSI())
+datasets <- list(
+  cdr = CDR() |>
+    zenodo("NSIDC CDR sea-ice concentration."),
+  osi = OSI() |>
+    zenodo("OSI sea-ice concentration.")
+)
 which_dataset <- "cdr"
 ```
 
@@ -261,7 +266,7 @@ extent_daily <- datasets |>
 
 ```{r hindcast_extent}
 hindcast_extent <- here::here("data/derived/hindcast_extent.csv") |>
-  zenodo() |>
+  zenodo("Sea-ice extent from hindcast.") |>
   fread() |>
   _[, model := relevel(factor(model), "S2")] |>
   _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |>
@@ -684,8 +689,10 @@ aice_forecast_example <- c(
     clim <- here::here(glue::glue(
       "data/derived/climatology/{model}/{month_clim}/em.nc"
     )) |>
-      zenodo()
+      zenodo("{model} sea-ice concentration climatology for {month_clim}")
+
     hindcast(forecast_date, model, 1) |>
+      zenodo("{model} hindcast for initialised on {forecast_date}") |>
       cdo_ydaysub(clim) |>
       cdo_execute() |>
       ReadNetCDF("aice", subset = list(time = sample_date)) |>
@@ -701,10 +708,15 @@ aice_forecast_example <- c(
   rbindlist()
 
 thickness_example <- c(
-  S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/hi/daily/e01/di_hi_{format(forecast_date, '%Y%m%d')}_e01.nc",
-  S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/e01/di_ice_{format(forecast_date, '%Y%m%d')}_e01.nc"
+  S2 = hindcast(forecast_date, "S2", members = 1, variable = "hi") |>
+    zenodo(
+      "S2 sea-ice thickness hindcast for {forecast_date} (1st ensemble member)"
+    ),
+  S1 = hindcast(forecast_date, "S1", members = 1, variable = "hi") |>
+    zenodo(
+      "S1 sea-ice thickness hindcast for {forecast_date} (1st ensemble member)"
+    )
 ) |>
-  zenodo() |>
   purrr::imap(\(f, model) {
     f |>
       glue::glue() |>
@@ -788,92 +800,6 @@ aice_forecast_example |>
   plot_layout(ncol = 1)
 ```
 
-```{r mean_thickness_funs}
-
-# mean_thickness <- function(concentration, thickness, cell_area = NULL) {
-#   rcdo::cdo_cache_set(here::here("data/temp/cache/"))
-#   if (is.null(cell_area)) {
-#     cell_area <- thickness |>
-#       rcdo::cdo_gridarea()
-#   }
-
-#   volume <- thickness |>
-#     rcdo::cdo_mul(concentration) |>
-#     rcdo::cdo_mul(cell_area) |>
-#     rcdo::cdo_fldsum()
-
-#   area <- concentration |>
-#     rcdo::cdo_mul(cell_area) |>
-#     rcdo::cdo_fldsum()
-
-#   rcdo::cdo_div(volume, area) |>
-#     rcdo::cdo_execute(options = "-L")
-# }
-
-# mean_thickness_access <- \(forecast_time, model) {
-#   concentration <- hindcast(
-#     forecast_time,
-#     model = model,
-#     members = "em",
-#     variable = "aice"
-#   )
-#   thickness <- hindcast(
-#     forecast_time,
-#     model = model,
-#     members = "em",
-#     variable = "hi"
-#   )
-
-#   if (length(thickness) == 0) {
-#     return(NA_character_)
-#   }
-#   if (length(concentration) == 0) {
-#     return(NA_character_)
-#   }
-
-#   cell_area <- thickness |>
-#     rcdo::cdo_gridarea()
-
-#   mean_thickness(concentration, thickness, cell_area)
-# }
-```
-
-
-```{r hindcast_thickness}
-# hindcast_thickness <- CJ(model = c("S2", "S1")) |>
-#   _[, .(forecast_time = get_forecast_times(model)), by = model] |>
-#   _[mday(forecast_time) == 1] |>
-#   _[,
-#     concentration := hindcast(
-#       forecast_time,
-#       model,
-#       members = "em",
-#       variable = "aice"
-#     ) |>
-#       zenodo(),
-#     by = .(model)
-#   ] |>
-#   _[mday(forecast_time) == 1] |>
-#   _[,
-#     thickness := hindcast(
-#       forecast_time,
-#       model,
-#       members = "em",
-#       variable = "hi"
-#     ) |>
-#       zenodo(),
-#     by = .(model)
-#   ] |>
-#   na.omit() |>
-#   _[,
-#     thickness := unlist(mirai_map(
-#       data.frame(concentration, thickness),
-#       mean_thickness
-#     )[.progress])
-#   ] |>
-#   na.omit()
-
-```
 
 ```{r hindcast_mean_thickness}
 hindcast_mean_thickness <- hindcast_mean_thickness() |>
@@ -923,7 +849,7 @@ To assess +S2 forecasts in more detail, we compute error measures for all hindca
 
 ```{r errors}
 errors <- here::here("data/derived/rmse.Rds") |>
-  zenodo() |>
+  zenodo("Hindcast RMSE of sea-ice concentration anomalies") |>
   readRDS() |>
   _[value < 0.01, value := NA] |>
   _[value > 3e13, value := NA] |>
@@ -1192,12 +1118,12 @@ rbind(
 
 ```{r topo_lonlat}
 topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
-  zenodo() |>
+  zenodo("ETOPO topography") |>
   ReadNetCDF() |>
   na.omit()
 ```
 
-```{r}
+```{r clim_std_lon} 
 clim_std_lon <- datasets |>
   lapply(\(x) {
     x |>
@@ -1219,7 +1145,7 @@ clim_std_lon <- datasets |>
 
 ```{r rmse_lon_mean}
 rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
-  zenodo() |>
+  zenodo("Hindcast RMSE in latitude slices") |>
   readRDS() |>
   _[version == "persistence", member := "0em"] |>
   _[member == "0em"] |>

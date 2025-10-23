@@ -12,7 +12,7 @@ cdo_apply <- function(ifile, op, ofile = NULL) {
 
 CDR_grid <- function() {
   here::here("data/raw/nsidc_grid.txt") |>
-    zenodo()
+    zenodo("NSDIC CDR grid description")
 }
 
 CDR <- function() {
@@ -416,7 +416,12 @@ hindcast_0lag_clim <- function(models = c("S1", "S2")) {
         rcdo::cdo_execute(output = file, options = "-O")
     }
 
-    return(list(file = zenodo(file)))
+    return(list(
+      file = zenodo(
+        file,
+        "{model} hindcast monthly sea-ice concentration climatology for the first month of forecast."
+      )
+    ))
   }) |>
     data.table::rbindlist(idcol = "model")
 }
@@ -495,6 +500,14 @@ hindcast_mean_thickness <- function() {
       na.omit()
   }
 
-  zenodo(thick$mean_thickness)
+  thick[,
+    mean_thickness := zenodo(
+      mean_thickness,
+      glue::glue_data(
+        .SD,
+        "{model} hindcast monthly spatial average sea-ice thickness for {forecast_time}"
+      )
+    )
+  ]
   thick
 }
