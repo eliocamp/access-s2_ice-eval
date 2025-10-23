@@ -268,7 +268,16 @@ zenodo <- function(files, description = rep("", length(files))) {
   return(files)
 }
 
-zenodo_files <- function() here::here("data/zenodo_files.csv")
+create_dir <- function(file_path) {
+  dir.create(dirname(file_path), showWarnings = FALSE, recurseive = TRUE)
+  return(file_path)
+}
+
+zenodo_files <- function() {
+  here::here("data/zenodo_files.csv") |>
+    create_dir()
+}
+
 
 zenodo_init <- function() {
   data.frame(
