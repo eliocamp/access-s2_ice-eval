@@ -141,7 +141,7 @@ relative_path <- function(path) {
 zenodo_upload_data <- function() {
   files <- read.csv(zenodo_files())
 
-  files <- files[!duplicated(files$file)]
+  files <- files[!duplicated(files$file), ]
 
   if (nrow(files) == 0) {
     stop("No files in zenodo_files.txt")
@@ -154,11 +154,14 @@ zenodo_upload_data <- function() {
     return(invisible(NULL))
   }
 
+  message("Creating zip file")
   zipfile <- file.path(tempdir(), "data.zip")
   zip(zipfile, files$file)
 
+  message("Uploading zip file")
   zenodo_upload_file(zipfile)
 
+  message("Uploading checksum file")
   checksum_file <- here::here("data/checksum")
   writeLines(checksum$local, checksum_file)
   zenodo_upload_file(checksum_file)
