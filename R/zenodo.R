@@ -269,7 +269,7 @@ zenodo <- function(files, description = rep("", length(files))) {
 }
 
 create_dir <- function(file_path) {
-  dir.create(dirname(file_path), showWarnings = FALSE, recurseive = TRUE)
+  dir.create(dirname(file_path), showWarnings = FALSE, recursive = TRUE)
   return(file_path)
 }
 
