@@ -61,7 +61,7 @@ execute:
   echo: false
   warning: false
   message: false
-  cache: true
+  cache: refresh
 
 filters:
   - _extensions/ute/search-replace/search-replace.lua
@@ -87,6 +87,12 @@ library(mirai)
 
 cdo_options_set("-L")
 cdo_cache_set(here::here("data/temp/cache"))
+```
+
+```{r zenodo, cache = FALSE}
+source(here::here("R/zenodo.R"))
+zenodo_init()
+zenodo_download_data()
 ```
 
 ```{r helpers, cache = FALSE}
@@ -254,7 +260,9 @@ extent_daily <- datasets |>
 ```
 
 ```{r hindcast_extent}
-hindcast_extent <- fread(here::here("data/derived/hindcast_extent.csv")) |>
+hindcast_extent <- here::here("data/derived/hindcast_extent.csv") |>
+  zenodo() |>
+  fread() |>
   _[, model := relevel(factor(model), "S2")] |>
   _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |>
   _[lag > 0] |>
@@ -441,7 +449,12 @@ dif_extent |>
 ```
 
 ```{r hindcast_clim}
-zeropad <- function(x, n = 2) formatC(x, width = 2, flag = "0")
+
+hindcast_clim <- hindcast_0lag_clim() |>
+  _[, ReadNetCDF(file, "aice"), by = .(model)] |>
+  _[, month := month(time)] |>
+  _[, time := NULL]
+
 monnb <- function(d) {
   lt <- as.POSIXlt(as.Date(d, origin = "1900-01-01"))
   lt$year * 12 + lt$mon
@@ -449,33 +462,6 @@ monnb <- function(d) {
 mondf <- function(d1, d2) {
   monnb(d2) - monnb(d1)
 }
-
-months <- 1:12
-
-hindcast_clim <- lapply(setNames(months, months), \(month) {
-  lapply(c("S1", "S2"), \(model) {
-    here::here(glue::glue(
-      "data/derived/climatology/{model}/{zeropad(month)}/em.nc"
-    )) |>
-      cdo_selmonth(month) |>
-      cdo_execute() |>
-      ReadNetCDF("aice") |>
-      _[, model := model]
-  }) |>
-    rbindlist()
-}) |>
-  rbindlist(idcol = "forecast_month") |>
-  _[, forecast_month := as.numeric(forecast_month)]
-
-
-hindcast_clim <- hindcast_clim |>
-  copy() |>
-  _[,
-    .(aice = mean(aice)),
-    by = .(month(time), ygrid, xgrid, forecast_month, model)
-  ] |>
-  _[forecast_month == month]
-
 
 obs_clim <- lapply(datasets, \(x) {
   x |>
@@ -695,11 +681,12 @@ mday(forecast_date) <- 1
 aice_forecast_example <- c(
   lapply(c("S1", "S2"), \(model) {
     month_clim <- formatC(month(forecast_date), width = 2, flag = "0")
-
+    clim <- here::here(glue::glue(
+      "data/derived/climatology/{model}/{month_clim}/em.nc"
+    )) |>
+      zenodo()
     hindcast(forecast_date, model, 1) |>
-      cdo_ydaysub(here::here(glue::glue(
-        "data/derived/climatology/{model}/{month_clim}/em.nc"
-      ))) |>
+      cdo_ydaysub(clim) |>
       cdo_execute() |>
       ReadNetCDF("aice", subset = list(time = sample_date)) |>
       _[, model := model]
@@ -717,6 +704,7 @@ thickness_example <- c(
   S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/hi/daily/e01/di_hi_{format(forecast_date, '%Y%m%d')}_e01.nc",
   S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/e01/di_ice_{format(forecast_date, '%Y%m%d')}_e01.nc"
 ) |>
+  zenodo() |>
   purrr::imap(\(f, model) {
     f |>
       glue::glue() |>
@@ -802,78 +790,95 @@ aice_forecast_example |>
 
 ```{r mean_thickness_funs}
 
-mean_thickness <- function(concentration, thickness, cell_area = NULL) {
-  if (is.null(cell_area)) {
-    cell_area <- concentration |>
-      rcdo::cdo_gridarea()
-  }
+# mean_thickness <- function(concentration, thickness, cell_area = NULL) {
+#   rcdo::cdo_cache_set(here::here("data/temp/cache/"))
+#   if (is.null(cell_area)) {
+#     cell_area <- thickness |>
+#       rcdo::cdo_gridarea()
+#   }
 
-  volume <- thickness |>
-    rcdo::cdo_mul(concentration) |>
-    rcdo::cdo_mul(cell_area) |>
-    rcdo::cdo_fldsum()
+#   volume <- thickness |>
+#     rcdo::cdo_mul(concentration) |>
+#     rcdo::cdo_mul(cell_area) |>
+#     rcdo::cdo_fldsum()
 
-  area <- concentration |>
-    rcdo::cdo_mul(cell_area) |>
-    rcdo::cdo_fldsum()
+#   area <- concentration |>
+#     rcdo::cdo_mul(cell_area) |>
+#     rcdo::cdo_fldsum()
 
-  rcdo::cdo_div(volume, area) |>
-    rcdo::cdo_execute(options = "-L")
-}
-mean_thickness_access <- \(forecast_time, model) {
-  concentration <- hindcast(
-    forecast_time,
-    model = model,
-    members = "em",
-    variable = "aice"
-  )
-  thickness <- hindcast(
-    forecast_time,
-    model = model,
-    members = "em",
-    variable = "hi"
-  )
+#   rcdo::cdo_div(volume, area) |>
+#     rcdo::cdo_execute(options = "-L")
+# }
 
-  if (length(thickness) == 0) {
-    return(NA_character_)
-  }
-  if (length(concentration) == 0) {
-    return(NA_character_)
-  }
+# mean_thickness_access <- \(forecast_time, model) {
+#   concentration <- hindcast(
+#     forecast_time,
+#     model = model,
+#     members = "em",
+#     variable = "aice"
+#   )
+#   thickness <- hindcast(
+#     forecast_time,
+#     model = model,
+#     members = "em",
+#     variable = "hi"
+#   )
 
-  rcdo::cdo_cache_set(here::here("data/temp/cache/"))
-  cell_area <- thickness |>
-    rcdo::cdo_gridarea()
+#   if (length(thickness) == 0) {
+#     return(NA_character_)
+#   }
+#   if (length(concentration) == 0) {
+#     return(NA_character_)
+#   }
 
-  mean_thickness(concentration, thickness, cell_area)
-}
+#   cell_area <- thickness |>
+#     rcdo::cdo_gridarea()
+
+#   mean_thickness(concentration, thickness, cell_area)
+# }
 ```
 
 
 ```{r hindcast_thickness}
-hindcast_thickness <- CJ(model = c("S2", "S1")) |>
-  _[, .(forecast_time = get_forecast_times(model)), by = model] |>
-  _[mday(forecast_time) == 1] |>
-  _[,
-    thickness := unlist(mirai_map(
-      data.frame(forecast_time, model),
-      mean_thickness_access,
-      hindcast = hindcast,
-      mean_thickness = mean_thickness
-    )[.progress])
-  ] |>
-  na.omit()
+# hindcast_thickness <- CJ(model = c("S2", "S1")) |>
+#   _[, .(forecast_time = get_forecast_times(model)), by = model] |>
+#   _[mday(forecast_time) == 1] |>
+#   _[,
+#     concentration := hindcast(
+#       forecast_time,
+#       model,
+#       members = "em",
+#       variable = "aice"
+#     ) |>
+#       zenodo(),
+#     by = .(model)
+#   ] |>
+#   _[mday(forecast_time) == 1] |>
+#   _[,
+#     thickness := hindcast(
+#       forecast_time,
+#       model,
+#       members = "em",
+#       variable = "hi"
+#     ) |>
+#       zenodo(),
+#     by = .(model)
+#   ] |>
+#   na.omit() |>
+#   _[,
+#     thickness := unlist(mirai_map(
+#       data.frame(concentration, thickness),
+#       mean_thickness
+#     )[.progress])
+#   ] |>
+#   na.omit()
 
 ```
 
 ```{r hindcast_mean_thickness}
-hindcast_mean_thickness <- hindcast_thickness |>
+hindcast_mean_thickness <- hindcast_mean_thickness() |>
   _[,
-    thickness |> cdo_monmean() |> cdo_execute(),
-    by = .(model, forecast_time)
-  ] |>
-  _[,
-    metR::ReadNetCDF(V1, c(thickness = "hi")),
+    ReadNetCDF(mean_thickness, c(thickness = "hi")),
     by = .(model, forecast_time)
   ] |>
   _[, time := as.Date(update(time, day = 1))] |>
@@ -917,10 +922,9 @@ It is possible that sea-ice in the +S2 system is left in an unbalanced state aft
 To assess +S2 forecasts in more detail, we compute error measures for all hindcasts started on the 1st of every month.
 
 ```{r errors}
-errors <- rbind(
-  readRDS(here::here("data/derived/rmse.Rds")),
-  readRDS(here::here("data/derived/iiee.Rds"))
-) |>
+errors <- here::here("data/derived/rmse.Rds") |>
+  zenodo() |>
+  readRDS() |>
   _[value < 0.01, value := NA] |>
   _[value > 3e13, value := NA] |>
   _[, time := as.Date(time)] |>
@@ -1188,6 +1192,7 @@ rbind(
 
 ```{r topo_lonlat}
 topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
+  zenodo() |>
   ReadNetCDF() |>
   na.omit()
 ```
@@ -1214,6 +1219,7 @@ clim_std_lon <- datasets |>
 
 ```{r rmse_lon_mean}
 rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
+  zenodo() |>
   readRDS() |>
   _[version == "persistence", member := "0em"] |>
   _[member == "0em"] |>
@@ -1349,7 +1355,9 @@ The fact that this is evident in the months in which ENSO teleconnections are mo
 February and March are the only two months that can be forecasted with marginally positive skill in large regions. 
 
 ```{r errors_ensemble} 
-errors_ensemble <- readRDS(here::here("data/derived/rmse.Rds")) |>
+errors_ensemble <- here::here("data/derived/rmse.Rds") |>
+  zenodo() |>
+  readRDS() |>
   _[version != "persistence"] |>
   _[member != "0em"] |>
   _[value < 0.01, value := NA] |>
