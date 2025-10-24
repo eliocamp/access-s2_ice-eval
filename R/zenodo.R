@@ -1,51 +1,29 @@
-# Minimal Zenodo helpers for a single fixed deposition
-# Uses httr2 for HTTP requests. Keep this file small and focused.
-
-# Hard-coded deposition ID for this project. Replace with the real ID.
-ZENODO_DEPOSITION_ID <- 386004
+# Hard-coded deposition ID for this project.
+ZENODO_DEPOSITION_ID <- 391075
 
 # Internal: read the token from environment and validate
 .zenodo_get_token <- function() {
   token <- Sys.getenv("ZENODO_TOKEN", unset = "")
   if (identical(token, "") || is.na(token)) {
-    stop(
-      "ZENODO_TOKEN environment variable is not set or empty. Set it to your Zenodo API token."
-    )
+    token <- NULL
   }
   token
 }
 
 # Internal: choose base API URL. If ZENODO_SANDBOX is set (non-empty), use the sandbox API.
-.zenodo_base_url <- function() {
+.zenodo_base_url <- function(api = TRUE) {
   if (nzchar(Sys.getenv("ZENODO_SANDBOX", ""))) {
-    return("https://sandbox.zenodo.org/api")
-  }
-  "https://zenodo.org/api"
-}
-
-# List files attached to the fixed deposition
-# Returns a list (as returned by the API) or throws on error
-zenodo_list_files <- function(deposition_id = ZENODO_DEPOSITION_ID) {
-  token <- .zenodo_get_token()
-  url <- paste0(.zenodo_base_url(), "/deposit/depositions/", deposition_id)
-
-  resp <- httr2::request(url) |>
-    httr2::req_auth_bearer_token(token) |>
-    httr2::req_perform()
-
-  if (httr2::resp_status(resp) >= 400) {
-    stop(sprintf(
-      "Zenodo API returned HTTP %s: %s",
-      httr2::resp_status(resp),
-      httr2::resp_body_json(resp, simplifyVector = TRUE)$message
-    ))
+    url <- "https://sandbox.zenodo.org/"
+  } else {
+    url <- "https://zenodo.org"
   }
 
-  body <- httr2::resp_body_json(resp, simplifyVector = FALSE)
-  # body$files is typically a list with elements containing 'filename', 'id', 'links', etc.
-  body$files
-}
+  if (api) {
+    url <- paste0(url, "api")
+  }
 
+  return(url)
+}
 
 get_bucket_for_deposition <- function(deposition_id = ZENODO_DEPOSITION_ID) {
   token <- .zenodo_get_token()
@@ -68,12 +46,48 @@ get_bucket_for_deposition <- function(deposition_id = ZENODO_DEPOSITION_ID) {
 }
 
 
+# Ensure the given deposition is editable. If the deposition is published,
+# create a new version and return the editable draft id. Otherwise return
+# the deposition id (already editable).
+zenodo_ensure_editable_deposition <- function(deposition_id = ZENODO_DEPOSITION_ID) {
+  token <- .zenodo_get_token()
+  if (is.null(token)) {
+    stop("ZENODO_TOKEN not set in environment; cannot access Zenodo API")
+  }
+
+  url <- paste0(.zenodo_base_url(), "/deposit/depositions/", deposition_id)
+  resp <- httr2::request(url) |>
+    httr2::req_auth_bearer_token(token) |>
+    httr2::req_perform()
+
+  if (httr2::resp_status(resp) >= 400) {
+    body <- tryCatch(
+      httr2::resp_body_json(resp, simplifyVector = TRUE),
+      error = function(e) NULL
+    )
+    msg <- if (!is.null(body) && !is.null(body$message)) body$message else httr2::resp_status(resp)
+    stop("Failed to fetch deposition: ", msg)
+  }
+
+  body <- httr2::resp_body_json(resp, simplifyVector = FALSE)
+
+  if (isTRUE(body$submitted) || identical(body$state, "done")) {
+    cli::cli_abort("Deposition {deposition_id} is published. To update new files you need to create a new version and modify {.var ZENODO_DEPOSITION_ID}.")
+  }
+
+  # Already editable/draft
+  return(as.integer(body$id))
+}
+
 # Upload a local file to the fixed deposition.
 # Returns the API response for the uploaded file entry.
 zenodo_upload_file <- function(path, deposition_id = ZENODO_DEPOSITION_ID) {
   if (!file.exists(path)) {
     stop("File does not exist: ", path)
   }
+
+  zenodo_ensure_editable_deposition(deposition_id = deposition_id)
+
   token <- .zenodo_get_token()
 
   bucket <- get_bucket_for_deposition(deposition_id = deposition_id)
@@ -112,17 +126,6 @@ zenodo_checksum_matches <- function(files) {
     vapply(\(x) digest::digest(file = x), character(1)) |>
     digest::digest()
 
-  remote_files <- zenodo_list_files() |>
-    vapply(\(x) x$filename, character(1))
-
-  if (!("checksum" %in% remote_files)) {
-    return(list(
-      local = checksum_local,
-      checksum = NULL,
-      matches = FALSE
-    ))
-  }
-
   checksum_remote <- readLines(zenodo_download_file("checksum", tempdir()))
 
   return(list(
@@ -138,18 +141,21 @@ relative_path <- function(path) {
   gsub(root, "", x = path)
 }
 
-zenodo_upload_data <- function() {
+zenodo_upload_data <- function(force = FALSE) {
   files <- read.csv(zenodo_files())
 
-  files <- files[!duplicated(files$file), ]
+  files <- files[!duplicated(files$file), ] |>
+    tail()
+
+  write.table(files, zenodo_files(), row.names = FALSE, sep = ",")
 
   if (nrow(files) == 0) {
     stop("No files in zenodo_files.txt")
   }
 
-  checksum <- zenodo_checksum_matches(files$files)
+  checksum <- zenodo_checksum_matches(files$file)
 
-  if (checksum$matches) {
+  if (!force & checksum$matches) {
     message("Remote and local checksum match. Nothing to upload.")
     return(invisible(NULL))
   }
@@ -167,58 +173,66 @@ zenodo_upload_data <- function() {
   zenodo_upload_file(checksum_file)
 }
 
-# Download a file (by filename) from the fixed deposition to a local path.
-# If destination is a directory, the file will be saved inside it with the original filename.
-zenodo_download_file <- function(
-  filename,
-  dest = ".",
-  deposition_id = ZENODO_DEPOSITION_ID
-) {
+zenodo_is_published <- function(deposition_id = ZENODO_DEPOSITION_ID) {
+  # Determine base host depending on sandbox env var
+  base <- .zenodo_base_url(api = FALSE)
+  # ensure no trailing slash
+  base <- sub("/$", "", base)
+
+  url <- paste0(base, "/api/records/", deposition_id)
+  resp <- try(httr2::request(url) |> httr2::req_perform(), silent = TRUE)
+  
+  if (inherits(resp, "try-error")) {
+    return(FALSE)
+  }
+  
+  return(TRUE)
+}
+
+
+zenodo_download_file <- function(filename, dest = ".", deposition_id = ZENODO_DEPOSITION_ID) {
+  # destination directory
+  if (!dir.exists(dest)) dir.create(dest, recursive = TRUE, showWarnings = FALSE)
+
+  is_pub <- zenodo_is_published(deposition_id = deposition_id)
+  destfile <- file.path(dest, filename)
+
+  if (is_pub) {
+    cli::cli_inform("Deposition {deposition_id} is published — performing public download")
+    base <- .zenodo_base_url(api = FALSE)
+    base <- sub("/$", "", base)
+    url <- paste0(base, "/api/records/", deposition_id, "/files/", utils::URLencode(filename, reserved = TRUE), "?download=1")
+
+    # use download.file for public download (no token)
+    o <- options(timeout = 3600)
+    on.exit(options(o), add = TRUE)
+    utils::download.file(url, destfile, mode = "wb")
+    return(invisible(destfile))
+  }
+
+  # Not published: need authenticated download
   token <- .zenodo_get_token()
-
-  files <- zenodo_list_files(deposition_id = deposition_id)
-  # find by exact filename
-  match <- NULL
-  for (f in files) {
-    if (!is.null(f$filename) && identical(f$filename, filename)) {
-      match <- f
-      break
-    }
-  }
-  if (is.null(match)) {
-    stop("File not found in deposition: ", filename)
+  if (is.null(token)) {
+    stop("Deposition is not published and ZENODO_TOKEN is not set — cannot download private file")
   }
 
-  # download link is usually in match$links$download
-  dl <- match$links$download
-  if (is.null(dl)) {
-    stop("No download link available for file: ", filename)
-  }
+  # get bucket link (uses authenticated depositions API)
+  bucket <- get_bucket_for_deposition(deposition_id = deposition_id)
+  file_url <- paste0(sub("/$", "", bucket), "/", utils::URLencode(filename, reserved = TRUE))
 
-  resp <- httr2::request(dl) |>
+  resp <- httr2::request(file_url) |>
     httr2::req_auth_bearer_token(token) |>
-    httr2::req_perform()
+    httr2::req_perform(path = destfile)
 
   if (httr2::resp_status(resp) >= 400) {
-    stop(sprintf("Failed to download file: HTTP %s", httr2::resp_status(resp)))
+    body <- tryCatch(httr2::resp_body_json(resp, simplifyVector = TRUE), error = function(e) NULL)
+    msg <- if (!is.null(body) && !is.null(body$message)) body$message else httr2::resp_status(resp)
+    stop("Failed to download private file: ", msg)
   }
 
-  data <- httr2::resp_body_raw(resp)
-
-  # determine destination path
-  if (dir.exists(dest)) {
-    destfile <- file.path(dest, filename)
-  } else {
-    # if dest ends with a separator or looks like a directory that doesn't exist, treat as dir
-    destfile <- dest
-  }
-
-  con <- file(destfile, open = "wb")
-  on.exit(close(con), add = TRUE)
-  writeBin(data, con)
-
-  invisible(destfile)
+  return(invisible(destfile))
 }
+
 
 
 zenodo_download_data <- function() {
@@ -233,14 +247,15 @@ zenodo_download_data <- function() {
       Filter(f = nzchar)
 
     if (all(file.exists(needed_files))) {
+      message("Checking checksum of files")
       checksum <- zenodo_checksum_matches(needed_files)
       if (checksum$matches) return(invisible(NULL))
     }
   }
 
-  dir <- tempdir()
+  dir <- here::here("data")
   file <- zenodo_download_file("data.zip", dir)
-  unzip(file, exdtir = here::here(""))
+  unzip(file, exdir = here::here(""))
 
   return(invisible(NULL))
 }
@@ -280,12 +295,13 @@ zenodo_files <- function() {
 
 
 zenodo_init <- function() {
-  data.frame(
-    file = relative_path(zenodo_files()),
-    description = "This table of files"
-  ) |>
-    write.table(zenodo_files(), row.names = FALSE, sep = ",") |>
-    invisible()
-}
+  if (on_gadi()) {
+    data.frame(
+      file = relative_path(zenodo_files()),
+      description = "This table of files"
+    ) |>
+      write.table(zenodo_files(), row.names = FALSE, sep = ",")
+  }
 
-## End of zenodo helpers
+  return(invisible(zenodo_files()))
+}
