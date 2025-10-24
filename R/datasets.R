@@ -452,6 +452,11 @@ hindcast_mean_thickness <- function() {
   thick <- data.table::CJ(model = c("S2", "S1")) |>
     _[, .(forecast_time = get_forecast_times(model)), by = model] |>
     _[data.table::mday(forecast_time) == 1] |>
+    _[
+      model == "S2" & forecast_time == as.IDate("1981-01-01"),
+      forecast_time := NA
+    ] |> # first time doesn't have mnembers
+    na.omit() |>
     _[,
       mean_thickness := here::here(glue::glue_data(
         .SD,
@@ -509,5 +514,5 @@ hindcast_mean_thickness <- function() {
       )
     )
   ]
-  thick
+  thick[]
 }
