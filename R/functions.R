@@ -27,23 +27,39 @@ ncview <- function(file) {
   system2("ncview", args = c(file), wait = FALSE)
 }
 
+save_forecast_times <- function() {
+  lapply(c("S1", "S2"), \(model) {
+    dir <- switch(
+      model,
+      S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/",
+      S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/aice/daily/",
+      stop("Model needs to be S1 or S2")
+    )
+
+    dates <- list.files(file.path(dir, "e01")) |>
+      strcapture(
+        pattern = "di_a?ice_(\\d{8})_e01.nc",
+        proto = list(date = character(1))
+      ) |>
+      _$date |>
+      lubridate::as_date()
+
+    list(model = model, date = dates)
+  }) |>
+    data.table::rbindlist() |>
+    data.table::fwrite(here::here("data/derived/forecast_times.csv"))
+}
+
 get_forecast_times <- function(model) {
-  dir <- switch(
-    model,
-    S1 = "/g/data/ub7/access-s1/hc/raw_model/unchecked/ice/ice/daily/",
-    S2 = "/g/data/ux62/access-s2/hindcast/raw_model/ice/aice/daily/",
-    stop("Model needs to be S1 or S2")
-  )
+  dates <- here::here("data/derived/forecast_times.csv") |>
+    zenodo("Hindcast dates.")
 
-  dates <- list.files(file.path(dir, "e01")) |>
-    strcapture(
-      pattern = "di_a?ice_(\\d{8})_e01.nc",
-      proto = list(date = character(1))
-    ) |>
-    _$date |>
-    lubridate::as_date()
-
-  dates
+  if (!file.exists(dates)) {
+    save_forecast_times()
+  }
+  dates <- data.table::fread(dates)
+  this_model <- model
+  dates[model == this_model]$date
 }
 
 compute_climatology <- function(
