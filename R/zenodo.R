@@ -110,6 +110,7 @@ zenodo_upload_file <- function(path, deposition_id = ZENODO_DEPOSITION_ID) {
     httr2::req_body_file(path = path) |>
     httr2::req_timeout(60 * 60) |>
     httr2::req_retry(max_tries = 3) |>
+    httr2::req_progress() |>
     httr2::req_perform()
 
   if (httr2::resp_status(resp) >= 400) {
@@ -160,21 +161,22 @@ zenodo_upload_data <- function(force = FALSE) {
     stop("No files in zenodo_files.txt")
   }
 
+  cli::cli_inform("Checking checksum against existing checksum.")
   checksum <- zenodo_checksum_matches(files$file)
 
   if (!force & checksum$matches) {
-    message("Remote and local checksum match. Nothing to upload.")
+    cli::cli_inform("Remote and local checksum match. Nothing to upload.")
     return(invisible(NULL))
   }
 
-  message("Creating zip file")
+  cli::cli_inform("Creating zip file")
   zipfile <- file.path(tempdir(), "data.zip")
   zip(zipfile, files$file)
 
-  message("Uploading zip file")
+  cli::cli_inform("Uploading zip file")
   zenodo_upload_file(zipfile)
 
-  message("Uploading checksum file")
+  cli::cli_inform("Uploading checksum file")
   checksum_file <- here::here("data/checksum")
   writeLines(checksum$local, checksum_file)
   zenodo_upload_file(checksum_file)
