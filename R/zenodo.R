@@ -250,6 +250,7 @@ zenodo_download_file <- function(
 
   resp <- httr2::request(file_url) |>
     httr2::req_auth_bearer_token(token) |>
+    httr2::req_progress() |>
     httr2::req_perform(path = destfile)
 
   if (httr2::resp_status(resp) >= 400) {
@@ -269,7 +270,7 @@ zenodo_download_file <- function(
 }
 
 
-zenodo_download_data <- function() {
+zenodo_download_data <- function(check_checksum = FALSE) {
   if (on_gadi()) {
     return(invisible(NULL))
   }
@@ -278,17 +279,28 @@ zenodo_download_data <- function() {
 
   if (file.exists(file_list)) {
     needed_files <- read.csv(file_list)$file |>
-      Filter(f = nzchar)
+      Filter(f = nzchar) |>
+      here::here()
 
     if (all(file.exists(needed_files))) {
-      message("Checking checksum of files")
+      if (!check_checksum) {
+        cli::cli_inform("All files exist, no download needed")
+        return(invisible(NULL))
+      }
+
+      cli::cli_inform("Checking checksum of files")
       checksum <- zenodo_checksum_matches(needed_files)
-      if (checksum$matches) return(invisible(NULL))
+      if (checksum$matches) {
+        cli::cli_inform("Checksum matches, no download needed")
+        return(invisible(NULL))
+      }
     }
   }
 
+  cli::cli_inform("Downloading data")
   dir <- here::here("data")
   file <- zenodo_download_file("data.zip", dir)
+  cli::cli_inform("Unzipping data")
   unzip(file, exdir = here::here(""))
 
   return(invisible(NULL))
