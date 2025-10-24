@@ -49,7 +49,9 @@ get_bucket_for_deposition <- function(deposition_id = ZENODO_DEPOSITION_ID) {
 # Ensure the given deposition is editable. If the deposition is published,
 # create a new version and return the editable draft id. Otherwise return
 # the deposition id (already editable).
-zenodo_ensure_editable_deposition <- function(deposition_id = ZENODO_DEPOSITION_ID) {
+zenodo_ensure_editable_deposition <- function(
+  deposition_id = ZENODO_DEPOSITION_ID
+) {
   token <- .zenodo_get_token()
   if (is.null(token)) {
     stop("ZENODO_TOKEN not set in environment; cannot access Zenodo API")
@@ -65,14 +67,20 @@ zenodo_ensure_editable_deposition <- function(deposition_id = ZENODO_DEPOSITION_
       httr2::resp_body_json(resp, simplifyVector = TRUE),
       error = function(e) NULL
     )
-    msg <- if (!is.null(body) && !is.null(body$message)) body$message else httr2::resp_status(resp)
+    msg <- if (!is.null(body) && !is.null(body$message)) {
+      body$message
+    } else {
+      httr2::resp_status(resp)
+    }
     stop("Failed to fetch deposition: ", msg)
   }
 
   body <- httr2::resp_body_json(resp, simplifyVector = FALSE)
 
   if (isTRUE(body$submitted) || identical(body$state, "done")) {
-    cli::cli_abort("Deposition {deposition_id} is published. To update new files you need to create a new version and modify {.var ZENODO_DEPOSITION_ID}.")
+    cli::cli_abort(
+      "Deposition {deposition_id} is published. To update new files you need to create a new version and modify {.var ZENODO_DEPOSITION_ID}."
+    )
   }
 
   # Already editable/draft
@@ -144,8 +152,7 @@ relative_path <- function(path) {
 zenodo_upload_data <- function(force = FALSE) {
   files <- read.csv(zenodo_files())
 
-  files <- files[!duplicated(files$file), ] |>
-    tail()
+  files <- files[!duplicated(files$file), ]
 
   write.table(files, zenodo_files(), row.names = FALSE, sep = ",")
 
@@ -181,27 +188,42 @@ zenodo_is_published <- function(deposition_id = ZENODO_DEPOSITION_ID) {
 
   url <- paste0(base, "/api/records/", deposition_id)
   resp <- try(httr2::request(url) |> httr2::req_perform(), silent = TRUE)
-  
+
   if (inherits(resp, "try-error")) {
     return(FALSE)
   }
-  
+
   return(TRUE)
 }
 
 
-zenodo_download_file <- function(filename, dest = ".", deposition_id = ZENODO_DEPOSITION_ID) {
+zenodo_download_file <- function(
+  filename,
+  dest = ".",
+  deposition_id = ZENODO_DEPOSITION_ID
+) {
   # destination directory
-  if (!dir.exists(dest)) dir.create(dest, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(dest)) {
+    dir.create(dest, recursive = TRUE, showWarnings = FALSE)
+  }
 
   is_pub <- zenodo_is_published(deposition_id = deposition_id)
   destfile <- file.path(dest, filename)
 
   if (is_pub) {
-    cli::cli_inform("Deposition {deposition_id} is published — performing public download")
+    cli::cli_inform(
+      "Deposition {deposition_id} is published — performing public download"
+    )
     base <- .zenodo_base_url(api = FALSE)
     base <- sub("/$", "", base)
-    url <- paste0(base, "/api/records/", deposition_id, "/files/", utils::URLencode(filename, reserved = TRUE), "?download=1")
+    url <- paste0(
+      base,
+      "/api/records/",
+      deposition_id,
+      "/files/",
+      utils::URLencode(filename, reserved = TRUE),
+      "?download=1"
+    )
 
     # use download.file for public download (no token)
     o <- options(timeout = 3600)
@@ -213,26 +235,38 @@ zenodo_download_file <- function(filename, dest = ".", deposition_id = ZENODO_DE
   # Not published: need authenticated download
   token <- .zenodo_get_token()
   if (is.null(token)) {
-    stop("Deposition is not published and ZENODO_TOKEN is not set — cannot download private file")
+    stop(
+      "Deposition is not published and ZENODO_TOKEN is not set — cannot download private file"
+    )
   }
 
   # get bucket link (uses authenticated depositions API)
   bucket <- get_bucket_for_deposition(deposition_id = deposition_id)
-  file_url <- paste0(sub("/$", "", bucket), "/", utils::URLencode(filename, reserved = TRUE))
+  file_url <- paste0(
+    sub("/$", "", bucket),
+    "/",
+    utils::URLencode(filename, reserved = TRUE)
+  )
 
   resp <- httr2::request(file_url) |>
     httr2::req_auth_bearer_token(token) |>
     httr2::req_perform(path = destfile)
 
   if (httr2::resp_status(resp) >= 400) {
-    body <- tryCatch(httr2::resp_body_json(resp, simplifyVector = TRUE), error = function(e) NULL)
-    msg <- if (!is.null(body) && !is.null(body$message)) body$message else httr2::resp_status(resp)
+    body <- tryCatch(
+      httr2::resp_body_json(resp, simplifyVector = TRUE),
+      error = function(e) NULL
+    )
+    msg <- if (!is.null(body) && !is.null(body$message)) {
+      body$message
+    } else {
+      httr2::resp_status(resp)
+    }
     stop("Failed to download private file: ", msg)
   }
 
   return(invisible(destfile))
 }
-
 
 
 zenodo_download_data <- function() {
