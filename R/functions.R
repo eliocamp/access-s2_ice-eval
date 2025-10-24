@@ -111,7 +111,7 @@ climatology <- function(dataset) {
 }
 
 
-anomalies <- function(dataset, climatology) {
+anomalies <- function(dataset, climatology = climatology(dataset)) {
   file <- here::here("data/derived/anomalies", name_from_dataset(dataset))
   dir.create(dirname(file), FALSE, TRUE)
 
