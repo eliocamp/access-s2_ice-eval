@@ -111,14 +111,14 @@ climatology <- function(dataset) {
 }
 
 
-anomalies <- function(dataset, climatology = climatology(dataset)) {
+anomalies <- function(dataset, clim = climatology(dataset)) {
   file <- here::here("data/derived/anomalies", name_from_dataset(dataset))
   dir.create(dirname(file), FALSE, TRUE)
 
   if (file.exists(file)) {
     return(file)
   }
-  cdo_ydaysub(cdo_del29feb(dataset), cdo_del29feb(climatology)) |>
+  cdo_ydaysub(cdo_del29feb(dataset), cdo_del29feb(clim)) |>
     cdo_execute(output = file, options = "-L")
 }
 
