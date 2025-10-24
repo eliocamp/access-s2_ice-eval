@@ -61,7 +61,7 @@ execute:
   echo: false
   warning: false
   message: false
-  cache: refresh
+  cache: true
 
 filters:
   - _extensions/ute/search-replace/search-replace.lua
@@ -246,6 +246,14 @@ $$
 Where $RMSE_{f}$ is the RMSE of the forecast, $RMSE_{r}$ is the RMSE of the reference forecast. 
 Negative skill score indicates that the forecast is worse than the reference forecast while positive values indicate an improvement. 
 A perfect forecast, would have zero RMSE and thus a skill score of 1. 
+
+
+## Computational procedures 
+
+We performed all analysis in this paper using the R programming language [@rcoreteam2020], using data.table [@dowle2020] and metR [@campitelli2020b] packages.
+Significant processing was performed using the CDO command line operators [@schulzweida2023].
+All graphics are made using ggplot2 [@wickham2009].
+The paper was rendered using knitr and quarto [@xie2015; @allaire2022].
 
 # Results and discussion
 
