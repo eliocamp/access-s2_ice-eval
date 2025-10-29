@@ -218,9 +218,10 @@ zenodo_download_file <- function(
     )
     base <- .zenodo_base_url(api = FALSE)
     base <- sub("/$", "", base)
+
     url <- paste0(
       base,
-      "/api/records/",
+      "/records/",
       deposition_id,
       "/files/",
       utils::URLencode(filename, reserved = TRUE),
@@ -301,9 +302,33 @@ zenodo_download_data <- function(check_checksum = FALSE) {
 
   cli::cli_inform("Downloading data")
   dir <- here::here("data")
-  file <- zenodo_download_file("data.zip", dir)
+  data_file <- file.path(dir, "data.zip")
+
+  if (!file.exists(data_file)) {
+    data_file <- zenodo_download_file("data.zip", dir)
+  } else {
+    remote_checksum <- paste0(
+      .zenodo_base_url(),
+      "/deposit/depositions/",
+      ZENODO_DEPOSITION_ID,
+      "/files"
+    ) |>
+      httr2::request() |>
+      httr2::req_perform() |>
+      httr2::resp_body_json() |>
+      Filter(f = \(x) x$filename == "data.zip") |>
+      _[[1]] |>
+      _$checksum
+
+    local_checksum <- digest::digest(file = data_file)
+
+    if (remote_checksum != local_checksum) {
+      data_file <- zenodo_download_file("data.zip", dir)
+    }
+  }
+
   cli::cli_inform("Unzipping data")
-  unzip(file, exdir = here::here(""))
+  unzip(data_file, exdir = here::here(""))
 
   return(invisible(NULL))
 }
