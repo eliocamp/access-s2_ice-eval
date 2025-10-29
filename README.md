@@ -1,4 +1,4 @@
-# access-s2_ice-eval
+# Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Model
 
 This repository contains data, code and other source files associated with Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Model
 
@@ -7,7 +7,6 @@ First clone or download this repository with
 ```bash
 git clone --depth 1 git@github.com:eliocamp/rcdo.git
 ```
-
 
 ## Runing with docker
 
