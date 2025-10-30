@@ -46,9 +46,9 @@ author:
       - ref: 2
   - name: Eun-Pa Lim
     affiliations:
-      - department: Research, Bureau of Meteorology
+      - department: Research, Bureau of Meteorology, Australia
         id: 3
-  - name: Matthew Wheeler
+  - name: Matthew C. Wheeler
     affiliations:
       - ref: 3      
   - name: Phillip Reid
@@ -111,7 +111,7 @@ if (!mirai::daemons_set()) {
 
 Accurate Antarctic sea-ice forecasts are crucial for climate monitoring and operational planning, yet they remain challenging due to model biases and complex ice-ocean-atmosphere interactions. 
 The two versions of the Australian Bureau of Meteorology's ACCESS seasonal forecast system, +S1 and +S2, use identical model configuration and differ only in their initial conditions; primarily in that +S2 does not assimilate sea-ice observations, whereas +S1 does.   
-This provides an opportunistic experiment to assess the role of initial conditions on Antarctic sea-ice forecasts using more than 20 years of fully coupled simulations with two 9-member ensembles.
+This provides an convenient opportunistic experiment to assess the role of initial conditions on Antarctic sea-ice forecasts using more than 20 years of fully coupled simulations with two 9-member ensembles.
 Our analysis reveals that both systems experience an extended melt season and delayed growth phase compared with observations. 
 This leads to a significant negative sea-ice extent bias, which is corrected only in +S1 by the data assimilation system. 
 The impact of the differing initial conditions on forecast errors varies dramatically by season: summer and autumn initial conditions (January-April) provide predictive skill for up to three months, with February initial conditions being particularly crucial. 
@@ -125,20 +125,20 @@ Accurately modelling Antarctic sea ice is essential for understanding processes 
 Accurate seasonal to sub-seasonal forecasts are also crucial for operation contingency planning in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020].
 Improvements in modelled sea-ice might also help improve weather forecasts over and away from sea-ice regions [@rinke2006; @wang2024; @semmler2016].
 
-However, progress in Antarctic sea-ice forecasting system has lagged behind Arctic sea-ice forecasts due to model biases, inherent large variability and complexity [@zampieri2019; @gao2024a].
-Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simpler statistical methods [@massonnet2023] and machine learning approaches (e.g. @dong2024, @lin2025), which also underscores the need for better understanding of sea-ice dynamics, and drivers of its variability.
+However, progress in Antarctic sea-ice forecasting system has lagged behind Arctic sea-ice forecasts due to model biases, and inherent large variability and complexity [@zampieri2019; @gao2024a].
+Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simpler statistical methods [@massonnet2023] and machine learning approaches (e.g. @dong2024, @lin2025), which also underscores the need for better understanding and physical modelling of sea-ice dynamics, and drivers of its variability.
 
 Good initial conditions are generally required for a good forecast, however, it is not entirely known to what extent accurate sea-ice initial conditions affect the quality of the forecast and at what timescales.
 Exploring seasonal predictions of Arctic sea ice, @guemas2016 found that sea-ice initial conditions are important in autumn to predict summer sea ice, but the impact wasn’t as dramatic when predicting winter sea ice.
-@day2014 also found seasonally-varying differences in the effect of initialisation, noting that accurate Arctic sea-ice thickness lead to improved sea-ice forecasts initialised in July but not when initialised in January.
+@day2014 also found seasonally-varying differences in the effect of initialisation, noting that accurate Arctic sea-ice thickness leads to improved sea-ice forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, @holland2013 studied the initial-value predictability of Antarctic sea ice in a perfect model study using the CCSM3 model.
 They found that sea-ice and ocean initial conditions provide predictive information to forecast sea-ice edge location several months in advance and that some predictability is retained for up to two years thanks to ocean heat content anomalies that are advected eastward.
 This is in contrast with @marchi2020, who ran perfect model experiments to argue that uncertainty in the predicted atmospheric state and evolution is the main driver of uncertainty in Antarctic sea-ice extent prediction on seasonal timescales, with sea-ice and ocean initial conditions having lesser importance.
 More recently, @morioka2022 studied decadal forecasts of Antarctic sea ice and found that initialising ocean and sea ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea.
-It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks: @holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September and @morioka2022 run forecasts only from the 1st of March.
+It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks: @holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September, and @morioka2022 ran forecasts only from the 1st of March.
 @marchi2020 also used a coupled ocean–sea-ice model instead of a fully coupled model like @holland2013 did.
-@morioka2022 used observed sea-ice initial conditions and compared with observations, while @marchi2020 and @holland2013 are perfect model studies.
+@morioka2022 used observed sea-ice initial conditions and compared with observations, while @marchi2020 and @holland2013 were perfect model studies.
 
 In October 2021 the Australian Bureau of Meteorology (BoM) upgraded the Australian Community Climate and Earth System Simulator – Seasonal (ACCESS-S) from version S1 to S2.
 While the base model remained the same, the change in version was focused on using ocean, sea-ice and land initial conditions generated by the BoM instead of depending on the UK Met Office.
