@@ -6,7 +6,7 @@
 %
 \documentclass[
   sn-mathphys-num,
-  referee]{sn-jnl}
+  referee,lineno]{sn-jnl}
 
 
 \usepackage{xcolor}
@@ -172,9 +172,9 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Model},
-  pdfauthor={Elio Campitelli; Ariaan Purich; Julie Arblaster; Eun-Pa Lim; Matthew Wheeler; Phillip Reid},
-  pdfkeywords={sea ice, predictability, initial
+  pdftitle={Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Forecast Model},
+  pdfauthor={Elio Campitelli; Ariaan Purich; Julie Arblaster; Eun-Pa Lim; Matthew C. Wheeler; Phillip Reid},
+  pdfkeywords={sea ice, seasonal predictability, initial
 conditions, forecasting},
   colorlinks=true,
   linkcolor={blue},
@@ -185,49 +185,52 @@ conditions, forecasting},
 
 
 \title[Evaluating the Importance of Initial Conditions for Antarctic Sea
-Ice Seasonal Predictability with a Fully Coupled Model]{Evaluating the
-Importance of Initial Conditions for Antarctic Sea Ice Seasonal
-Predictability with a Fully Coupled Model}
+Ice Seasonal Predictability with a Fully Coupled Forecast
+Model]{Evaluating the Importance of Initial Conditions for Antarctic Sea
+Ice Seasonal Predictability with a Fully Coupled Forecast Model}
 
 % author setup
-\author*[1,2]{\fnm{Elio} \sur{Campitelli}}\email{elio.campitelli@monash.edu}\author[1,2]{\fnm{Ariaan} \sur{Purich}}\author[1,2]{\fnm{Julie} \sur{Arblaster}}\author[3]{\fnm{Eun-Pa} \sur{Lim}}\author[3]{\fnm{Matthew} \sur{Wheeler}}\author[3]{\fnm{Phillip} \sur{Reid}}
+\author*[1,2]{\fnm{Elio} \sur{Campitelli}}\email{elio.campitelli@monash.edu}\author[1,2]{\fnm{Ariaan} \sur{Purich}}\author[1,2]{\fnm{Julie} \sur{Arblaster}}\author[3]{\fnm{Eun-Pa} \sur{Lim}}\author[3]{\fnm{Matthew C.} \sur{Wheeler}}\author[3]{\fnm{Phillip} \sur{Reid}}
 % affil setup
 \affil[1]{\orgdiv{School of Earth, Atmosphere and
 Environment}, \orgname{Monash University, Australia,}}
 \affil[2]{\orgdiv{Securing Antarctica's Environmental
 Future}, \orgname{Monash University, Australia}}
-\affil[3]{\orgdiv{Research, Bureau of Meteorology}}
+\affil[3]{\orgdiv{Research, Bureau of Meteorology, Australia}}
 
 % abstract 
 
-\abstract{Accurate Antarctic sea ice forecasts are crucial for climate
+\abstract{Accurate Antarctic sea-ice forecasts are crucial for climate
 monitoring and operational planning, yet they remain challenging due to
 model biases and complex ice-ocean-atmosphere interactions. The two
 versions of the Australian Bureau of Meteorology's ACCESS seasonal
 forecast system, ACCESS-S1 and ACCESS-S2, use identical model
 configuration and differ only in their initial conditions; primarily in
-that ACCESS-S2 does not assimilate sea-ice observations. This makes for
-a good ``natural experiment'' to analyse the role of initial conditions
-on Antarctic sea ice forecasts using a long run and a moderately large
-ensemble with a fully coupled model. Our analysis reveals that both
-systems experience an extended melt season and delayed growth phase.
-This leads to a significant negative sea-ice extent bias which is
-corrected only in ACCESS-S1 by the data assimilation system. The impact
-of the initial conditions on forecast errors varies dramatically by
-season: summer and autumn initial conditions (January-April) provide
-predictive skill for up to three months, with February initial
-conditions being particularly crucial. In contrast, winter forecasts of
-the two systems are statistically indistinguishable after only two
-weeks. Regional analysis of forecast skill suggests that this winter
-predictability barrier is most dramatic over Eastern Antarctica, where
-even ACCESS-S1 shows negative skill. These findings highlight the
-critical importance of comprehensive year-round sampling in
-predictability studies and suggest that operational sea-ice data
-assimilation efforts should prioritize the summer-autumn period when
-initial conditions have maximum impact on forecast skill.}
+that ACCESS-S2 does not assimilate sea-ice observations, whereas
+ACCESS-S1 does.\\
+This provides an convenient opportunistic experiment to assess the role
+of initial conditions on Antarctic sea-ice forecasts using more than 20
+years of fully coupled simulations with two 9-member ensembles. Our
+analysis reveals that both systems experience an extended melt season
+and delayed growth phase compared with observations. This leads to a
+significant negative sea-ice extent bias, which is corrected only in
+ACCESS-S1 by the data assimilation system. The impact of the differing
+initial conditions on forecast errors varies dramatically by season:
+summer and autumn initial conditions (January-April) provide predictive
+skill for up to three months, with February initial conditions being
+particularly crucial. In contrast, winter forecasts of the two systems
+are statistically indistinguishable after only two weeks. Regional
+analysis of forecast skill suggests that this winter predictability
+barrier is most dramatic over East Antarctica, where even ACCESS-S1
+shows negative skill. These findings highlight the critical importance
+of comprehensive year-round sampling in predictability studies and
+suggest that operational sea-ice data assimilation efforts should
+prioritize the summer-autumn period when initial conditions have maximum
+impact on forecast skill.}
 
 % keywords
-\keywords{sea ice,  predictability,  initial conditions,  forecasting}
+\keywords{sea ice,  seasonal predictability,  initial
+conditions,  forecasting}
 
 \begin{document}
 \maketitle
@@ -244,24 +247,25 @@ continent, including scientific missions, fisheries, and tourism
 also help improve weather forecasts over and away from sea-ice regions
 \citep{rinke2006, wang2024, semmler2016}.
 
-However, Antarctic sea ice forecasts have lagged behind Arctic sea ice
-forecasts due to model biases, inherent large variability and complexity
-\citep{zampieri2019, gao2024a}. Dynamical seasonal forecasts of summer
-Antarctic sea ice have been shown to perform worse than relatively
-simpler statistical methods \citep{massonnet2023} and machine learning
-approaches (e.g. \citet{dong2024}, \citet{lin2025}), which also
-underscores the need for better understanding of sea-ice dynamics, and
+However, progress in Antarctic sea-ice forecasting system has lagged
+behind Arctic sea-ice forecasts due to model biases, and inherent large
+variability and complexity \citep{zampieri2019, gao2024a}. Dynamical
+seasonal forecasts of summer Antarctic sea ice have been shown to
+perform worse than relatively simpler statistical methods
+\citep{massonnet2023} and machine learning approaches (e.g.
+\citet{dong2024}, \citet{lin2025}), which also underscores the need for
+better understanding and physical modelling of sea-ice dynamics, and
 drivers of its variability.
 
 Good initial conditions are generally required for a good forecast,
-however, it is not entirely known to what extent accurate sea ice
+however, it is not entirely known to what extent accurate sea-ice
 initial conditions affect the quality of the forecast and at what
 timescales. Exploring seasonal predictions of Arctic sea ice,
-\citet{guemas2016} found that sea ice initial conditions are important
+\citet{guemas2016} found that sea-ice initial conditions are important
 in autumn to predict summer sea ice, but the impact wasn't as dramatic
 when predicting winter sea ice. \citet{day2014} also found
 seasonally-varying differences in the effect of initialisation, noting
-that accurate Arctic sea-ice thickness lead to improved sea ice
+that accurate Arctic sea-ice thickness leads to improved sea-ice
 forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, \citet{holland2013} studied the initial-value
@@ -283,12 +287,12 @@ they are based on forecasts initialised at different times of the year
 and different frameworks: \citet{holland2013} ran 20 ensemble members
 initialised on the 1st of January of a particular year,
 \citet{marchi2020} ran forecasts from the 1st of March and 1st of
-September and \citet{morioka2022} run forecasts only from the 1st of
+September, and \citet{morioka2022} ran forecasts only from the 1st of
 March. \citet{marchi2020} also used a coupled ocean--sea-ice model
 instead of a fully coupled model like \citet{holland2013} did.
-\citet{morioka2022} used observed sea ice initial conditions and
+\citet{morioka2022} used observed sea-ice initial conditions and
 compared with observations, while \citet{marchi2020} and
-\citet{holland2013} are perfect model studies.
+\citet{holland2013} were perfect model studies.
 
 In October 2021 the Australian Bureau of Meteorology (BoM) upgraded the
 Australian Community Climate and Earth System Simulator -- Seasonal
@@ -300,21 +304,21 @@ assimilate sea-ice observations, so sea ice is only affected by the
 ocean and atmospheric data assimilation via the coupled integration.
 
 Since model configuration is identical between ACCESS-S1 and ACCESS-S2,
-they form a sort of ``natural experiment'' where the same forecasting
-model was run over a long period of time with multiple ensemble
-forecasts initialised throughout the year, with the only difference
-being the initial conditions. This provides an opportunity to test the
-effect of sea ice initial conditions on the forecast of sea-ice
+they form a sort of ``opportunistic experiment'' where the same
+forecasting model was run over a long period of time with multiple
+ensemble forecasts initialised throughout the year, with the only
+difference being the initial conditions. This provides an opportunity to
+test the effect of sea-ice initial conditions on the forecast of sea-ice
 concentrations and the climate.
 
-In this study we compare sea ice hindcasts produced by ACCESS-S1 and
+In this study we compare sea-ice hindcasts produced by ACCESS-S1 and
 ACCESS-S2. We focus on seasonality of errors and biases and the effect
-of the data assimilation system. This comparison will also inform future
-work with the prediction system as a research tool to better understand
-the dynamics and variability of the Antarctic sea ice and its impacts on
-the climate system as well as to explore the potential of using its sea
-ice forecasts for decision-making. The work will also serve as a
-benchmark for future prediction systems to attempt to improve upon.
+of the data assimilation system. This comparison will inform future work
+with the prediction system as a research tool to better understand the
+dynamics and variability of the Antarctic sea ice and its impacts on the
+climate system as well as to explore the potential of using its sea-ice
+forecasts for decision-making. The work will also serve as a benchmark
+for future prediction systems to attempt to improve upon.
 
 \section{Data and methods}\label{data-and-methods}
 
@@ -338,8 +342,8 @@ sea-ice thickness categories as well as an open water category.
 
 Both systems take atmospheric initial conditions derived from
 ERA-interim \citep{dee2011} for their hindcasts. The main difference
-between the hindcasts of the two systems are the ocean and sea ice
-initial conditions. ACCESS-S1's ocean and sea ice initial conditions
+between the hindcasts of the two systems are the ocean and sea-ice
+initial conditions. ACCESS-S1's ocean and sea-ice initial conditions
 come from the Met Office FOAM system, which uses a multivariate,
 incremental three-dimensional variational (3D-Var),
 first-guess-at-appropriate-time (FGAT) data assimilation scheme
@@ -362,7 +366,7 @@ Then the restart file fields of the ocean component are used as first
 guess in the data assimilation cycle and the innovations are used to
 build the next ocean initial conditions for the following cycle. The
 atmosphere fields from that daily integration are not used and instead
-the model atmosphere is initialised using ERA-Interim. The sea ice
+the model atmosphere is initialised using ERA-Interim. The sea-ice
 initial conditions for the next cycle are the unaltered output of the
 previous daily integration. Then the cycle starts again and the coupled
 model runs for another 24 hours. During this integration the sea-ice
@@ -374,10 +378,10 @@ perturbing the atmospheric fields only with a random field perturbation
 \citep{hudson2017} and runs for 217 days for the period 1990--2012
 initialised at the first of every month. The ACCESS-S2 hindcast set used
 in this study runs for the period 1981--2018. Each hindcast consists of
-nine ensemble members built from three consecutive 3-member forecasts
-created in the same manner as ACCESS-S1 members initialised at the first
-of every month and the two previous days and run for 279 days. We
-analyse the ensemble mean hindcasts unless otherwise specified.
+nine ensemble members built from three consecutive three-member
+forecasts created in the same manner as ACCESS-S1 members initialised at
+the first of every month and the two previous days and run for 279 days.
+We analyse the ensemble mean hindcasts unless otherwise specified.
 
 Anomalies for each hindcast set are taken with respect to their own
 climatology specific to each initialisation date and forecast lead time,
@@ -411,25 +415,24 @@ use data from the Scanning Multichannel Microwave Radiometer (SMMR) on
 the Nimbus-7 satellite and from the Special Sensor Microwave/Imager
 (SSM/I) sensors on the Defense Meteorological Satellite Program's (DMSP)
 -F8, -F11, and -F13 satellites. The data has a spatial resolution of 25
-by 25 km and daily from 1978 onwards.
+by 25 km and daily from November 1978 onwards.
 
 The European Organisation for the Exploitation of Meteorological
 Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility
-\citep{OSISAF} based on the SSMIS sensor is another satellite-derived
-sea-ice concentration product. It is based on mostly the same sensors as
-the NOAA CDR but computed independently using different algorithms.
-Figures prepared with this dataset are provided in the supplementary
-material and do not differ significantly from the ones prepared using
-CDR.
+{[}OSI; \citet{OSISAF}{]} based on the SSMIS sensor is another
+satellite-derived sea-ice concentration product. It is based on mostly
+the same sensors as the NOAA CDR but computed independently using
+different algorithms. Figures prepared with this dataset are provided in
+the supplementary material and do not differ significantly from the ones
+prepared using CDR.
 
 \subsection{Error measures}\label{error-measures}
 
-For evaluation purposes, we use a series of measures.
-
-Sea-ice extent is defined as the area of the ocean at least 15\% covered
-by sea-ice. This threshold is motivated by the limitations in satellite
-retrieval, which is increasingly unreliable for lower sea-ice
-concentrations \citep{cavalieri1991}.
+For evaluation purposes, we use a series of measures. Sea-ice extent is
+defined as the area of the ocean at least 15\% covered by sea-ice. This
+threshold is motivated by the limitations in satellite retrieval, which
+is increasingly unreliable for lower sea-ice concentrations
+\citep{cavalieri1991}.
 
 Pan-Antarctic (net) sea-ice extent serves as a hemispheric measure of
 the amount of sea ice, but it does not take into account the spatial
@@ -569,7 +572,7 @@ forecast month. Values are smoothed with a 11-day running mean.}
 \caption{\label{fig-bias-1}Ensemble mean difference between monthly
 sea-ice concentration of ACCESS-S2 ensemble mean forecast at 0-month
 lead time (monthly mean values forecasted from the forecast initialised
-at the first of the month) and observations.}
+at the first of the month) and observations (CDR).}
 
 \end{figure}%
 
@@ -582,7 +585,7 @@ at the first of the month) and observations.}
 }
 
 \caption{\label{fig-bias-2}Same as Figure~\ref{fig-bias-1} but for
-ACCESS-S1}
+ACCESS-S1.}
 
 \end{figure}%
 
@@ -603,7 +606,7 @@ ACCESS-S1 has a comparatively smaller overall bias
 (Figure~\ref{fig-bias-2}). The largest values are found between April
 and June, when the faster growth results in large positive bias along
 the sea-ice edge, and in January, when the faster melt leads to large
-negative bias in the Weddell and Admunsen seas.
+negative bias in the Weddell and Admunsen Seas.
 
 \FloatBarrier
 
@@ -621,7 +624,7 @@ negative bias in the Weddell and Admunsen seas.
 the observations (black) and forecasts from ACCESS-S1 (right column;
 purple) and ACCESS-S2 (left column; green) at lead times of 0, 2, 4, and
 6 months. The RMSE and correlation during the overlapping period of
-ACCESS-S1 and ACCESS-S2 hindcasts (1990--2013) is shown on the top left
+ACCESS-S1 and ACCESS-S2 hindcasts (1990--2013) are shown on the top left
 and bottom left of each panel respectively.}
 
 \end{figure}%
@@ -643,7 +646,7 @@ monthly sea-ice extent of the forecasts as a function of lead time
 compared with observations. ACCESS-S1 standard deviation lies within the
 observed standard deviation regardless of lead time, while ACCESS-S2
 standard deviation is more than twice that of observations at zero lead
-time and only approaches the observed value at 9 month lead time for
+time and only approaches the observed value at nine month lead time for
 most months.
 
 \begin{figure}[!htb]
@@ -677,11 +680,11 @@ concentrations anomalies are very close to observations as expected from
 the system assimilating these data. ACCESS-S2 sea-ice concentration
 anomalies, which are not assimilated, are not as close, but the
 large-scale pattern is aligned with observations. The system simulates
-large positive anomalies in the Weddell and Ross seas and slight
-negative anomalies in the Amundsen and Bellingshausen seas. The fact
+large positive anomalies in the Weddell and Ross Seas and slight
+negative anomalies in the Amundsen and Bellingshausen Seas. The fact
 that ACCESS-S2 can simulate this pattern without assimilating sea-ice
-data suggests that atmospheric and oceanic forcing was the dominant
-factor. However, the magnitude of the sea-ice anomalies is too big. It
+data suggests that atmospheric and oceanic forcing were the dominant
+drivers. However, the magnitude of the sea-ice anomalies is too big. It
 is plausible that this is due to the thinner ice simulated by ACCESS-S2
 (bottom row).
 
@@ -731,8 +734,8 @@ variability to increase with lead time in both forecasting systems.
 The fact that ACCESS-S1 and ACCESS-S2 share the same model configuration
 and that the increased variability is more extreme at short lead times
 (Fig.~\ref{fig-extent-sd}) suggests that the data assimilation procedure
-is partly to blame. It is possible that sea-ice in the ACCESS-S2 system
-is left in an unbalanced state after assimilating atmospheric and
+is partly responsible. It is possible that sea-ice in the ACCESS-S2
+system is left in an unbalanced state after assimilating atmospheric and
 oceanic data but not sea-ice data, leading to large responses that are
 amplified by the thin ice in the initial states which then subside at
 longer lead times when the model is balanced.
@@ -838,7 +841,7 @@ coastline is shown at the bottom of each panel for reference.}
 }
 
 \caption{\label{fig-rmse_lon-2}Same as Figure~\ref{fig-rmse_lon-1} but
-for ACCESS-S2}
+for ACCESS-S2.}
 
 \end{figure}%
 
@@ -853,8 +856,8 @@ lower off the coast of Eastern Antarctica even at short lead times; for
 instance, the skill score for forecasts initialised in May and June are
 negative between 0° and 120°E even at almost zero lead time. This
 mirrors \citet{libera2022} findings of a ``winter predictability
-barrier'', although they focus on the Weddell sea and here we show that
-the effect seems to be stronger more to the East. In western Antarctica
+barrier'', although they focus on the Weddell Sea and here we show that
+the effect seems to be stronger more to the east. In West Antarctica
 there is a hint of easterly-propagating skill in forecasts initialised
 in February and March. This is consistent with \citet{holland2013}
 findings that memory of sea-ice anomalies are stored in ocean heat
@@ -862,18 +865,18 @@ content anomalies that are transported east by the Antarctic Circumpolar
 Current.
 
 ACCESS-S2 forecasts (Figure~\ref{fig-rmse_lon-2}) also have lower skill
-over Eastern Antarctica. From July to December even though the
+over East Antarctica. From July to December even though the
 pan-Antarctic average skill is negative at all lead times
 (Fig.~\ref{fig-lead-time-window}), it is positive for up to a month in
-Western Antarctica. Since oceanic and atmospheric forcing is the only
+West Antarctica. Since oceanic and atmospheric forcing is the only
 source of information, this suggests that sea-ice in this region is
 particularly sensitive to oceanic and atmospheric forcing and suggests a
 role of the Pacific-South American mode and the Amundsen Sea Low to
 shape sea-ice concentration anomalies. The fact that this is evident in
-the months in which ENSO teleconnections are more important for
-atmospheric circulation also suggest the influence of tropical Pacific
-variability. February and March are the only two months that can be
-forecasted with marginally positive skill in large regions.
+the months in which El Niño--Southern Oscillation teleconnections are
+more important for atmospheric circulation also suggest the influence of
+tropical Pacific variability. February and March are the only two months
+that can be forecasted with marginally positive skill in large regions.
 
 \begin{figure}[!htb]
 
@@ -924,7 +927,7 @@ times.
 
 \subsection{Conclusions}\label{conclusions}
 
-Sea ice forecasts from the ACCESS-S2 system show a significant low
+Sea-ice forecasts from the ACCESS-S2 system show a significant low
 extent bias, particularly during late summer and early autumn. This bias
 is attributed to a faster and longer melt season between January and
 March, and slower growth between March and April. This underestimation
@@ -933,16 +936,16 @@ seasonal-to-subseasonal (S2S) systems, suggesting potential problems
 either with the model's thermodynamic representation or with short wave
 radiation forcing, as shown in other climate models
 \citep{zampieri2019, roach2020}. Even though ACCESS-S2 shares the same
-model formulation with ACCESS-S1, the latter does not suffer from this
+model components as ACCESS-S1, the latter does not suffer from this
 bias, indicating that assimilating sea-ice concentrations successfully
 corrects for the negative bias that exists in the free-running model.
 
 Ensemble spread grows quickly even when perturbations are only
 implemented in the atmosphere component (in ACCESS-S1), indicating that
-sea-ice is indeed responding quickly to atmospheric perturbations.
+sea ice is indeed responding quickly to atmospheric perturbations.
 However, our analysis suggests that the atmosphere and ocean data
 assimilation implemented in ACCESS-S2 is only effectively influencing
-sea ice initial conditions from June to October, while the rest of the
+sea-ice initial conditions from June to October, while the rest of the
 year, the sea-ice component runs virtually free, reverting to its biased
 equilibrium state.
 
@@ -957,37 +960,38 @@ that individual initial conditions are not being affected by the data
 assimilation scheme.
 
 Although ACCESS-S1 only assimilates sea-ice concentration, it is clear
-that sea-ice thickness is also affected. ACCESS-S1 simulates
-significantly thicker ice than ACCESS-S2 and in both systems sea-ice is
-thicker at shorter lead times than at longer lead times. Both the
-explicit data assimilation in ACCESS-S2 and the effects of atmospheric
-and oceanic data assimilation in ACCESS-S1 might be nudging simulated
-sea ice to be thicker than the model equilimbrium state.\\
-We believe that the thinner sea ice in ACCESS-S2 is a partial cause for
-the large sea-ice extent variance, but other mechanisms, such as
-unbalanced initial conditions might be important.
+that sea-ice thickness is also affected through the assimilation
+process. ACCESS-S1 simulates significantly thicker ice than ACCESS-S2
+and in both systems sea-ice is thicker at shorter lead times than at
+longer lead times. Both the explicit data assimilation in ACCESS-S2 and
+the effects of atmospheric and oceanic data assimilation in ACCESS-S1
+might be nudging simulated sea ice to be thicker than the model
+equilimbrium state. We suggest that the thinner sea ice in ACCESS-S2
+contributes to the large sea-ice extent variance, but other mechanisms,
+such as unbalanced initial conditions might also be important.
 
-Given that ACCESS-S2 sea-ice extent is essentially not initialised by
-the observations, comparing its forecasts with those of ACCESS-S1 allows
-us to estimate the time-scale for which initial conditions are
-important. We find that initial conditions affect Antarctic sea ice
+Given that ACCESS-S2 sea-ice extent is not directly initialised by
+sea-ice observations, comparing its forecasts with those of ACCESS-S1
+allows us to estimate the time-scale over which initial conditions are
+important. We find that initial conditions affect Antarctic sea-ice
 forecasts in the order of a few months, but that effect is seasonally
 dependent. January to April initial conditions improve forecasts for up
-to 3 months with, February initial conditions in particular are shown to
-be crucial for determining sea-ice evolution at least up to May. Arctic
-sea ice forecasts also show greater sensitivity to initial conditions in
-boreal summer, compared with boreal winter \citep{day2014, bunzel2016},
-suggesting a similar mechanism might be playing a role.
+to three months with, February initial conditions in particular are
+shown to be crucial for determining sea-ice evolution at least up to
+May. Arctic sea-ice forecasts also show greater sensitivity to initial
+conditions in boreal summer, compared with boreal winter
+\citep{day2014, bunzel2016}, suggesting a similar mechanism might be
+playing a role.
 
 Forecasts initialised in winter have very little skill and ACCESS-S1 and
-ACCESS-S2 forecast errors are not statistically different after just 2
-weeks. This is consistent with \citet{libera2022}'s finding of a
-``winter predictability barrier'' in the Weddell sea, although they
-describe the barrier as sharp loss of predictability in July, and here
-we find a gradual reduction in skill compared with climatology around
-June. This difference might be due to our use of pan-Antarctic RMSE,
-since our regional analysis indicates that the degraded skill is most
-dramatic in the King Haakon sea.
+ACCESS-S2 forecast errors are not statistically different after just two
+weeks. This is consistent with the findings of \citet{libera2022}'s
+finding of a ``winter predictability barrier'' in the Weddell Sea,
+although they describe the barrier as sharp loss of predictability in
+July, and here we find a gradual reduction in skill compared with
+climatology around June. This difference might be due to our use of
+pan-Antarctic RMSE, since our regional analysis indicates that the
+degraded skill is most dramatic in the King Haakon sea.
 
 These findings have important implications for both operational
 forecasting, model development and predictability studies. For
@@ -1078,7 +1082,7 @@ forecast month. Values are smoothed with a 11-day running mean.}
 \caption{\label{fig-bias-1-osi}Ensemble mean difference between monthly
 sea-ice concentration of ACCESS-S2 ensemble mean forecast at 0-month
 lead time (monthly mean values forecasted from the forecast initialised
-at the first of the month) and observations.}
+at the first of the month) and observations (OSI).}
 
 \end{figure}%
 
@@ -1091,7 +1095,7 @@ at the first of the month) and observations.}
 }
 
 \caption{\label{fig-bias-2-osi}Same as Figure~\ref{fig-bias-1} but for
-ACCESS-S1}
+ACCESS-S1.}
 
 \end{figure}%
 
@@ -1107,7 +1111,7 @@ ACCESS-S1}
 anomalies of the observations (black) and forecasts from ACCESS-S1
 (right column; purple) and ACCESS-S2 (left column; green) at lead times
 of 0, 2, 4, and 6 months. The RMSE and correlation during the
-overlapping period of ACCESS-S1 and ACCESS-S2 hindcasts (1990--2013) is
+overlapping period of ACCESS-S1 and ACCESS-S2 hindcasts (1990--2013) are
 shown on the top left and bottom left of each panel respectively.}
 
 \end{figure}%
@@ -1192,7 +1196,7 @@ reference.}
 }
 
 \caption{\label{fig-rmse_lon-2-osi}Same as Figure~\ref{fig-rmse_lon-1}
-but for ACCESS-S2}
+but for ACCESS-S2.}
 
 \end{figure}%
 
