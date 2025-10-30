@@ -15,7 +15,7 @@ ZENODO_DEPOSITION_ID <- 17479538
   if (nzchar(Sys.getenv("ZENODO_SANDBOX", ""))) {
     url <- "https://sandbox.zenodo.org/"
   } else {
-    url <- "https://zenodo.org"
+    url <- "https://zenodo.org/"
   }
 
   if (api) {
@@ -131,11 +131,15 @@ zenodo_upload_file <- function(path, deposition_id = ZENODO_DEPOSITION_ID) {
 }
 
 zenodo_checksum_matches <- function(files) {
+
+  cli::cli_inform("Downloading remote checksum")
+  checksum_remote <- readLines(zenodo_download_file("checksum", tempdir()))
+
+
+  cli::cli_inform("Computing local checksum")
   checksum_local <- files |>
     vapply(\(x) digest::digest(file = x), character(1)) |>
     digest::digest()
-
-  checksum_remote <- readLines(zenodo_download_file("checksum", tempdir()))
 
   return(list(
     local = checksum_local,
