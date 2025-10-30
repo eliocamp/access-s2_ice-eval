@@ -520,7 +520,7 @@ plot_bias <- lapply(c("S2", "S1"), \(x) {
 ```
 
 ```{r fig-bias-1}
-#| fig-cap: !expr glue::glue("Ensemble mean difference between monthly sea-ice concentration of +S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations ({labs_dataset[which_dataset]})").
+#| fig-cap: !expr glue::glue("Ensemble mean difference between monthly sea-ice concentration of +S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations ({labs_dataset[which_dataset]}).")
 #| fig-height: 6
 
 plot_bias[[1]]
