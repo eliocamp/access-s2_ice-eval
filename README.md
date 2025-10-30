@@ -1,6 +1,6 @@
-# Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Model
+# Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Forecast Model
 
-This repository contains data, code and other source files associated with Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Model
+This repository contains data, code and other source files associated with Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Forecast Model
 
 First clone or download this repository with
 
