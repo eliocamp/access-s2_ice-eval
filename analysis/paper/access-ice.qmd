@@ -1413,7 +1413,7 @@ This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s 
 The underlying code for this study is available on github and can be accessed via this link https://github.com/eliocamp/access-s2_ice-eval.
 
 Raw data of +S1 and +S2 forecast are not available due to size. 
-Derived datasets required to reproduce the results are available in this zenodo repository: XXXXX
+Derived datasets required to reproduce the results are available in this zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
 
 # References
 
