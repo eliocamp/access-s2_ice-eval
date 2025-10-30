@@ -1,5 +1,5 @@
 # Hard-coded deposition ID for this project.
-ZENODO_DEPOSITION_ID <- 391075
+ZENODO_DEPOSITION_ID <- 17479538
 
 # Internal: read the token from environment and validate
 .zenodo_get_token <- function() {
