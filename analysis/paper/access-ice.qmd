@@ -19,16 +19,16 @@ header-includes: |
 author:
   - name: Elio Campitelli
     affiliations:
-      - name: Monash University, Australia,
+      - name: Monash University, Kulin Nations, Clayton, Victoria, Australia.
         id: 1
         department: School of Earth, Atmosphere and Environment
         # address: 1737 Cambridge Street
         # city: Cambridge
         # state: MA
         # postal-code: 02138
-      - name: Monash University, Australia
+      - name: Clayton, Kulin Nations, Victoria, Australia
         id: 2
-        department: Securing Antarctica’s Environmental Future
+        department: SARC Special Research Initiative for Securing Antarctica’s Environmental Future
         # address: 1 Oxford Street
         # city: Cambridge
         # state: MA
