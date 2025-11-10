@@ -308,7 +308,7 @@ range_max_lag <- hindcast_extent[
 ```
 
 ```{r fig-hindcast-extent}
-#| fig-cap: "Row a: Pan-Antarctic mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S1 (column 2; purple). Observed mean sea-ice extent in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the end of forecasts (i.e., the longest possible lead time)."
+#| fig-cap: "Row a: Pan-Antarctic mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S2 (column 2; purple). Observed mean sea-ice extent in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the end of forecasts (i.e., the longest possible lead time)."
 #| fig-height: 4
 
 hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
@@ -373,7 +373,7 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
   scale_y_continuous(NULL, labels = labels_extent) +
   scale_color_models +
   scale_fill_models +
-  guides(colour = "none", fill = "none") +
+  guides(fill = "none") +
   # scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"),
   #                    aesthetics = c("fill", "color"), guide = "none") +
   facet_grid(
