@@ -1461,10 +1461,21 @@ This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s 
 
 # Code and data availability 
 
-The underlying code for this study is available on GitHub and can be accessed via this link https://github.com/eliocamp/access-s2_ice-eval.
+The underlying code for this study is available on GitHub: https://github.com/eliocamp/access-s2_ice-eval.
 
-Raw data of +S1 and +S2 forecasts are not available due to size. 
-Derived datasets required to reproduce the results are available in this Zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
+Raw data of +S1 and +S2 hindcast are not available due to size. 
+Derived datasets required to reproduce the results, including extent timeseries and error measures, are available in this Zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
+
+# Competing interests 
+
+All authors declare no financial or non-financial competing interests. 
+
+# Author contributions 
+
+EC performed the data analysis and wrote the manuscript draft. 
+AP, JA, EL, MW and PR, performed interpretation of the results, and reviewed and edited the draft. 
+All authors read and approved the final manuscript.
+
 
 # References
 
