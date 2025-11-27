@@ -2,6 +2,7 @@
 title: The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice
 format:
   nature-pdf:
+    latex-clean: false
     # journal.cite-style is included in the tex file but ignored by pandoc if 
     # cite-method is not `natbib`.
     journal:
@@ -14,9 +15,7 @@ format:
     classoption: referee,lineno
     fig-width: 5  
     fig-pos: "!htb"
-    fig-dpi: 300
-header-includes: | 
-   \usepackage[section]{placeins}
+    fig-dpi: 300    
 author:
   - name: Elio Campitelli
     affiliations:
@@ -47,7 +46,7 @@ author:
       - ref: 2
   - name: Eun-Pa Lim
     affiliations:
-      - department: Research, Bureau of Meteorology, Australia
+      - department: Research, Bureau of Meteorology, Melbourne, Australia
         id: 3
   - name: Matthew C. Wheeler
     affiliations:
@@ -86,6 +85,11 @@ library(tagger)
 library(patchwork)
 library(mirai)
 
+knitr::opts_chunk$set(
+  fig.path = "access-ice_files/figure-pdf/",
+  cache.path = here::here("analysis/paper/access-ice_cache/pdf/")
+)
+
 cdo_options_set("-L")
 cdo_cache_set(here::here("data/temp/cache"))
 ```
@@ -107,6 +111,8 @@ if (!mirai::daemons_set()) {
   invisible(daemons(6))
 }
 ```
+
+::: {.content-visible when-profile="main"}
 
 # Abstract
 
@@ -404,14 +410,14 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
   coord_cartesian(clip = "off")
 ```
 
-@fig-hindcast-extent shows mean sea-ice extent of the +S1 and +S2 hindcasts (row a) and their differences from mean sea-ice extent of +CDR (row b).
+@fig-hindcast-extent (Figure \ref{fig-hindcast-extent-osi} for OSI) shows mean sea-ice extent of the +S1 and +S2 hindcasts (row a) and their differences from mean sea-ice extent of +CDR (row b).
 Mean extent at the first of every month is indicated with circles for the initial conditions and with triangles for the longest lead time possible for each model (between `r range_max_lag[model == "S2", min]` and `r range_max_lag[model == "S2", max]` days for +S2 and between `r range_max_lag[model == "S1", min]` and `r range_max_lag[model == "S1", max]` days for +S1).
 At this long lead time, information of the initial conditions is essentially lost and the forecast reverts close to each model's preferred equilibrium state.
 
 +S2 initial conditions (circles in [Fig. @fig-hindcast-extent] column 2) show an overall negative bias, especially in the late summer-early autumn, while +S1 initial conditions (circles in [Fig. @fig-hindcast-extent] column 1) are very close to observations, as expected from the assimilation of sea-ice observations to produce the initial conditions of +S1.
 Both systems' equilibrium states (triangles) show negative biases of sea-ice extent, particularly in the growth phase of late-autumn and winter months.
 This is due primarily to the melt season being longer than in observations and with faster melt between January and March and the growing seasons being shorter with slower growth during March and April.
-This is then followed by faster growth between May and July (@fig-mean-growth).
+This is then followed by faster growth between May and July (@fig-mean-growth and Figure \ref{fig-mean-growth-osi}).
 Many sea-ice models exhibit this systematic underestimation during the sea-ice minimum and early freezing season [@massonnet2023], which could indicate problems in the representation of thermodynamics in the model [@zampieri2019].
 It is also not surprising that both forecasting systems converge to a similar equilibrium state because they share the same model formulation.
 
@@ -547,18 +553,18 @@ plot_bias[[1]]
 
 
 ```{r fig-bias-2}
-#| fig-cap: Same as @fig-bias-1 but for +S1.
+#| fig-cap: Same as Figure \ref{fig-bias-1} but for +S1.
 #| fig-height: 6
 
 plot_bias[[2]]
 ```
 
 
-To further understand the bias in +S2, @fig-bias-1 shows spatial patterns of the differences of monthly mean sea-ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest monthly lead time.
+To further understand the bias in +S2, @fig-bias-1 (Figure \ref{fig-bias-1-osi}) shows spatial patterns of the differences of monthly mean sea-ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest monthly lead time.
 From October to May, the model underestimates sea-ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea-ice concentrations saturate to 1 both in the observations and forecasts.
 In winter, the differences are limited to a narrow band around the sea-ice edge with slight positive biases in the African sector of East Antarctica and negative biases around the Indian Ocean sector which partially compensate, resulting in the near-zero extent bias seen in those months (@fig-hindcast-extent).
 
-+S1 has a comparatively smaller overall bias (@fig-bias-2). 
++S1 has a comparatively smaller overall bias (@fig-bias-2 and Figure \ref{fig-bias-2-osi}). 
 The largest values are found between April and June, when the faster growth results in large positive bias along the sea-ice edge, and in January, when the faster melt leads to large negative bias in the Weddell and Amundsen Seas. 
 
 \FloatBarrier
@@ -648,14 +654,14 @@ hindast_extent_monthly |>
   scale_fill_models
 ```
 
-@fig-extent-anom shows monthly sea-ice extent anomalies forecasted at selected lead times.
+@fig-extent-anom (Figure \ref{fig-extent-anom-osi}) shows monthly sea-ice extent anomalies forecasted at selected lead times.
 Compared with +S1, +S2 anomaly forecasts are relatively poor (large RMSE) even for the first month (lead time 0), whereas +S1 forecasts stay relatively skilful even at a lead time of three months.
 +S2 shows much larger interannual variability than observations, with dramatic lows between 1995 and 2007, and highs between 2007 and 2015.
 
 Unexpectedly, for +S2, RMSE improves with lead time, even though the correlation degrades with lead time.
 This is puzzling behaviour that goes contrary to what is usually seen in prediction models.
 The explanation seems to be the mentioned increased interannual variability.
-@fig-extent-sd shows the interannual standard deviation of monthly sea-ice extent of the forecasts as a function of lead time compared with observations.
+@fig-extent-sd (Figure \ref{fig-extent-sd-osi}) shows the interannual standard deviation of monthly sea-ice extent of the forecasts as a function of lead time compared with observations.
 +S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at nine month lead time for most months.
 
 
@@ -869,7 +875,7 @@ hindcast_mean_thickness[
   facet_wrap(~month, labeller = labeller(month = labels_month))
 ```
 
-Extending beyond the one case in @fig-forecast-example, @fig-mean-thickness shows monthly mean sea-ice thickness as a function of lead time for +S1 and +S2.
+Extending beyond the one case in @fig-forecast-example, @fig-mean-thickness (Figure \ref{fig-mean-thickness-osi}) shows monthly mean sea-ice thickness as a function of lead time for +S1 and +S2.
 Supporting the idea that thinner ice is what causes the increased extent variability in +S2, this system  simulates thinner sea-ice compared to +S1 overall at almost all lead times and in all months except for summer at short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months).
 However, in both systems, forecasted sea-ice is thicker at shorter lead times and then decreases, particularly in the summer months.
 If thinner ice were a sufficient cause of increased variability, then we would expect variability to increase with lead time in both forecasting systems.
@@ -1036,7 +1042,7 @@ errors2 |>
 ```
 
 To assess +S2 forecasts in more detail, we compute error measures for all hindcasts started on the 1st of every month.
-@fig-rmse shows the mean RMSE of sea-ice concentration anomalies for +S1 and +S2 hindcasts compared against persistence and climatological forecasts used as a benchmark.
+@fig-rmse (Figure \ref{fig-rmse-osi}) shows the mean RMSE of sea-ice concentration anomalies for +S1 and +S2 hindcasts compared against persistence and climatological forecasts used as a benchmark.
 Due to errors in the initial conditions, it is expected that persistence forecasts would be better than the model forecasts at very short lead times, but that the persistence forecast errors would grow faster and may eventually surpass the model forecast errors.
 The black line shows that the persistence forecast error indeed grows rapidly and reaches its maximum in about 30 days for most months except for February, when it grows much slower.
 The +S1 forecast errors grow slower than persistence forecast errors and remain lower after less than 10 days on average.
@@ -1046,7 +1052,7 @@ At longer lead times, it is more appropriate to compare errors with the climatol
 The lead time at which +S1 forecast error is higher than the climatological forecast error varies between more than 60 and less than 20 days depending on forecast initialisation month with the minimum in June.
 +S2 forecasts never have lower error than climatology, on the other hand, except marginally in October forecasts. 
 
-@fig-lead-time-window summarises the lead time window in which each hindcast is better than both the persistence forecast and the climatological forecast as a function of forecast month. 
+@fig-lead-time-window (Figure \ref{fig-lead-time-window-osi}) summarises the lead time window in which each hindcast is better than both the persistence forecast and the climatological forecast as a function of forecast month. 
 +S1 forecasts have a wider lead time window in the summer than the other seasons and is not better than both benchmarks at forecasting June sea-ice concentration anomalies. 
 Forecasts initialised in May and June are particularly poor, and July cannot be forecasted better than the benchmarks. 
 This is consistent with the mid-winter loss of predictability observed by @libera2022, who attributed it to deep warm water entraining into the mixed layer. 
@@ -1299,7 +1305,7 @@ rmse_lon_plots[[1]]
 
 ```{r}
 #| label: fig-rmse_lon-2
-#| fig-cap: Same as @fig-rmse_lon-1 but for +S2.
+#| fig-cap: Same as Figure \ref{fig-rmse_lon-1} but for +S2.
 #| fig-height: 7
 #| dev: png
 rmse_lon_plots[[2]]
@@ -1308,12 +1314,12 @@ rmse_lon_plots[[2]]
 To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `r diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
 We control for some areas being naturally easier to forecast than others by computing the RMSE skill score with the climatological forecast RMSE as reference. 
 
-For +S1 forecasts (@fig-rmse_lon-1), skill tends to be lower off the coast of Eastern Antarctica even at short lead times; for instance, the skill score for forecasts initialised in May and June are negative between 0° and 120°E even at almost zero lead time. 
+For +S1 forecasts (@fig-rmse_lon-1 and Figure \ref{fig-rmse_lon-1-osi}), skill tends to be lower off the coast of Eastern Antarctica even at short lead times; for instance, the skill score for forecasts initialised in May and June are negative between 0° and 120°E even at almost zero lead time. 
 This mirrors @libera2022 findings of a “winter predictability barrier”, although they focus on the Weddell Sea and here we show that the effect seems to be stronger more to the east. 
 In West Antarctica there is a hint of easterly-propagating skill in forecasts initialised in February and March. 
 This is consistent with @holland2013 findings that memory of sea-ice anomalies are stored in ocean heat content anomalies that are transported east by the Antarctic Circumpolar Current. 
 
-+S2 forecasts  (@fig-rmse_lon-2) also have lower skill over East Antarctica. 
++S2 forecasts  (@fig-rmse_lon-2 and Figure \ref{fig-rmse_lon-2-osi}) also have lower skill over East Antarctica. 
 From July to December even though the pan-Antarctic average skill is negative at all lead times ([Fig. @fig-lead-time-window]), it is positive for up to a month in West Antarctica. 
 Since oceanic and atmospheric forcing is the only source of information, this suggests that sea-ice in this region is particularly sensitive to oceanic and atmospheric forcing and suggests a role of the Pacific-South American mode and the Amundsen Sea Low to shape sea-ice concentration anomalies. 
 The fact that this is evident in the months in which El Niño--Southern Oscillation teleconnections are more important for atmospheric circulation also suggests the influence of tropical Pacific variability.
@@ -1321,13 +1327,13 @@ February and March are the only two months that can be forecasted with marginall
 
 ```{r}
 #| label: fig-rmse_lon-3
-#| fig-cap: Same as @fig-rmse_lon-1 but for the difference between +S1 and +S2.
+#| fig-cap: Same as Figure \ref{fig-rmse_lon-1} but for the difference between +S1 and +S2.
 #| fig-height: 7
 #| dev: png
 rmse_lon_plots[[3]]
 ```
 
-Finally, @fig-rmse_lon-3 shows the difference in skill between +S1 and +S2. 
+Finally, @fig-rmse_lon-3 (Figure \ref{fig-rmse_lon-3-osi}) shows the difference in skill between +S1 and +S2. 
 Large differences in skill indicate areas and months that are most affected by the data assimilation present in +S1.
 Between January and March, which are the months in which +S1 is the most skilful (@fig-lead-time-window), most of the improvement compared with +S2 is present in the Ross and Weddell Sea. 
 In April and May, the improvement seems more homogeneous. 
@@ -1400,7 +1406,7 @@ rbind(
 
 
 In @fig-rmse the mean error was shown. 
-@fig-initial-spread column 1 shows the mean standard deviation of errors among ensemble members at various lead times.
+@fig-initial-spread (Figure \ref{fig-initial-spread-osi}) column 1 shows the mean standard deviation of errors among ensemble members at various lead times.
 At one day lead time ([Fig. @fig-initial-spread] a.1) +S2 has a slightly larger spread than +S1 due to the way that ensemble members are generated.
 +S1 ensemble members are generated by adding random field perturbations to the atmosphere only, which then are transferred to the other components via the coupled simulation [@hudson2017]. 
 With this scheme, ensemble members are all but guaranteed to be underdispersed in the ocean and sea-ice components. The time-lag ensemble used for +S2 ensures greater spread. 
@@ -1449,6 +1455,10 @@ Additionally, the substantial bias in +S2 highlights the need for improved model
 Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
 Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
 
+# Funding 
+
+This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s Environmental Future.
+
 # Acknowledgments
 
 We thank the internal reviewers Bethan White and Xiaobing Zhou for their comments and feedback. 
@@ -1456,8 +1466,6 @@ We thank the internal reviewers Bethan White and Xiaobing Zhou for their comment
 This work benefited from earlier unpublished work by Laura Davies, Phil Reid, Andrew G. Marshall. 
 
 This research was undertaken with the assistance of resources from the National Computational Infrastructure (NCI Australia), an NCRIS enabled capability supported by the Australian Government.
-
-This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s Environmental Future.
 
 # Code and data availability 
 
@@ -1482,6 +1490,10 @@ All authors read and approved the final manuscript.
 ::: {#refs}
 :::
 
+:::
+
+::: {.content-visible when-profile="supp"}
+
 \clearpage
 
 \appendix  
@@ -1489,7 +1501,6 @@ All authors read and approved the final manuscript.
 \setcounter{figure}{0} 
 
 # Supplementary figures {.appendix}
-
 
 The following are the same figures from the main paper but using the OSI dataset instead of CDR.
 
@@ -1560,3 +1571,5 @@ which_dataset <- "osi"
 ```{r, fig-initial-spread-osi, ref.label=I("fig-initial-spread")}
 
 ```
+
+:::
