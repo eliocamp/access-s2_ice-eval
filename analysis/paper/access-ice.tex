@@ -4,14 +4,10 @@
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
-\documentclass[
-  sn-mathphys-num,
-  referee,lineno]{sn-jnl}
-
-
+\documentclass[bg, manuscript]{copernicus}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\setcounter{secnumdepth}{5}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -106,26 +102,7 @@
 
 
 
-%%%% Standard Packages
-
-\usepackage{graphicx}%
-\usepackage{multirow}%
-\usepackage{amsmath,amssymb,amsfonts}%
-\usepackage{amsthm}%
-\usepackage{mathrsfs}%
-\usepackage[title]{appendix}%
-\usepackage{xcolor}%
-\usepackage{textcomp}%
-\usepackage{manyfoot}%
-\usepackage{booktabs}%
-\usepackage{algorithm}%
-\usepackage{algorithmicx}%
-\usepackage{algpseudocode}%
-\usepackage{listings}%
-
-%%%%
-
-\raggedbottom
+\usepackage[inline]{trackchanges}
 \usepackage[section]{placeins}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
@@ -173,43 +150,64 @@
 \urlstyle{same}
 \hypersetup{
   pdftitle={The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice},
-  pdfauthor={Elio Campitelli; Ariaan Purich; Julie Arblaster; Eun-Pa Lim; Matthew C. Wheeler; Phillip Reid},
   pdfkeywords={sea ice, seasonal predictability, initial
 conditions, forecasting},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
   citecolor={Blue},
-  urlcolor={Blue},
+  urlcolor={red},
   pdfcreator={LaTeX via pandoc}}
 
 
-\title[The Importance of Initial Conditions in Seasonal Predictions of
-Antarctic Sea Ice]{The Importance of Initial Conditions in Seasonal
+
+\title{The Importance of Initial Conditions in Seasonal Predictions of
+Antarctic Sea Ice}
+
+\Author[1, 2]{Elio}{Campitelli}
+\Author[1, 2]{Ariaan}{Purich}
+\Author[1, 2]{Julie}{Arblaster}
+\Author[3]{Eun-Pa}{Lim}
+\Author[3]{Matthew C.}{Wheeler}
+\Author[3]{Phillip}{Reid}
+
+
+\affil[1]{School of Earth, Atmosphere and Environment, Monash
+University, Kulin Nations, Clayton, Victoria, Australia.}
+\affil[2]{ARC Special Research Initiative for Securing Antarctica's
+Environmental Future, Clayton, Kulin Nations, Victoria, Australia}
+\affil[3]{Research, Bureau of Meteorology, Melbourne, Australia.}
+
+\runningtitle{The Importance of Initial Conditions in Seasonal
 Predictions of Antarctic Sea Ice}
 
-% author setup
-\author*[1,2]{\fnm{Elio} \sur{Campitelli}}\email{elio.campitelli@monash.edu}\author[1,2]{\fnm{Ariaan} \sur{Purich}}\author[1,2]{\fnm{Julie} \sur{Arblaster}}\author[3]{\fnm{Eun-Pa} \sur{Lim}}\author[3]{\fnm{Matthew C.} \sur{Wheeler}}\author[3]{\fnm{Phillip} \sur{Reid}}
-% affil setup
-\affil[1]{\orgdiv{School of Earth, Atmosphere and
-Environment}, \orgname{Monash University, Kulin Nations, Clayton,
-Victoria, Australia.}}
-\affil[2]{\orgdiv{SARC Special Research Initiative for Securing
-Antarctica's Environmental Future}, \orgname{Clayton, Kulin Nations,
-Victoria, Australia}}
-\affil[3]{\orgdiv{Research, Bureau of Meteorology, Melbourne,
-Australia}}
+\runningauthor{Campitelli et al.}
 
-% abstract 
 
-\abstract{Accurate Antarctic sea-ice forecasts are crucial for climate
-monitoring and operational planning, yet they remain challenging due to
-model biases and complex ice-ocean-atmosphere interactions. The two
-versions of the Australian Bureau of Meteorology's ACCESS seasonal
-forecast system, ACCESS-S1 and ACCESS-S2, use identical model
-configuration and differ only in their initial conditions; primarily in
-that ACCESS-S2 does not assimilate sea-ice observations, whereas
-ACCESS-S1 does.\\
+\correspondence{Elio\ Campitelli\ (elio.campitelli@monash.edu)}
+
+
+\begin{document}
+
+\received{}
+\pubdiscuss{} %% only important for two-stage journals
+\revised{}
+\accepted{}
+\published{}
+
+%% These dates will be inserted by Copernicus Publications during the typesetting process.
+
+
+\firstpage{1}
+\maketitle
+\begin{abstract}
+Accurate Antarctic sea-ice forecasts are crucial for climate monitoring
+and operational planning, yet they remain challenging due to model
+biases and complex ice-ocean-atmosphere interactions. The two versions
+of the Australian Bureau of Meteorology's ACCESS seasonal forecast
+system, ACCESS-S1 and ACCESS-S2, use identical model configuration and
+differ only in their initial conditions; primarily in that ACCESS-S2
+does not assimilate sea-ice observations, whereas ACCESS-S1 does.\\
 This provides a convenient opportunistic experiment to assess the role
 of initial conditions on Antarctic sea-ice forecasts using more than 20
 years of fully coupled simulations with two 9-member ensembles. Our
@@ -228,14 +226,10 @@ shows negative skill. These findings highlight the critical importance
 of comprehensive year-round sampling in predictability studies and
 suggest that operational sea-ice data assimilation efforts should
 prioritize the summer-autumn period when initial conditions have maximum
-impact on forecast skill.}
-
-% keywords
-\keywords{sea ice,  seasonal predictability,  initial
-conditions,  forecasting}
-
-\begin{document}
-\maketitle
+impact on forecast skill.
+\end{abstract}
+\copyrightstatement{The author's copyright for this publication is
+transferred to institution/company.}
 
 
 \section{Introduction}\label{introduction}
@@ -430,8 +424,8 @@ Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility
 satellite-derived sea-ice concentration product. It is based on mostly
 the same sensors as the NOAA CDR but computed independently using
 different algorithms. Figures prepared with this dataset are provided in
-the supplementary material and do not differ significantly from the ones
-prepared using CDR.
+the appendix and do not differ significantly from the ones prepared
+using CDR.
 
 \subsection{Error measures}\label{error-measures}
 
@@ -1042,43 +1036,6 @@ dramatic seasonal variations in sea-ice predictability. Future studies
 should therefore use initial conditions through the whole year rather
 than focusing on a limited number of initialisation dates.
 
-\section{Funding}\label{funding}
-
-This work was supported by ARC SRIEAS Grant SR200100005 Securing
-Antarctica's Environmental Future.
-
-\section{Acknowledgments}\label{acknowledgments}
-
-We thank the internal reviewers Bethan White and Xiaobing Zhou for their
-comments and feedback.
-
-This work benefited from earlier unpublished work by Laura Davies, Phil
-Reid, Andrew G. Marshall.
-
-This research was undertaken with the assistance of resources from the
-National Computational Infrastructure (NCI Australia), an NCRIS enabled
-capability supported by the Australian Government.
-
-\section{Code and data availability}\label{code-and-data-availability}
-
-The underlying code for this study is available on GitHub:
-https://github.com/eliocamp/access-s2\_ice-eval.
-
-Raw data of ACCESS-S1 and ACCESS-S2 hindcast are not available due to
-size. Derived datasets required to reproduce the results, including
-extent timeseries and error measures, are available in this Zenodo
-repository: https://zenodo.org/records/17479538 \citep{campitelli2025}
-
-\section{Competing interests}\label{competing-interests}
-
-All authors declare no financial or non-financial competing interests.
-
-\section{Author contributions}\label{author-contributions}
-
-EC performed the data analysis and wrote the manuscript draft. AP, JA,
-EL, MW and PR, performed interpretation of the results, and reviewed and
-edited the draft. All authors read and approved the final manuscript.
-
 \section{References}\label{references}
 
 \renewcommand{\bibsection}{}
@@ -1086,11 +1043,9 @@ edited the draft. All authors read and approved the final manuscript.
 
 \clearpage
 
-\appendix  
-\renewcommand{\thefigure}{A\arabic{figure}}
-\setcounter{figure}{0}
+\section{Appendix}\label{appendix}
 
-\section{Supplementary figures}\label{supplementary-figures}
+\appendixfigures
 
 The following are the same figures from the main paper but using the OSI
 dataset instead of CDR.
@@ -1115,6 +1070,8 @@ lead time in S1 (between 213 and 216 days, depending on the month)}
 
 \end{figure}%
 
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1131,6 +1088,10 @@ forecast month. Values are smoothed with a 11-day running mean.}
 
 \end{figure}%
 
+\clearpage
+
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1146,6 +1107,8 @@ at the first of the month) and observations (OSI).}
 
 \end{figure}%
 
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1158,6 +1121,8 @@ at the first of the month) and observations (OSI).}
 ACCESS-S1.}
 
 \end{figure}%
+
+\clearpage
 
 \begin{figure}[!htb]
 
@@ -1176,6 +1141,8 @@ shown on the top left and bottom left of each panel respectively.}
 
 \end{figure}%
 
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1191,6 +1158,8 @@ deviation. ACCESS-S1 and ACCESS-S2 at different lead times. Each panel
 indicates the target month. Note the reverse horizontal axis.}
 
 \end{figure}%
+
+\clearpage
 
 \begin{figure}[!htb]
 
@@ -1209,6 +1178,8 @@ which ACCESS-S1 and ACCESS-S2 mean RMSE is not statistically different
 at the 99\% confidence level.}
 
 \end{figure}%
+
+\clearpage
 
 \begin{figure}[!htb]
 
@@ -1231,6 +1202,10 @@ forecast outperforms climatology.}
 
 \end{figure}%
 
+\clearpage
+
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1247,6 +1222,8 @@ reference.}
 
 \end{figure}%
 
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1260,6 +1237,8 @@ but for ACCESS-S2.}
 
 \end{figure}%
 
+\clearpage
+
 \begin{figure}[!htb]
 
 \centering{
@@ -1272,6 +1251,8 @@ but for ACCESS-S2.}
 but for the difference between ACCESS-S1 and ACCESS-S2.}
 
 \end{figure}%
+
+\clearpage
 
 \begin{figure}[!htb]
 
@@ -1293,6 +1274,45 @@ errors.}
 
 
 
+\codedataavailability{The underlying code for this study is available on
+GitHub: https://github.com/eliocamp/access-s2\_ice-eval. Raw data of +S1
+and +S2 hindcast are not available due to size. Derived datasets
+required to reproduce the results, including extent timeseries and error
+measures, are available in this Zenodo repository:
+https://zenodo.org/records/17479538
+\citep{campitelli2025}} %% use this section when having data sets and software code available
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% optional
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\authorcontribution{EC performed the data analysis and wrote the
+manuscript draft. AP, JA, EL, MW and PR, performed interpretation of the
+results, and reviewed and edited the draft. All authors read and
+approved the final manuscript.} %% optional section
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\competinginterests{The authors declare no competing
+interests.} %% this section is mandatory even if you declare that no competing interests are present
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{acknowledgements}
+We thank the internal reviewers Bethan White and Xiaobing Zhou for their
+comments and feedback. This work benefited from earlier unpublished work
+by Laura Davies, Phil Reid, Andrew G. Marshall. This research was
+undertaken with the assistance of resources from the National
+Computational Infrastructure (NCI Australia), an NCRIS enabled
+capability supported by the Australian Government. This work was
+supported by ARC SRIEAS Grant SR200100005 Securing Antarctica's
+Environmental Future.
+\end{acknowledgements}
+
+\bibliographystyle{copernicus}
 
 \end{document}
