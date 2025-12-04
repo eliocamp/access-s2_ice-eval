@@ -1,63 +1,97 @@
 ---
 title: The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice
-format:
-  nature-pdf:
-    # journal.cite-style is included in the tex file but ignored by pandoc if 
-    # cite-method is not `natbib`.
-    journal:
-      cite-style: sn-mathphys-num
-    # `citeproc` is the pandoc default. Set `cite-method: natbib` if required
-    # to use the bst styles from the upstream template.
-    cite-method: natbib
-    keep-tex: true
-    equal-margins: false
-    classoption: referee,lineno
-    fig-width: 5  
-    fig-pos: "!htb"
-    fig-dpi: 300    
+pdf-engine: pdflatex
+journal:
+  name: bg
+author:
+  - given_name: Elio 
+    surname: Campitelli
+    affiliation: "1, 2"
+    email: elio.campitelli@monash.edu
+    corresponding: true
+  - given_name: Ariaan
+    surname: Purich
+    affiliation: "1, 2"
+  - given_name: Julie
+    surname: Arblaster
+    affiliation: "1, 2"
+  - given_name: Eun-Pa
+    surname: Lim
+    affiliation: "3"
+  - given_name: Matthew C.
+    surname: Wheeler
+    affiliation: "3"
+  - given_name: Phillip
+    surname: Reid
+    affiliation: "3"
+            
+affiliation:
+  - code: 1
+    address: School of Earth, Atmosphere and Environment, Monash University, Kulin Nations, Clayton, Victoria, Australia. 
+  - code: 2
+    address: ARC Special Research Initiative for Securing Antarctica’s Environmental Future, Clayton, Kulin Nations, Victoria, Australia
+  - code: 3
+    address: Research, Bureau of Meteorology, Melbourne, Australia.
 
+bibliography: references.bib  
+running:
+  title: The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice
+  author: Campitelli et al.
+# This section is mandatory even if you declare that no competing interests are present.
+competinginterests: |
+  The authors declare no competing interests.
+# See https://publications.copernicus.org/for_authors/licence_and_copyright.html, normally used for transferring the copyright, if needed. 
+# Note: additional copyright statements for affiliated software or data need to be placed in the data availability section. 
+copyrightstatement: |
+  The author's copyright for this publication is transferred to institution/company. 
+### The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
+### It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
+### Note: unless stated otherwise, software and data affiliated with the manuscript are assumed to be published under the same licence as the article (currently Creative Commons 4.0)
+availability:
+  #code: |
+  #  use this to add a statement when having only software code available
+  #data: |
+  #  use this to add a statement when having only data sets available
+  codedata: |
+    The underlying code for this study is available on GitHub: https://github.com/eliocamp/access-s2_ice-eval.
+    Raw data of +S1 and +S2 hindcast are not available due to size. 
+    Derived datasets required to reproduce the results, including extent timeseries and error measures, are available in this Zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
+authorcontribution: |
+    EC performed the data analysis and wrote the manuscript draft. 
+    AP, JA, EL, MW and PR, performed interpretation of the results, and reviewed and edited the draft. 
+    All authors read and approved the final manuscript.
+
+acknowledgements: |
+    We thank the internal reviewers Bethan White and Xiaobing Zhou for their comments and feedback. 
+    This work benefited from earlier unpublished work by Laura Davies, Phil Reid, Andrew G. Marshall. 
+    This research was undertaken with the assistance of resources from the National Computational Infrastructure (NCI Australia), an NCRIS enabled capability supported by the Australian Government.
+    This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s Environmental Future.
+# appendix: |
+#   \section{Figures and tables in appendices}
+#   Regarding figures and tables in appendices, the following two options are possible depending on your general handling of figures and tables in the manuscript environment:
+#   \subsection{Option 1}
+#   If you sorted all figures and tables into the sections of the text, please also sort the appendix figures and appendix tables into the respective appendix sections.
+#   They will be correctly named automatically.
+#   \subsection{Option 2}
+#   If you put all figures after the reference list, please insert appendix tables and figures after the normal tables and figures.
+  
+#   To rename them correctly to A1, A2, etc., please add the following commands in front of them:
+#   `\appendixfigures` needs to be added in front of appendix figures
+#   `\appendixtables` needs to be added in front of appendix tables
+  
+#   Please add `\clearpage` between each table and/or figure.
+format: 
+  copernicus-pdf: 
+      keep-tex: true
+      classoption: referee,lineno
+      fig-width: 6.5
+      fig-pos: "!htb"
+      fig-dpi: 300    
 header-includes: | 
    \usepackage[section]{placeins}    
-author:
-  - name: Elio Campitelli
-    affiliations:
-      - name: Monash University, Kulin Nations, Clayton, Victoria, Australia.
-        id: 1
-        department: School of Earth, Atmosphere and Environment
-        # address: 1737 Cambridge Street
-        # city: Cambridge
-        # state: MA
-        # postal-code: 02138
-      - name: Clayton, Kulin Nations, Victoria, Australia
-        id: 2
-        department: SARC Special Research Initiative for Securing Antarctica’s Environmental Future
-        # address: 1 Oxford Street
-        # city: Cambridge
-        # state: MA
-        # postal-code: 02138
-    email: elio.campitelli@monash.edu
-    attributes:
-      corresponding: true
-  - name: Ariaan Purich
-    affiliations:
-      - ref: 1
-      - ref: 2
-  - name: Julie Arblaster
-    affiliations:
-      - ref: 1
-      - ref: 2
-  - name: Eun-Pa Lim
-    affiliations:
-      - department: Research, Bureau of Meteorology, Melbourne, Australia
-        id: 3
-  - name: Matthew C. Wheeler
-    affiliations:
-      - ref: 3      
-  - name: Phillip Reid
-    affiliations:
-      - ref: 3      
+
 keywords: [sea ice, seasonal predictability, initial conditions, forecasting]
-bibliography: references.bib  
+
 
 execute: 
   echo: false
@@ -67,13 +101,14 @@ execute:
 
 filters:
   - _extensions/ute/search-replace/search-replace.lua
-  - _extensions/pandoc-ext/abstract-section/abstract-section.lua
-  # - ../../_extensions/mloubout/critic-markup/critic-markup.lua
-  
+  - _extensions/pandoc-ext/abstract-section/abstract-section.lua  
+
+
 search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
+  
 
 ---
 
@@ -221,7 +256,7 @@ The data have a spatial resolution of 25 by 25 km and daily from November 1978 o
 
 The European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Ocean and Sea Ice Satellite Application Facility [OSI; @OSISAF] based on the SSMIS sensor is another satellite-derived sea-ice concentration product. 
 It is based on mostly the same sensors as the NOAA CDR but computed independently using different algorithms. 
-Figures prepared with this dataset are provided in the supplementary material and do not differ significantly from the ones prepared using CDR.
+Figures prepared with this dataset are provided in the appendix and do not differ significantly from the ones prepared using CDR.
 
 ## Error measures
 
@@ -404,6 +439,7 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
   tag_facets(tag = "rc") +
   coord_cartesian(clip = "off")
 ```
+
 
 @fig-hindcast-extent (@fig-hindcast-extent-osi for OSI) shows mean sea-ice extent of the +S1 and +S2 hindcasts (row a) and their differences from mean sea-ice extent of +CDR (row b).
 Mean extent at the first of every month is indicated with circles for the initial conditions and with triangles for the longest lead time possible for each model (between `r range_max_lag[model == "S2", min]` and `r range_max_lag[model == "S2", max]` days for +S2 and between `r range_max_lag[model == "S1", min]` and `r range_max_lag[model == "S1", max]` days for +S1).
@@ -1450,35 +1486,6 @@ Additionally, the substantial bias in +S2 highlights the need for improved model
 Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
 Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
 
-# Funding 
-
-This work was supported by ARC SRIEAS Grant SR200100005 Securing Antarctica’s Environmental Future.
-
-# Acknowledgments
-
-We thank the internal reviewers Bethan White and Xiaobing Zhou for their comments and feedback. 
-
-This work benefited from earlier unpublished work by Laura Davies, Phil Reid, Andrew G. Marshall. 
-
-This research was undertaken with the assistance of resources from the National Computational Infrastructure (NCI Australia), an NCRIS enabled capability supported by the Australian Government.
-
-# Code and data availability 
-
-The underlying code for this study is available on GitHub: https://github.com/eliocamp/access-s2_ice-eval.
-
-Raw data of +S1 and +S2 hindcast are not available due to size. 
-Derived datasets required to reproduce the results, including extent timeseries and error measures, are available in this Zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
-
-# Competing interests 
-
-All authors declare no financial or non-financial competing interests. 
-
-# Author contributions 
-
-EC performed the data analysis and wrote the manuscript draft. 
-AP, JA, EL, MW and PR, performed interpretation of the results, and reviewed and edited the draft. 
-All authors read and approved the final manuscript.
-
 
 # References
 
@@ -1488,11 +1495,11 @@ All authors read and approved the final manuscript.
 
 \clearpage
 
-\appendix  
-\renewcommand{\thefigure}{A\arabic{figure}}
-\setcounter{figure}{0} 
 
-# Supplementary figures {.appendix}
+
+# Appendix {.appendix}
+
+\appendixfigures
 
 The following are the same figures from the main paper but using the OSI dataset instead of CDR.
 
@@ -1504,61 +1511,78 @@ which_dataset <- "osi"
 
 ```
 
+\clearpage
 
 ```{r, fig-mean-growth-osi, ref.label=I("fig-mean-growth")}
 
 ```
 
+\clearpage
+
 ```{r, plot_bias-osi, ref.label=I("plot_bias")}
 
 ```
+
+\clearpage
 
 ```{r, fig-bias-1-osi, ref.label=I("fig-bias-1")}
 
 ```
 
+\clearpage
 
 ```{r, fig-bias-2-osi, ref.label=I("fig-bias-2")}
 
 ```
 
+\clearpage
 
 ```{r, fig-extent-anom-osi, ref.label=I("fig-extent-anom")}
 
 ```
 
+\clearpage
 
 ```{r, fig-extent-sd-osi, ref.label=I("fig-extent-sd")}
 ```
 
+\clearpage
 
 ```{r, fig-rmse-osi, ref.label=I("fig-rmse")}
 
 ```
 
+\clearpage
+
 ```{r, fig-lead-time-window-osi, ref.label=I("fig-lead-time-window")}
 
 ```
 
+\clearpage
 
 ```{r, rmse_lon_plots-osi, ref.label=I("rmse_lon_plots")}
 
 ```
 
+\clearpage
 
 ```{r, fig-rmse_lon-1-osi, ref.label=I("fig-rmse_lon-1")}
 
 ```
 
+\clearpage
 
 ```{r, fig-rmse_lon-2-osi, ref.label=I("fig-rmse_lon-2")}
 
 ```
 
+\clearpage
+
 ```{r, fig-rmse_lon-3-osi, ref.label=I("fig-rmse_lon-3")}
 
 ```
 
+\clearpage
 
 ```{r, fig-initial-spread-osi, ref.label=I("fig-initial-spread")}
 
