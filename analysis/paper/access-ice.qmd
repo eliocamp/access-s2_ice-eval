@@ -39,11 +39,12 @@ running:
   author: Campitelli et al.
 # This section is mandatory even if you declare that no competing interests are present.
 competinginterests: |
+  # Competing interests
   The authors declare no competing interests.
 # See https://publications.copernicus.org/for_authors/licence_and_copyright.html, normally used for transferring the copyright, if needed. 
 # Note: additional copyright statements for affiliated software or data need to be placed in the data availability section. 
-copyrightstatement: |
-  The author's copyright for this publication is transferred to institution/company. 
+# copyrightstatement: |
+#   The author's copyright for this publication is transferred to institution/company. 
 ### The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
 ### It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
 ### Note: unless stated otherwise, software and data affiliated with the manuscript are assumed to be published under the same licence as the article (currently Creative Commons 4.0)
@@ -53,15 +54,18 @@ availability:
   #data: |
   #  use this to add a statement when having only data sets available
   codedata: |
+    # Code/Data availability 
     The underlying code for this study is available on GitHub: https://github.com/eliocamp/access-s2_ice-eval.
     Raw data of +S1 and +S2 hindcast are not available due to size. 
     Derived datasets required to reproduce the results, including extent timeseries and error measures, are available in this Zenodo repository: https://zenodo.org/records/17479538 [@campitelli2025]
 authorcontribution: |
+    # Author contributions
     EC performed the data analysis and wrote the manuscript draft. 
     AP, JA, EL, MW and PR, performed interpretation of the results, and reviewed and edited the draft. 
     All authors read and approved the final manuscript.
 
 acknowledgements: |
+    # Acknowledgements
     We thank the internal reviewers Bethan White and Xiaobing Zhou for their comments and feedback. 
     This work benefited from earlier unpublished work by Laura Davies, Phil Reid, Andrew G. Marshall. 
     This research was undertaken with the assistance of resources from the National Computational Infrastructure (NCI Australia), an NCRIS enabled capability supported by the Australian Government.
@@ -108,7 +112,6 @@ search-replace:
   +S2: ACCESS-S2
   +S1: ACCESS-S1
   +CDR: NOAA/NSIDC CDRV4
-  
 
 ---
 
@@ -154,7 +157,7 @@ This leads to a significant negative sea-ice extent bias, which is corrected onl
 The impact of the differing initial conditions on forecast errors varies dramatically by season: summer and autumn initial conditions (January-April) provide predictive skill for up to three months, with February initial conditions being particularly crucial. 
 In contrast, winter forecasts of the two systems are statistically indistinguishable after only two weeks. 
 Regional analysis of forecast skill suggests that this winter predictability barrier is most dramatic over East Antarctica, where even +S1 shows negative skill. 
-These findings highlight the critical importance of comprehensive year-round sampling in predictability studies and suggest that operational sea-ice data assimilation efforts should prioritize the summer-autumn period when initial conditions have maximum impact on forecast skill.
+These findings highlight the critical importance of comprehensive year-round sampling in predictability studies and suggest that operational sea-ice data assimilation efforts should prioritise the summer-autumn period when initial conditions have maximum impact on forecast skill.
 
 # Introduction
 
