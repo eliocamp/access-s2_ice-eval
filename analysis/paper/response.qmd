@@ -1,0 +1,97 @@
+#  R1
+
+> Many climate models suffer from systemical bias, and bias correction is often applied prior to forecast evaluation. Have the authors examined whether bias correction would lead to substantial differences in the reported results? Clarifying the role of model bias in the skill assessment would strengthen the robustness of the conclusions.
+
+Since we compute anomalies relative to each model's own climatology, this applies a first order bias correction. 
+Our measures of skill do include model bias (of the mean). 
+It is possible that 
+
+P5 Line146, 
+
+Section 5.3.2 in @murphy1985 gives examples of skill scores in terms of Mean Absolute Deviation and Mean Squared Error, but Root Mean Square Error is also a valid measurement from which to derive skill scores: 
+
+> Finally, a skill score based on the root mean square error (RMSE) measure can be defined by replacing MSEFs and MSERs in (24) with RMSEFs and RMSERS• respectively
+
+The general definition of skill score is given in section 4.3. 
+
+
+
+P7 Line 175: Changed
+
+P12 Line 200: That is true. However, in those months RMSE increases with lead time. We added Line XX: "This effect is seen in all months except from July to September [@fig-extent-rmse-month]." And a supplementary figure showing RMSE as a function of lead time for each month. 
+
+
+P12 Line 206: Lines XXX now read: "The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50cm or removed from the thinnest category first and from thicker categories if needed. "
+
+
+P12 Line 210: 
+
+
+P15 Line 245: Yes, it is June that cannot be forecasted better than the benchmarks. 
+
+
+Figure 5: The numbers in brackets represent the 95% confidence interval. We clarified that in the caption. 
+All correlations are statistically different from zero, but we don't think that's a meaningful comparison. 
+
+Figure 6: We assume normal distribution for that sea-ice extent, so the standard deviation has a chi squared distribution with N - 1 degrees of freedom (where N is the number of samples). We then divide all the values by the observation standard deviation. We modified the caption to make it clearer. 
+
+
+
+Figure 9:  
+> Does this imply that the oceanic and atmosphere data assimilation provide limited benefit to the prediction? 
+
+With our data is not possible to say to what extent the oceanic and atmospheric data assimilation improve sea-ice forecasting. It might very well be the case that if it not were for data assimilation, the forecasts would've been even worse. 
+Clearly some information is being transferred from the atmosphere/ocean to the ice in some months (Figure 1). 
+
+> What role does the model bias play in this prediction error?
+
+# R2
+
+
+Ocean: 
+
+Yes, ocean DA is different, but some arguments why it should be of lesser importance: 
+
+While the DA process is different, the underlying observations are the same, so the effect should be similar. 
+There are few observations in hgih latitudes, so SST DA has probably a lesser impact in that region.  (CAN WE GET INFO ON NUMBER OF OBSERVATIONS ASSIMULATED?)
+@wedd2022 showed that T300 correaltion between EN4 and +S2 reanalysis (initial conditions) is relatively high and not different from +S1 around 60°, which suggest that the ocean initial conditions are not dramatically different between models. 
+The correlation is very low in the Antarctic coast, but it's the same in both systems. 
+Although this is correlation and not RMSE, and also it's upper heat content of the top 300m and not just SST. 
+S300 correlation, on the other hand, is very low south of 30°S in +S2, but again +S1 is not dramatically different. 
+But on the other hand, forecasted SSTs were noticeably degraded in the Southern Ocean in +S2 compared with +S1 in the ice-covered regions. 
+Correlation of SSTa is much lower for +S2 (@wedd2022 fig 13) and with higher positive bias (fig 12) which might've appeared as a response to the greater negative sea-ice concentration bias in +S2. (our figure XX). 
+So even when the correlation of the initial conditions were high, correlation of the forecast took a hit. 
+It is likely that lack of sea-ice data assimilation is the culprit. 
+
+
+
+
+L125, Section 2.3:
+We added bias and correlation to the method section. 
+
+L126–127:
+
+
+L214–215: There was an error in the labeling of the plots where observations were labeled as ACCESS-S2. This is now fixed. 
+
+L245: Fixed
+
+Figures 9 and 10: 
+
+Figure 9 provides information on magnitude and scale that cannot be seen in Figure 10, while Figure 10 serves as a summary of Figure 9 with clearer labels and also takes into account the uncertainty that we can't show in Figure 9 for clarity. 
+
+Figures 11–13: We altered the colour scale, added vertical grid and smoothed values to increase readability. 
+
+Caption of Figure 14: Added "days" in the figure to make the unit clearer. 
+
+L277–278: Yes, the spread is slightly higher in S1 between Feb and April. Lines XXX point that out. 
+
+L307–308: Lines XX now read: The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50cm or removed from the thinnest category first and from thicker categories if needed. 
+
+
+# R3
+
+1. We made it clear that all computations were done using only the overlapping period between hindcasts. 
+
+
+

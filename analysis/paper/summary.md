@@ -1,0 +1,9 @@
+Accurate Antarctic sea-ice forecasts are crucial for climate monitoring and operational planning, yet they remain challenging due to model biases and complex ice-ocean-atmosphere interactions. 
+The two versions of the Australian Bureau of Meteorology's ACCESS seasonal forecast system, +S1 and +S2, use identical model configuration and differ only in their initial conditions; primarily in that +S2 does not assimilate sea-ice observations, whereas +S1 does.   
+This provides a convenient opportunistic experiment to assess the role of initial conditions on Antarctic sea-ice forecasts using more than 20 years of fully coupled simulations with two 9-member ensembles.
+Our analysis reveals that both systems experience an extended melt season and delayed growth phase compared with observations. 
+This leads to a significant negative sea-ice extent bias, which is corrected only in +S1 by the data assimilation system. 
+The impact of the differing initial conditions on forecast errors varies dramatically by season: summer and autumn initial conditions (January-April) provide predictive skill for up to three months, with February initial conditions being particularly crucial. 
+In contrast, winter forecasts of the two systems are statistically indistinguishable after only two weeks. 
+Regional analysis of forecast skill suggests that this winter predictability barrier is most dramatic over East Antarctica, where even +S1 shows negative skill. 
+These findings highlight the critical importance of comprehensive year-round sampling in predictability studies and suggest that operational sea-ice data assimilation efforts should prioritise the summer-autumn period when initial conditions have maximum impact on forecast skill.

@@ -29,8 +29,8 @@ ggplot2::theme_set(
 wide_legend <- ggplot2::theme(legend.key.width = grid::unit(1, 'null'))
 
 
-trans_pink <- scales::muted("#F7A8B8", l = 60, c = 100)
-trans_blue <- scales::muted("#55CDFC", l = 60, c = 100)
+pink <- RColorBrewer::brewer.pal(9, "RdBu")[1]
+blue <- rev(RColorBrewer::brewer.pal(9, "RdBu"))[1]
 
 
 colours_models <- c(

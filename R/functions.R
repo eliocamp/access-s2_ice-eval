@@ -65,7 +65,7 @@ get_forecast_times <- function(model) {
 compute_climatology <- function(
   dataset,
   output,
-  climatology = 1981:2011,
+  climatology = 1990:2012,
   runmean_number = 11,
   year = 2000,
   options = c("-L")
@@ -298,7 +298,7 @@ rmse <- function(x, y, signif = 2, sep = "\ ", scale = 1) {
       sep,
       "(CI:\ ",
       round(low, signif),
-      "\ --\ ",
+      "\ —\ ",
       round(high, signif),
       ")"
     )
