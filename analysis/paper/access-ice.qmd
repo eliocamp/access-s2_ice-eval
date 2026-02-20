@@ -91,6 +91,7 @@ format:
       fig-width: 6.5
       fig-pos: "!htb"
       fig-dpi: 300    
+      fig-format: png
 header-includes: | 
    \usepackage[section]{placeins}    
 
@@ -102,6 +103,7 @@ execute:
   warning: false
   message: false
   cache: true
+
 
 filters:
   - _extensions/ute/search-replace/search-replace.lua
@@ -124,6 +126,9 @@ library(rcdo)
 library(tagger)
 library(patchwork)
 library(mirai)
+
+library(dtparallel)
+parallel_method_set("mirai")
 
 cdo_options_set("-L")
 cdo_cache_set(here::here("data/temp/cache"))
@@ -164,6 +169,7 @@ everywhere({
 })
 ```
 
+
 # Abstract
 
 Accurate Antarctic sea-ice forecasts are crucial for climate monitoring and operational planning, yet they remain challenging due to model biases and complex ice-ocean-atmosphere interactions. 
@@ -173,7 +179,7 @@ Our analysis reveals that both systems experience an extended melt season and de
 This leads to a significant negative sea-ice extent bias, which is corrected only in +S1 by the data assimilation system. 
 The impact of the differing initial conditions on forecast errors varies dramatically by season: summer and autumn initial conditions (January-April) provide predictive skill for up to three months, with February initial conditions being particularly crucial. 
 In contrast, winter forecasts of the two systems are statistically indistinguishable after only two weeks. 
-Regional analysis of forecast skill suggests that this winter predictability barrier is most dramatic over East Antarctica, where even +S1 shows negative skill. 
+Regional analysis of forecast skill suggests that this winter predictive skill barrier is most dramatic over East Antarctica, where even +S1 shows negative skill. 
 These findings highlight the critical importance of comprehensive year-round sampling in predictability studies and suggest that operational sea-ice data assimilation efforts should prioritise the summer-autumn period when initial conditions have maximum impact on forecast skill.
 
 # Introduction
@@ -186,16 +192,23 @@ However, progress in Antarctic sea-ice forecasting system has lagged behind Arct
 Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simpler statistical methods [@massonnet2023] and machine learning approaches (e.g. @dong2024, @lin2025), which also underscores the need for better understanding and physical modelling of sea-ice dynamics, and drivers of its variability.
 
 Good initial conditions are generally required for a good forecast, however, it is not entirely known to what extent accurate sea-ice initial conditions affect the quality of the forecast and at what timescales.
-Exploring seasonal predictions of Arctic sea ice, @guemas2016 found that sea-ice initial conditions are important in autumn to predict summer sea ice, but the impact wasn’t as dramatic when predicting winter sea ice.
+Exploring seasonal predictions of Arctic sea ice, @guemas2016 found that sea-ice initial conditions are important in autumn to predict summer Arctic sea ice, but the impact wasn’t as dramatic when predicting winter Arctic sea ice.
 @day2014 also found seasonally-varying differences in the effect of initialisation, noting that accurate Arctic sea-ice thickness leads to improved sea-ice forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, @holland2013 studied the initial-value predictability of Antarctic sea ice in a perfect model study using the CCSM3 model.
 They found that sea-ice and ocean initial conditions provide predictive information to forecast sea-ice edge location several months in advance and that some predictability is retained for up to two years thanks to ocean heat content anomalies that are advected eastward.
+Similarly, @morioka2022 studied decadal forecasts of Antarctic sea ice and found that initialising ocean and sea ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea.
 This is in contrast with @marchi2020, who ran perfect model experiments to argue that uncertainty in the predicted atmospheric state and evolution is the main driver of uncertainty in Antarctic sea-ice extent prediction on seasonal timescales, with sea-ice and ocean initial conditions having lesser importance.
-More recently, @morioka2022 studied decadal forecasts of Antarctic sea ice and found that initialising ocean and sea ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea.
-It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks: @holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September, and @morioka2022 ran forecasts only from the 1st of March.
-@marchi2020 also used a coupled ocean–sea-ice model instead of a fully coupled model like @holland2013 did.
-@morioka2022 used observed sea-ice initial conditions and compared with observations, while @marchi2020 and @holland2013 were perfect model studies.
+More recently, @xiu2025 contrasted Antarctic sea ice hindcasts based on different data assimilation sources. 
+The concluded that hindcast initialised only with atmospheric data lead to good predictions of sea-ice area in many regions that where comparable if not better than hindcasts initialised only with ocean data or with ocean and sea-ice concentration data. 
+Furthermore, they find little benefit in assimilation of sea-ice concentration data on top of ocean data. 
+
+It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks.
+@holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September, and @morioka2022 ran forecasts only from the 1st of March.
+@xiu2025 was the most comprehensive study, using hindcasts initialised on the 1st of January, April, July and October. 
+@marchi2020 also used a coupled ocean–sea-ice model instead of a fully coupled model like @holland2013 and @xiu2025 did.
+@morioka2022 and @xiu2025 both compared forecast with observations, but the former used observed sea-ice initial conditions while the latter used initial conditions derived from data asimilationand.
+On the other hand, @marchi2020 and @holland2013 were perfect model studies. 
 
 In October 2021 the Australian Bureau of Meteorology (BoM) upgraded the Australian Community Climate and Earth System Simulator – Seasonal (ACCESS-S) from version S1 to S2.
 While the base model remained the same, the change in version was focused on using ocean, sea-ice and land initial conditions generated by the BoM instead of depending on the UK Met Office.
@@ -211,7 +224,7 @@ The work will also serve as a benchmark for future prediction systems to attempt
 
 # Data and methods
 
-## Forecasting systems  {#sec-systems}
+## Forecasting systems {#sec-systems}
 
 ```{r}
 #| label: ranges
@@ -234,7 +247,7 @@ The ocean component has a nominal horizontal resolution of 1/4° with 75 vertica
 The sea-ice component, based on CICE version 4.1, has the same resolution as the ocean component and five sea-ice thickness categories as well as an open water category.
 
 Both systems take atmospheric initial conditions derived from ERA-interim [@dee2011] for their hindcasts.
-The main difference between the hindcasts of the two systems are the ocean and sea-ice initial conditions.
+The only difference between the hindcasts of the two systems are the ocean and sea-ice initial conditions.
 
 +S1's ocean and sea-ice initial conditions come from the Met Office FOAM system, which uses a multivariate, incremental three-dimensional variational (3D-Var), first-guess-at-appropriate-time (FGAT) data assimilation scheme [@waters2015] and assimilates sea surface temperature (SST), sea surface height (SSH), in situ temperature and salinity profiles, and satellite observations of sea-ice concentration using the EUMETSAT OSISAF product described in the next section.
 The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50cm or removed from the thinnest category first and from thicker categories if needed. 
@@ -296,12 +309,12 @@ It is based on mostly the same sensors as the NOAA CDR but computed independentl
 Figures prepared with this dataset are provided in the appendix and do not differ significantly from the ones prepared using CDR.
 
 ## Error measures
-
+ 
 For evaluation purposes, we use a series of measures. 
 Sea-ice extent is defined as the area of the ocean at least 15% covered by sea-ice. 
 This threshold is motivated by the limitations in satellite retrieval, which is increasingly unreliable for lower sea-ice concentrations [@cavalieri1991].
 We evaluate sea-ice extent anomaly hindcasts by their Root Mean Squared Error (RMSE) and correlation coefficient. 
-The hindcast ensemble mean sea-ice extent is defined as the sea-ice extent of the ensemble mean hindcast. 
+The hindcast ensemble mean sea-ice extent is defined as the mean sea-ice extent of individual ensemble members.
 
 Pan-Antarctic (net) sea-ice extent serves as a hemispheric measure of the amount of sea ice, but it does not take into account the spatial distribution. 
 A model could have a relatively accurate extent of the net ice but with different regional distributions. 
@@ -357,10 +370,12 @@ extent_daily <- datasets |>
 hindcast_extent <- here::here("data/derived/hindcast_extent.csv") |>
   zenodo("Sea-ice extent from hindcast.") |>
   fread() |>
+  _[member != "em"] |>
   _[, model := relevel(factor(model), "S2")] |>
   _[, lag := as.numeric(as.Date(time) - as.Date(forecast_time))] |>
   _[lag > 0] |>
-  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")] # This member is wrong
+  _[!(month(forecast_time) == 1 & member == 7 & model == "S1")] |> # This member is wrong
+  _[, .(aice = mean(aice)), by = .(model, measure, forecast_time, time, lag)]
 ```
 
 ```{r extent_climatology}
@@ -389,10 +404,10 @@ range_max_lag <- hindcast_extent[
 ```
 
 ```{r fig-hindcast-extent}
-#| fig-cap: "Row a: Pan-Antarctic daily mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S2 (column 2; purple). Observed mean sea-ice extent in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values at the lead time corresponding to the maximum lead time in S1 (between 213 and 216 days, depending on the month)"
+#| fig-cap: "Row a: Pan-Antarctic daily mean sea-ice extent for all hindcasts initialised on the first of each calendar month for +S1 (column 1; green) and +S2 (column 2; purple). Observed mean sea-ice extent in each corresponding hindcast period is shown in black. Row b: Mean differences between the forecast and the observed values. Circles represent the initial conditions at the start of forecasts (i.e., the first of every month), and triangles represent the mean values forecasted for the first of every month the lead time corresponding to the maximum lead time in S1 (between 213 and 216 days, depending on the month)."
 #| fig-height: 4
 
-hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
+hindcast_extent[, .(model, forecast_time, time, Forecast = aice)] |>
   overlap_range(forecast_time) |>
   extent_daily[i = _, on = c("time"), allow.cartesian = TRUE] |>
   _[, Difference := Forecast - aice] |>
@@ -467,8 +482,8 @@ hindcast_extent[, .(model, forecast_time, member, time, Forecast = aice)] |>
     expand = c(0, 0)
   ) +
   scale_y_continuous(NULL, labels = labels_extent) +
-  scale_color_models +
-  scale_fill_models +
+  scale_color_models() +
+  scale_fill_models() +
   guides(fill = "none") +
   # scale_color_manual(values = cetcolor::cet_pal(12, name = "c2"),
   #                    aesthetics = c("fill", "color"), guide = "none") +
@@ -490,7 +505,7 @@ At this long lead time, information of the initial conditions is essentially los
 Both systems' equilibrium states (triangles) show negative biases of sea-ice extent, particularly in the growth phase of late-autumn and winter months.
 This is due primarily to the melt season being longer than in observations and with faster melt between January and March and the growing seasons being shorter with slower growth during March and April.
 This is then followed by faster growth between May and July (@fig-mean-growth and @fig-mean-growth-osi).
-Many sea-ice models exhibit this systematic underestimation during the sea-ice minimum and early freezing season [@massonnet2023], which could indicate problems in the representation of thermodynamics in the model [@zampieri2019].
+Many sea-ice models exhibit this systematic underestimation during the sea-ice minimum and early freezing season [@bushuk2021; @massonnet2023], which could indicate problems in the representation of thermodynamics in the model [@zampieri2019].
 It is also not surprising that both forecasting systems converge to a similar equilibrium state because they share the same model formulation.
 
 The difference between the initial conditions (circles) and the model equilibrium state (triangles) can be mostly attributed to the effect of data assimilation, which in +S2 is due solely to the coupling of sea-ice with the atmosphere and the ocean. 
@@ -506,7 +521,6 @@ dif_hindcast <- hindcast_extent |>
   overlap_range(forecast_time) |>
   copy() |>
   _[order(time)] |>
-  _[, .(aice = mean(aice)), by = .(model, forecast_time, time)] |>
   _[,
     dif := c(NA, diff(aice) / diff(as.numeric(as.Date(time)))),
     by = .(model, forecast_time)
@@ -531,7 +545,6 @@ dif_extent <- extent_daily |>
   na.omit() |>
   _[, dif := frollmean(dif, n = w, align = "center"), by = .(dataset)] |>
   _[, average(dif), by = .(dataset, time = update(time, year = 2000))]
-
 ```
 
 ```{r fig-mean-growth}
@@ -556,7 +569,7 @@ dif_extent |>
   scale_y_continuous(NULL, labels = \(x) {
     labels_extent(x, units = "M km²/day")
   }) +
-  scale_color_models +
+  scale_color_models() +
   coord_cartesian(xlim = as.POSIXct(c("2000-01-01", "2000-12-31"), tz = "UTC"))
 ```
 
@@ -589,8 +602,61 @@ hindcast_clim <- hindcast_clim |>
   merge(obs_clim)
 ```
 
+
+
 ```{r}
 #| label: plot_bias
+
+circle <- function(center, radius, res = 80) {
+  t <- seq(0, 2 * pi, length.out = res)
+  data.frame(x = cos(t) * radius, y = sin(t) * radius)
+}
+
+
+box <- c(xmin = -3937500, xmax = 3937500, ymin = -3937500, ymax = 4337500)
+geom_coords <- function() {
+  lats <- seq(-90, -40, by = 10)[-1]
+
+  ys <- proj4::project(
+    list(lon = rep(0, length(lats)), lat = lats),
+    proj = sic_projection
+  )$y
+
+  latitudes <- lapply(setNames(ys, lats), \(x) circle(0, x)) |>
+    data.table::rbindlist(idcol = "lat")
+
+  lons <- seq(0, 360, length.out = 9)[-1]
+  longitudes <- data.table::CJ(lon = lons, lat = c(lats[1], max(lats))) |>
+    _[, c("x", "y") := proj4::project(list(lon, lat), proj = sic_projection)] |>
+    _[]
+
+  list(
+    geom_path(
+      data = latitudes,
+      aes(x, y, group = lat),
+      inherit.aes = FALSE,
+      linewidth = 0.1,
+      colour = "gray50",
+      alpha = 0.5
+    ),
+    geom_path(
+      data = longitudes,
+      aes(x, y, group = lon),
+      inherit.aes = FALSE,
+      linewidth = 0.1,
+      colour = "gray50",
+      alpha = 0.5
+    ),
+    geom_label(
+      data = data.frame(x = 0, y = ys, label = lats),
+      aes(x = x, y = y, label = label),
+      size = 1,
+      label.size = 0,
+      inherit.aes = FALSE
+    )
+  )
+}
+
 plot_bias <- lapply(c("S2", "S1"), \(x) {
   hindcast_clim |>
     _[model == x] |>
@@ -613,14 +679,22 @@ plot_bias <- lapply(c("S2", "S1"), \(x) {
     geom_antarctica_fill +
     facet_wrap(~month, labeller = labeller(month = labels_month)) +
     wide_legend +
-    tag_facets()
+    tag_facets() +
+    geom_coords() +
+    ggplot2::coord_sf(
+      xlim = box[1:2],
+      ylim = box[3:4],
+      crs = sic_projection,
+      lims_method = "box",
+      label_axes = "----"
+    )
 })
-
 ```
 
 ```{r fig-bias-1}
-#| fig-cap: !expr glue::glue("Ensemble mean difference between monthly sea-ice concentration of +S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations ({labs_dataset[which_dataset]}).")
+#| fig-cap: Ensemble mean difference between monthly sea-ice concentration of +S2 ensemble mean forecast at 0-month lead time (monthly mean values forecasted from the forecast initialised at the first of the month) and observations ({labs_dataset[which_dataset]}).
 #| fig-height: 6
+
 plot_bias[[1]]
 ```
 
@@ -641,7 +715,7 @@ The largest values are found between April and June, when the faster growth resu
 
 \FloatBarrier
 
-## RMSE
+## Anomaly errors
 
 ```{r fig-extent-anom}
 #| fig-cap: Monthly mean sea-ice extent anomalies of the observations (black) and forecasts from +S1 (right column; purple) and +S2 (left column; green) at lead times of 0, 2, 4, and 6 months. The RMSE and correlation with their respective 95% confidence interval during the overlapping period of +S1 and +S2 hindcasts (1990–2012) are shown on the top left and bottom left of each panel respectively
@@ -668,6 +742,7 @@ N <- uniqueN(monthly_extent$time)
 
 hindast_extent_monthly <- hindcast_extent |>
   copy() |>
+  _[, .(aice = mean(aice)), by = .(model, measure, forecast_time, time, lag)] |>
   _[,
     aice := aice - mean(aice[year(time) %between% c(1990, 2012)]),
     by = .(lag, model, time = update(time, year = 2000))
@@ -682,6 +757,7 @@ hindast_extent_monthly |>
   _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |>
   _[lag %in% (c(1, 3, 5, 7) - 1)] |>
   _[time %between% s2_range] |>
+  _[, model := factor(model, levels = c("S1", "S2", which_dataset))] |>
   ggplot(aes(time)) +
   geom_line(aes(y = aice, group = dataset, color = dataset), linewidth = 0.2) +
   geom_line(aes(y = forecast, color = model), linewidth = 0.2) +
@@ -721,14 +797,14 @@ hindast_extent_monthly |>
   scale_x_date(NULL, expand = c(0, 0)) +
   facet_grid(
     lag ~ model,
-    labeller = labeller(lag = \(x) paste0("Month: ", x))
+    labeller = labeller(lag = \(x) paste0("Month: ", x), model = labels_models)
   ) +
-  scale_color_models +
-  scale_fill_models
+  scale_color_models() +
+  scale_fill_models()
 ```
 
 @fig-extent-anom (@fig-extent-anom-osi) shows monthly sea-ice extent anomalies forecasted at selected lead times.
-Compared with +S1, +S2 anomaly forecasts are relatively poor (large RMSE) even for the first month (lead time 0), whereas +S1 forecasts stay relatively skilful even at a lead time of three months.
+Compared with +S1, +S2 anomaly forecasts are relatively poor (large RMSE) even for the first month (lead time 0), whereas +S1 forecasts have lower RMSE than +S2 even at a lead time of four months.
 +S2 shows much larger interannual variability than observations, with dramatic lows between 1995 and 2007, and highs between 2007 and 2015.
 
 Unexpectedly, for +S2, RMSE improves with lead time, even though the correlation degrades with lead time.
@@ -736,7 +812,7 @@ This effect is seen in all months except from July to September [@fig-extent-rms
 This is puzzling behaviour that goes contrary to what is usually seen in prediction models.
 The explanation seems to be the mentioned increased interannual variability.
 @fig-extent-sd (@fig-extent-sd-osi) shows the interannual standard deviation of monthly sea-ice extent of the forecasts as a function of lead time compared with observations.
-+S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at nine month lead time for most months.
++S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at nine months lead time for most months.
 
 ```{r fig-extent-rmse-month_build}
 
@@ -753,17 +829,20 @@ fig_extent_rmse_month <- hindast_extent_monthly |>
   # _[, estimate := estimate / estimate[1], by = .(month, model)] |>
   # _[, up := FitLm(estimate, lag)$estimate[2] > 0, by = .(month)] |>
   ggplot(aes(lag, estimate)) +
+  geom_ribbon(aes(ymin = low, ymax = high, fill = model), alpha = 0.5) +
   geom_line(aes(color = model)) +
+  scale_y_continuous("Sea-ice extent anomaly RMSE.") +
   scale_x_continuous(
-    "Lead time",
+    "Lead time [months]",
     breaks = c(0:9),
     expand = c(0, 0),
     trans = scales::reverse_trans()
   ) +
-  scale_color_models +
+  scale_color_models() +
+  scale_fill_models() +
   facet_wrap(~month, labeller = labeller(month = labels_month))
-
 ```
+
 
 ```{r fig-extent-sd}
 #| fig-cap: Interannual standard deviation with 95% confidence interval of monthly mean sea-ice extent forecasted for each month. We standardise the standard deviation by that month’s sea-ice extent observation standard deviation. +S1 and +S2 at different lead times. Each panel indicates the target month. Note the reverse horizontal axis.
@@ -798,15 +877,14 @@ hindcast_extent_sd |>
 
   scale_y_continuous("Standardised sea-ice extent standard deviation") +
   scale_x_continuous(
-    "Lead time",
+    "Lead time [months]",
     breaks = c(0:9),
     expand = c(0, 0),
     trans = scales::reverse_trans()
   ) +
-  scale_color_models +
-  scale_fill_models +
+  scale_color_models() +
+  scale_fill_models() +
   facet_wrap(~month, labeller = labeller(month = labels_month))
-
 ```
 
 ```{r plot_forecast_example}
@@ -917,9 +995,16 @@ plot_forecast_example <- function(sample_date) {
     geomcoord_antarctica +
     wide_legend +
     facet_wrap(~model, labeller = labeller(model = labels_models)) +
-    plot_layout(ncol = 1)
+    plot_layout(ncol = 1) &
+    geom_coords() &
+    ggplot2::coord_sf(
+      xlim = box[1:2],
+      ylim = box[3:4],
+      crs = sic_projection,
+      lims_method = "box",
+      label_axes = "----"
+    )
 }
-
 
 ```
 
@@ -928,11 +1013,10 @@ This could be caused by +S2 sea ice being much more sensitive to atmospheric and
 
 As an example, @fig-forecast-example shows sea-ice concentration anomalies (top row) and sea-ice thickness and the difference between the two models (bottom row) for `r format(as.Date("2008-05-02"), "%e %B %Y")` initialised one day prior; being that close to initialisation date, these are very approximately the initial conditions. 
 +S1 sea-ice concentrations anomalies are very close to observations as expected from the system assimilating these data. 
-+S2 sea-ice concentration anomalies, which are not assimilated, are not as close, but the large-scale pattern is aligned with observations.
++S2 sea-ice concentration anomalies, are not as close, but the large-scale pattern is aligned with observations.
 The system simulates large positive anomalies in the Weddell and Ross Seas and slight negative anomalies in the Amundsen and Bellingshausen Seas.
 The fact that +S2 can simulate this pattern without assimilating sea-ice data suggests that atmospheric and oceanic forcing were the dominant drivers.
-However, the magnitude of the sea-ice anomalies is too big. 
-It is plausible that this is due to the thinner ice simulated by +S2 (bottom row). 
+However, the magnitude of the sea-ice concentration anomalies is too big. 
 
 ```{r fig-forecast-example}
 #| fig.cap: +S1 and +S2 hindcasts for 2 May 2008 at one day lead time. Top row shows sea-ice concentration anomalies forecasted by each system and the observations. Bottom row shows forecasted sea-ice thickness and the difference between +S1 and +S2.
@@ -942,13 +1026,14 @@ plot_forecast_example(as.Date("2008-05-02"))
 ```
 
 ```{r hindcast_mean_thickness}
-hindcast_mean_thickness <- hindcast_mean_thickness() |>
+hindcast_mean_thickness_data <- hindcast_mean_thickness() |>
   _[,
     ReadNetCDF(mean_thickness, c(thickness = "hi")),
     by = .(model, forecast_time)
   ] |>
   _[, time := as.Date(update(time, day = 1))] |>
-  _[, lag := months_difference(time, forecast_time)]
+  _[, lag := months_difference(time, forecast_time)] |>
+  _[lag > 0]
 ```
 
 ```{r}
@@ -956,7 +1041,7 @@ hindcast_mean_thickness <- hindcast_mean_thickness() |>
 #| fig-cap: Mean and 95% interval of monthly mean sea-ice thickness for +S1 and +S2 at different lead times. Each panel indicates the target month. Note the reverse horizontal axis.
 #| fig-height: 5
 
-hindcast_mean_thickness[
+hindcast_mean_thickness_data[
   time %between% range_overlap,
   average(thickness),
   keyby = .(lag, model, month(time))
@@ -965,11 +1050,11 @@ hindcast_mean_thickness[
   geom_ribbon(aes(ymin = low, ymax = high, fill = model), alpha = 0.5) +
   geom_line(aes(color = model)) +
   # geom_smooth(method = "lm", aes(color = model)) +
-  scale_color_models +
-  scale_fill_models +
+  scale_color_models() +
+  scale_fill_models() +
   scale_y_continuous("Mean sea-ice thickness") +
   scale_x_continuous(
-    "Lead time",
+    "Lead time [months]",
     breaks = c(0:9),
     expand = c(0, 0),
     trans = scales::reverse_trans()
@@ -977,15 +1062,17 @@ hindcast_mean_thickness[
   facet_wrap(~month, labeller = labeller(month = labels_month))
 ```
 
-Extending beyond the one case in @fig-forecast-example, @fig-mean-thickness shows monthly mean sea-ice thickness as a function of lead time for +S1 and +S2.
-Supporting the idea that thinner ice is what causes the increased extent variability in +S2, this system  simulates thinner sea-ice compared to +S1 overall at almost all lead times and in all months except for summer at short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months).
-However, in both systems, forecasted sea-ice is thicker at shorter lead times and then decreases, particularly in the summer months.
-If thinner ice were a sufficient cause of increased variability, then we would expect variability to increase with lead time in both forecasting systems.
+The reason for the increased variability in +S2 is not clear. 
+One plausible explanation is that +S2 simulates thinner sea ice than +S1 (@fig-forecast-example bottom row) that is more sensitive to atmospheric and oceanic forcing (@fig-hi-var-cor).
+@fig-mean-thickness, shows that indeed +S2 simulates thinner sea ice compared to +S1 overall at almost all lead times and in all months except for summer at short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months).
+However, @fig-mean-thickness also shows that sea-ice thickness tends to decrease at longer leadtimes, when +S2' variability converges to observed variability. 
+Furthermore, the thickness difference between +S1 and +S2 is large also in the months in which +S2 sea-ice extent variabilty is comparable to +S1 and +S2 RMSE doesn't decrease with lead time, such as August and September. 
 
-The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-extent-sd]) suggests that the data assimilation procedure is partly responsible. 
-It is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses that are amplified by the thin ice in the initial states which then subside at longer lead times when the model is balanced. 
-
-
+Even if +S2's sea ice is is more sensitive to forcing than +S1 by being overall thinner, this is not a sufficient explanation for the pattern of increased variability at shorter lead times and absent in particular months.
+Instead, the streangth of the atmospheric and oceanic forcing might also be playing a role. 
+The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-extent-sd]) suggests that the data assimilation procedure might also be partly responsible. 
+We speculate that it is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses that are amplified by the thinner ice. 
+Teasing this out would require an in-depth analysis of the data assimilation innovations which is out of scope for this work and requires data that is not available.
 
 ```{r errors}
 errors <- here::here("data/derived/rmse.Rds") |>
@@ -1062,7 +1149,7 @@ dif <- errors |>
 ```
 
 ```{r fig-rmse}
-#| fig-cap: Mean RMSE of sea-ice concentration anomalies as a function of forecast lead time for all forecasts initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). Only the first 120 days are shown. In parentheses, the shortest time at which +S1 and +S2 mean RMSE is not statistically different at the 99% confidence level.
+#| fig-cap: Mean RMSE of sea-ice concentration anomalies as a function of forecast lead time for all forecasts initialised on the first of each month compared with a reference forecast of persistence of anomalies (black) and climatology (gray). The shading indicates the 95% confidence interval of the mean. Only the first 150 days are shown. In parentheses, the shortest time at which +S1 and +S2 mean RMSE is not statistically different at the 99% confidence level. Note that the horizontal axis uses a square root transformation to expand the shorter lead times.
 #| fig-height: 5
 
 month_from_lag <- function(day = 1, step = 2) {
@@ -1097,8 +1184,22 @@ errors2 <- clim_std2 |>
 
 errors2 |>
   _[obs_dataset == which_dataset] |>
-  _[lag <= 120] |>
+  _[lag <= 150] |>
   ggplot(aes(lag, estimate)) +
+
+  geom_vline(
+    data = NULL,
+    xintercept = c(5, 15),
+    colour = "gray50",
+    linewidth = 0.1
+  ) +
+
+  geom_text(
+    data = data.frame(x = c(5, 15), y = -Inf),
+    aes(x, y, label = x),
+    size = 2.5,
+    vjust = 0
+  ) +
 
   geom_vline(
     data = month_from_lag(1, 1),
@@ -1120,20 +1221,32 @@ errors2 |>
     size = 2.5,
     vjust = 0
   ) +
-
-  # geom_ribbon(aes(ymin = low,
-  #                 ymax = high,
-  #                 color = version,
-  #                 fill = version,
-  #                 group = interaction(obs_dataset, version)),
-  #             alpha = 0.1) +
-  geom_line(aes(color = version, group = interaction(obs_dataset, version))) +
-
+  ggblend::blend(
+    blend = "multiply",
+    list(
+      geom_ribbon(
+        # data = \(x) x[version %in% c("S1", "S2")],
+        aes(
+          ymin = low,
+          ymax = high,
+          # color = version,
+          fill = version,
+          group = interaction(obs_dataset, version)
+        ),
+        alpha = 0.3
+      ),
+      geom_line(aes(color = version, group = interaction(obs_dataset, version)))
+    )
+  ) +
   # geom_line(aes(y = clim_std)) +
-  scale_x_continuous(breaks = NULL, expand = c(0, 0)) +
-  labs(y = "RMSE", x = "Lead time (days)") +
-  scale_color_models +
-  scale_fill_models +
+  scale_x_continuous(
+    breaks = NULL,
+    expand = c(0, 0),
+    transform = scales::transform_sqrt()
+  ) +
+  labs(y = "RMSE", x = "Lead time [days]") +
+  scale_color_models() +
+  scale_fill_models(guide = "none") +
   facet_wrap(
     ~month,
     labeller = labeller(month = labels_month_significant),
@@ -1153,13 +1266,633 @@ At longer lead times, it is more appropriate to compare errors with the climatol
 The lead time at which +S1 forecast error is higher than the climatological forecast error varies between more than 60 and less than 20 days depending on forecast initialisation month with the minimum in June.
 +S2 forecasts never have lower error than climatology, on the other hand, except marginally in October forecasts. 
 
-@fig-lead-time-window (@fig-lead-time-window-osi) summarises the lead time window in which each hindcast is better than both the persistence forecast and the climatological forecast as a function of forecast month. 
-+S1 forecasts have a wider lead time window in the summer than the other seasons and is not better than both benchmarks at forecasting June sea-ice concentration anomalies. 
-Forecasts initialised between May and July are particularly poor, and June cannot be forecasted better than the benchmarks. 
-This is consistent with the mid-winter loss of predictability observed by @libera2022, who attributed it to deep warm water entraining into the mixed layer. 
+In summary, +S1 forecasts have a wider lead time window in the summer than the other seasons and is not better than both benchmarks at forecasting June sea-ice concentration anomalies. 
+Forecasts initialised between May and July are particularly poor, and June cannot be forecasted better than the benchmarks suggesting a winter barrier in predictive skill (
+@fig-lead-time-window and @fig-lead-time-window-osi). 
+This is similar to the mid-winter loss of predictability observed by @libera2022, who attributed it to deep warm water entraining into the mixed layer.
+
+
+```{r}
+#| label: fig-improvement
+#| fig-cap: Shortest lead time at which +S1 and +S2 mean RMSE is not statistically different at the 99% confidence level.
+#| fig-height: 2
+
+median_improvement <- dif |>
+  _[obs_dataset == which_dataset] |>
+  _[, median(lag)]
+
+dif |>
+  _[obs_dataset == which_dataset] |>
+  ggplot(aes(month, lag)) +
+  geom_col(fill = "gray20") +
+  # geom_line() +
+  # geom_point() +
+  scale_y_continuous(
+    "Lead time [days]",
+    limits = c(0, NA),
+    breaks = scales::pretty_breaks(8)
+  ) +
+  scale_x_continuous(
+    "Month",
+    labels = month.abb,
+    breaks = 1:12,
+    expand = c(0, 0)
+  )
+```
+
+We quantify the improvement in sea-ice forecast between +S2 and +S1 in @fig-improvement by computing the shortest lead time in which the mean RMSE of each system's forecast are not statistically different. 
+The median improvement is around `r floor(median_improvement)` days but the biggest improvement is between February and April, where +S1 forecasts have lower RMSE than +S2's for more between 65 and 125 days. 
+The smallest difference, on the other hand, is in winter, when +S1's forecast are statistically indistinguishable from +S2's after less than 20 days. 
+Assimilation of sea-ice concentration data seems to have a much greater effect in the late summer than in the winter.
+
+```{r topo_lonlat}
+topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
+  zenodo("ETOPO topography") |>
+  ReadNetCDF() |>
+  na.omit()
+```
+
+```{r clim_std_lon} 
+clim_std_lon <- datasets |>
+  lapply(\(x) {
+    x |>
+      anomalies(climatology(x)) |>
+      cdo_sqr() |>
+      cdo_remapmean("r15x360") |>
+      cdo_mermean() |>
+      cdo_sqrt() |>
+      cdo_execute() |>
+      ReadNetCDF(c(climatology = "aice")) |>
+      _[, let(lat = NULL, lon = lon + 12)]
+  }) |>
+  rbindlist(idcol = "obs_dataset") |>
+  _[, time := as.Date(time)] |>
+  _[climatology == 0, climatology := NA] |>
+  _[climatology < 0.05, climatology := NA]
+
+```
+
+```{r rmse_lon_mean}
+rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
+  zenodo("Hindcast RMSE in latitude slices") |>
+  readRDS() |>
+  overlap_range(time_forecast) |>
+  _[version == "persistence", member := "0em"] |>
+  _[member == "0em"] |>
+  _[, lon := lon + 12] |>
+  _[, time := update(time, hour = 0)] |>
+  _[, time := as.Date(time)]
+```
+
+
+
+```{r rmse_lon-gdata}
+
+rmse_lon_mean_gdata <- rmse_lon_mean |>
+  _[version != "persistence"] |>
+  _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
+  clim_std_lon[i = _, on = .NATURAL] |>
+  _[,
+    c(
+      average(value, climatology),
+      list(
+        skill = 1 -
+          (mean(value, na.rm = TRUE) / mean(climatology, na.rm = TRUE))
+      )
+    ),
+    by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))
+  ]
+
+
+rmse_lon_mean_gdata_dif <- rmse_lon_mean |>
+  _[version != "persistence"] |>
+  _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
+  _[lag <= 217] |>
+  dcast(
+    lag + lon + obs_dataset + time_forecast + time ~ version,
+    value.var = "value"
+  ) |>
+  clim_std_lon[i = _, on = .NATURAL] |>
+  _[,
+    c(
+      average(S2 - S1),
+      list(
+        clim = mean(climatology, na.rm = TRUE)
+      )
+    ),
+    by = .(lag, lon, obs_dataset, month = factor(month(time_forecast)))
+  ] |>
+  _[, skill := estimate / clim]
+```
+
+  
+```{r, fig.height=7, fig.width=10}
+#| label: rmse_lon_plots
+sqrt_step <- function(step = 0, root = 2, squish = 1) {
+  transform = function(x) {
+    ifelse(x >= step, (x - step)^(1 / root) + step, x / squish)
+  }
+  inverse = function(x) {
+    ifelse(x >= sqrt(step), (x - step)^(root) + step, x * squish)
+  }
+  scales::new_transform("sqrt_step", transform = transform, inverse = inverse)
+}
+rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata[obs_dataset == which_dataset]
+
+range <- range(rmse_lon_mean_gdata2$skill, na.rm = TRUE)
+binwidth <- 0.1
+breaks <- AnchorBreaks(0, binwidth = binwidth)(range)
+rmse_lon_plots <- lapply(c("S1", "S2", "diff"), \(x) {
+  if (x == "diff") {
+    rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata_dif |>
+      _[obs_dataset == which_dataset] |>
+      na.omit()
+    breaks <- NULL
+  } else {
+    rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata2 |>
+      _[version == x]
+  }
+  geom_p <- \() {
+    rmse_lon_mean_gdata2 |>
+      _[,
+        spline(lon, p.value) |> setNames(c("lon", "p.value")),
+        by = .(lag, month)
+      ] |>
+      _[,
+        approx(lon, p.value, xout = seq(0, 360, by = 12)) |>
+          setNames(c("lon", "p.value")),
+        by = .(lag, month)
+      ] |>
+      _[, p.value := frollmean(p.value, n = 11), by = .(month, lon)] |>
+      geom_contour_pval(data = _, aes(z = p.value), p.value = 0.05)
+  }
+  rmse_lon_mean_gdata2 <- rbind(
+    rmse_lon_mean_gdata2,
+    rmse_lon_mean_gdata2 |>
+      copy() |>
+      _[, lon := lon - 360],
+
+    rmse_lon_mean_gdata2 |>
+      copy() |>
+      _[, lon := lon + 360]
+  )
+
+  rmse_lon_mean_gdata2 |>
+    _[,
+      spline(lon, skill) |> setNames(c("lon", "skill")),
+      by = .(lag, month)
+    ] |>
+    _[,
+      approx(lon, skill, xout = seq(0, 360, by = 12)) |>
+        setNames(c("lon", "skill")),
+      by = .(lag, month)
+    ] |>
+    _[, skill := frollmean(skill, n = 11), by = .(month, lon)] |>
+
+    ggplot(aes(lon, lag)) +
+    geom_contour_fill(
+      aes(z = skill, fill = after_stat(level)),
+      breaks = AnchorBreaks(0)
+    ) +
+    geom_contour_tanaka(
+      aes(z = skill),
+      range = c(0.005, 0.05),
+      breaks = AnchorBreaks(0)
+    ) +
+    geom_p() +
+    geom_contour_fill(
+      data = topo_lonlat,
+      aes(lon, scales::rescale(lat, c(7.5, 10.5)), z = z, fill = NULL),
+      fill = "#FAFAFA",
+      breaks = c(0, Inf)
+    ) +
+
+    geom_contour2(
+      data = topo_lonlat,
+      aes(lon, scales::rescale(lat, c(7.5, 10.5)), z = z),
+      linewidth = 0.2,
+      breaks = 0
+    ) +
+
+    geom_segment(
+      data = month_from_lag(1, 1),
+      aes(y = lag, yend = lag, x = 0, xend = 360),
+      colour = "gray50",
+      alpha = 0.5,
+      linewidth = 0.2
+    ) +
+
+    annotate(
+      "segment",
+      x = seq(0, 360, by = 90),
+      xend = seq(0, 360, by = 90),
+      y = 11,
+      yend = max(rmse_lon_mean_gdata2$lag),
+      colour = "gray50",
+      alpha = 0.5,
+      linewidth = 0.2
+    ) +
+
+    annotate(
+      "segment",
+      x = seq(45, 360 - 45, by = 90),
+      xend = seq(45, 360 - 45, by = 90),
+      y = 11,
+      yend = max(rmse_lon_mean_gdata2$lag),
+      colour = "gray50",
+      alpha = 0.3,
+      linewidth = 0.1
+    ) +
+
+    # geom_vline(xintercept = ConvertLongitude(c(-60, -30, 70, 150, -150))) +
+    geom_text(
+      data = month_from_lag(15, 1),
+      aes(x = 360, label = month2),
+      size = 1.5,
+      hjust = -0.2
+    ) +
+
+    geom_text(
+      data = month_from_lag(1, 1),
+      aes(x = 0, label = lag),
+      size = 1.5,
+      hjust = 1.2
+    ) +
+    scale_fill_divergent_discretised(
+      high = RColorBrewer::brewer.pal(9, "RdBu")[1],
+      low = rev(RColorBrewer::brewer.pal(9, "RdBu"))[1],
+      mid = "#FAFAFA",
+    ) +
+    scale_x_longitude(ticks = 90, expand = c(0.07, 0)) +
+    scale_y_continuous(
+      transform = sqrt_step(step = 11, root = 1.5),
+      breaks = NULL,
+      expand = expansion(mult = c(0, 0.02))
+    ) +
+    labs(fill = NULL, y = "Lead time [days]") +
+    wide_legend +
+    facet_wrap(~month, labeller = labeller(month = labels_month), ncol = 3) +
+    theme(
+      panel.background = element_blank(),
+      panel.grid = element_blank(),
+      tagger.panel.tag.background = element_rect(
+        colour = "white",
+        fill = "white"
+      )
+    ) +
+    tag_facets(position = "bl")
+})
+
+```
+
+
+```{r}
+#| label: fig-rmse_lon-1
+#| fig-cap: MSE skill score of +S1 forecasts with climatological forecast as reference computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}° wide as a function of lead time and longitude. Regions where the difference of means between +S1 RMSE and climatological RMSE are significant at p-value < 0.05 are stipppled. Antarctica’s coastline is shown at the bottom of each panel for reference. Values were smoothed with an 11-day running mean to improve readability. Note that the vertical axis uses a 1.5 root transformation to expand the shorter lead times.
+#| fig-height: 7
+#| dev: png
+rmse_lon_plots[[1]]
+
+```
+
+
+
+```{r}
+#| label: fig-rmse_lon-2
+#| fig-cap: Same as @fig-rmse_lon-1 but for +S2.
+#| fig-height: 7
+#| dev: png
+rmse_lon_plots[[2]]
+
+```
+
+To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `r diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
+We control for some areas being naturally easier to forecast than others by computing the RMSE skill score with the climatological forecast RMSE as reference. 
+
+For +S1 forecasts (@fig-rmse_lon-1 and @fig-rmse_lon-1-osi), skill tends to be lower off the coast of Eastern Antarctica even at short lead times. 
+This is particularly important for forecasts initialised between May and July, where we see that the low skill in early Winter (@fig-rmse and @fig-lead-time-window) is only a feature in Eastern Antarctica where skill is evern negative at almost zero lead time. 
++S1 forecats have relatively high predictive skill in the Weddell Sea in winter, consistent with other seasonal prediction systems [@bushuk2021].
+July forecasts have positive (albeit not statistically significant) skill with hindcasts initialised as early as February. 
+The winter predictive skill barrier thus seems to come in great part from large errors in East Antarctica. 
+
+In West Antarctica there is a hint of easterly-propagating skill in forecasts initialised in February and March. 
+This is consistent with @holland2013 findings that memory of sea-ice anomalies are stored in ocean heat content anomalies that are transported east by the Antarctic Circumpolar Current. 
+
++S2 forecasts  (@fig-rmse_lon-2 and @fig-rmse_lon-2-osi) also have lower skill over East Antarctica. 
+From July to December even though the pan-Antarctic average skill is negative at all lead times ([Fig. @fig-lead-time-window]), it is positive (but not statistically significnat) for up to a month in West Antarctic. 
+Since oceanic and atmospheric forcing is the only source of information, this suggests that sea-ice in this region is particularly sensitive to oceanic and atmospheric forcing and suggests a role of the Pacific-South American mode and the Amundsen Sea Low to shape sea-ice concentration anomalies. 
+The fact that this is evident in the months in which El Niño--Southern Oscillation teleconnections are more important for atmospheric circulation also suggests the influence of tropical Pacific variability.
+February and March are the only two months that can be forecasted with marginally positive skill in large regions. 
+
+```{r}
+#| label: fig-rmse_lon-3
+#| fig-cap: Same as @fig-rmse_lon-1 but for the difference between +S1 and +S2.
+#| fig-height: 7
+#| dev: png
+rmse_lon_plots[[3]]
+```
+
+Finally, @fig-rmse_lon-3 (@fig-rmse_lon-3-osi) shows the difference in skill between +S1 and +S2. 
+Large differences in skill indicate areas and months that are most affected by the data assimilation present in +S1.
+Between January and March, which are the months in which +S1 is the most skillful (@fig-lead-time-window), most of the improvement compared with +S2 is present in the Ross and Weddell Sea. 
+In April and May, the improvement seems more homogeneous. 
+In June and July, +S1 has higher skill only at very short lead times and in limited regions; in particular we see that in June there is no improvement between 0° and 90°.
+
+## Limitations
+
+This analysis rests on the assumption that the main difference between +S1 and +S2 is the lack of data assimilation of sea-ice concentrations. 
+However, although both systems use the same model configuration and atmospheric initial conditions, they also differ in the ensamble generation scheme and their ocean initial conditions.
+
+```{r errors_ensemble} 
+errors_ensemble <- here::here("data/derived/rmse.Rds") |>
+  zenodo() |>
+  readRDS() |>
+  overlap_range(time_forecast) |>
+  _[version != "persistence"] |>
+  _[member != "0em"] |>
+  _[value < 0.01, value := NA] |>
+  _[value > 3e13, value := NA] |>
+  _[!is.na(value)] |>
+  _[, time := as.Date(time)] |>
+  _[, lag := as.numeric(time - time_forecast)] |>
+  _[lag > 0] |>
+  _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]
+
+``` 
+
+```{r fig-spread}
+#| fig-cap: Mean variance of RMSE between ensemble members of each forecast. Note the double log scale. In parentheses, the shortest minimum  lead time at which +S1 mean spread becomes larger than the lower bound of the 95% confidence interval of +S2 spread.
+#| fig-height: 4
+spread <- errors_ensemble |>
+  _[measure == "rmse"] |>
+  _[obs_dataset == which_dataset] |>
+  _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |>
+  _[,
+    average(V1),
+    by = .(version, month(time_forecast), lag)
+  ]
+
+min_lag_equal <- spread |>
+  copy() |>
+  _[, base := low[version == "S2"], by = .(lag, month)] |>
+  _[version != "S2"] |>
+  _[estimate > base] |>
+  _[, .SD[which.min(lag)], by = .(month)] |>
+  _[order(month)]
+
+
+labels_month_significant <- setNames(
+  paste0(month.abb, " (", min_lag_equal$lag, ")"),
+  1:12
+)
+
+spread |>
+  ggplot(aes(lag, estimate)) +
+  geom_ribbon(
+    aes(ymin = low, ymax = high, fill = version),
+    alpha = 0.5
+  ) +
+  geom_line(aes(color = version)) +
+  facet_wrap(~month, labeller = labeller(month = labels_month_significant)) +
+  scale_y_log10("Mean ensemble spread", guide = guide_axis_logticks()) +
+  scale_x_log10("Lead time [days]", guide = guide_axis_logticks()) +
+  scale_color_models() +
+  scale_fill_models()
+```
+
+As mentioned in @sec-systems, +S1 ensemble members are generated by adding random field perturbations to the atmosphere only, which then are transferred to the other components via the coupled simulation [@hudson2017] while +S2 ensemble members are generated by time-lagged ensemble. 
+
+We believe this difference would only alter the ensemble spread and should have minimal impact in the dramatic differences in ensemble mean error shown in @fig-rmse. 
+In +S1's scheme, ensemble members are all but guaranteed to be underdispersed in the ocean and sea-ice components. 
+To test the effect of the ensemble generation scheme on ensemble spread, we compute the mean variance of RMSE of individual forecasts as a function of lag for each forecasting system. 
+@fig-spread (@fig-spread-osi) shows that indeed +S1's initial spread is much lower than +S2's in every month. 
+However, +S1's ensemble spread grows quickly, and after less than a week, both systems's spread is comparable. 
+For forecasts initialised in February, March and April, +S1 even has larger spread than +S2. 
+
+Regarding ocean initial conditions, unfortunately we cannot directly compare +S1 and +S2 initial conditions because that data is currently not available. 
+However, we believe there are reasons to consider that the effect would be of second order importance. 
+
+While the ocean data assimilation process is different, the underlying observations are similar, especially in the high latitudes, where there are few direct observations in total. 
+As an indirect comparison of ocean initial conditions, @wedd2022 in their Figure 9 show the correlation of  ocean heat content in the upper 300m of the ocean between EN4 and +S2 and +S1 reanalysis. 
+In both systems, correlations are raltively high around 60° and very low in the Antarctic coast; importantly, their correlation patterns are very similar, suggesting that the initial conditions sare not too dissimilar between the two systems. 
+A limitation of this comparison is that the low correlations seen in both systems in the ice-covered regions only show that both systems have poor ocean initial conditions in that region but does not necessarily mean that their initial conditions are similar. 
+Even though the ocean initial conditions are similarly correlated with the reference dataset in both systems, SST forecast was shown by @wedd2022 to be extremely degraded in the Southern Ocean even at zero months lead time. 
+Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2 (@fig-hindcast-extent). 
+This is raises the possibility that it is the lack of assimilation of sea-ice data that is degradidng SST forecast and not the other way around. 
+
+
+\FloatBarrier
+
+# Conclusions
+
+Sea-ice forecasts from the +S2 system show a significant low extent bias, particularly during late summer and early autumn. 
+This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April. 
+This underestimation during the minimum and early freezing season is a common issue in many subseasonal-to-seasonal (S2S) systems, suggesting potential problems either with the model’s thermodynamic representation or with short wave radiation forcing, as shown in other climate models [@zampieri2019; @roach2020].
+Even though +S2 shares the same model components as +S1, the latter does not suffer from this bias, indicating that assimilating sea-ice concentrations successfully corrects for the negative bias that exists in the free-running model.
+
+Ensemble spread grows quickly even when perturbations are only implemented in the atmosphere component (in +S1), indicating that sea ice is indeed responding quickly to atmospheric perturbations. 
+However, our analysis suggests that the atmosphere and ocean data assimilation implemented in +S2 is only effectively influencing sea-ice initial conditions from June to October, while the rest of the year, the sea-ice component runs virtually free, reverting to its biased equilibrium state. 
+@zhou2022 had previously evaluated sea-ice forecasts in +S2 and also highlighted the poor performance of this forecasting system attributed to the lack of good initial conditions.
+
+Although +S1 only assimilates sea-ice concentration, it is clear that sea-ice thickness is also affected through the assimilation process. 
++S1 simulates significantly thicker ice than +S2 and in both systems sea-ice is thicker at shorter lead times than at longer lead times. 
+Both the explicit data assimilation in +S2 and the effects of atmospheric and oceanic data assimilation in +S1 might be nudging simulated sea ice to be thicker than the model equilibrium state.
+It still remains unclear why +S2 simulates much larger interannual variability than +S1 at shorter leadtimes. 
+We suggest that the thinner sea ice in +S2 contributes to the large sea-ice extent variance, but other mechanisms, such as unbalanced initial conditions might also be important. 
+
+Given that +S2 sea-ice extent is not directly initialised by sea-ice observations, comparing its forecasts with those of +S1 allows us to estimate the time-scale over which initial conditions are important. 
+We find that initial conditions affect Antarctic sea-ice forecasts in the order of a few months, but that effect is seasonally dependent. 
+January to April initial conditions improve forecasts for up to three months.
+February initial conditions in particular are shown to be crucial for determining sea-ice evolution at least up to May. 
+Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal summer, compared with boreal winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
+
+These results contrasts with @xiu2025, which used a very similar methodology to our own.   
+Based on their claims that assimilation of sea-ice concentration data doesn't improve sea-ice forecasts compared with only assimilating ocean data and that atmosphere conditions are enough for a skillful sea-ice forecast we would have expected skillful forecast from +S2's atmosphere initial conditions. 
+It is possible that model biases are important to explain this discrepancy. 
+Their forecasting system simulated more sea ice than observations; the reverse of +S1 and +S2, which tended to drift into lower sea-ice concentration that needed to be corrected with data assimilation. 
+However, since they used anomaly field assimilation, which assimilates anomalies on top of the model's own climatology, their initial conditions were close to the model's own equilibrium state, reducing the strong drift the type we detected in +S1 and we speculate might be degrading +S2's variability. 
+
+Forecasts initialised in the winter have very little skill and +S1 and +S2 forecast errors are statistically indistinguishable after just two weeks. 
+Contra @libera2022 but consisitent with @xiu2025, we find that this predictive skill barrier is not apparent in the Weddell Sea and instead comes from low skill in the Indian Ocean sector. 
+However, we cannot make a direct comparison due to significant methodological differences.
+Their results were based on persistence of sea-ice area, whereas we study errors in sea-ice concentration anomalies of a dynamical model. 
+Further exploration of these differences could lead to more insight in how persistence-based measures of predictability translate to actual predictive skill. 
+
+These findings have important implications for both operational forecasting, model development and predictability studies.
+For operational centers, our results suggest that efforts to improve sea-ice data assimilation should prioritize the summer and autumn months when initial conditions have the greatest impact on forecast skill. 
+Additionally, the substantial bias in +S2 highlights the need for improved model physics, particularly in the representation of sea-ice thermodynamics and radiation processes. 
+Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
+Our conclusions are limited by the fact that +S1 and +S2 differ in the ocean data assimilation and also the ensemble generation method. 
+Although we believe these differences to be of minor importance compared with the wildly divergent sea-ice initial conditions, they motivate the need for targeted experiments. 
+Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
+
+
+# References
+
+::: {#refs}
+:::
+
+
+\clearpage
+
+
+
+# Appendix {.appendix}
+
+\appendixfigures
+
+The following are the same figures from the main paper but using the OSI dataset instead of CDR.
+
+```{r dataset_era}
+which_dataset <- "osi"
+```
+
+```{r fig-hindcast-extent-osi, ref.label=I('fig-hindcast-extent')}
+
+```
+
+\clearpage
+
+```{r, fig-mean-growth-osi, ref.label=I("fig-mean-growth")}
+
+```
+
+\clearpage
+
+```{r, plot_bias-osi, ref.label=I("plot_bias")}
+
+```
+
+\clearpage
+
+```{r, fig-bias-1-osi, ref.label=I("fig-bias-1")}
+
+```
+
+\clearpage
+
+```{r, fig-bias-2-osi, ref.label=I("fig-bias-2")}
+
+```
+
+\clearpage
+
+```{r, fig-extent-anom-osi, ref.label=I("fig-extent-anom")}
+
+```
+
+\clearpage
+
+```{r fig-extent-rmse-month}
+#| fig-cap: RMSE of monthly mean sea-ice extent anomalies as a function of lead time (months) for +S1 (green) and +S2 (purple). RMSE is computed over the overlapping period of +S1 and +S2 hindcasts (1990–2013). Each panel indicates the target month. Note the reverse horizontal axis.
+#| fig-height: 6
+fig_extent_rmse_month
+```
+
+
+\clearpage
+
+
+```{r, fig-extent-sd-osi, ref.label=I("fig-extent-sd")}
+```
+
+
+\clearpage
+
+
+```{r}
+#| label: cor_hi
+mean_aice <- S2_reanalysis() |>
+  cdo_ymonmean() |>
+  cdo_setyear(2000) |>
+  cdo_setday(1) |>
+  _[] |>
+  ReadNetCDF(c(mean = "aice")) |>
+  _[, .(xgrid, ygrid, month = month(time), mean)]
+
+
+mask <- S2_reanalysis("hi") |>
+  cdo_ymonmean() |>
+  cdo_setyear(2000) |>
+  cdo_setday(1) |>
+  _[] |>
+  ReadNetCDF(c(mean = "hi")) |>
+  _[, .(xgrid, ygrid, month = month(time), mean)]
+
+
+cor_hi <- lapply(1:12, \(month) {
+  merge(
+    S2_reanalysis("hi") |>
+      cdo_selmonth(month) |>
+      cdo_monmean() |>
+      _[] |>
+      ReadNetCDF("hi") |>
+      na.omit(),
+
+    S2_reanalysis() |>
+      anomalies() |>
+      cdo_selmonth(month) |>
+      cdo_monmean() |>
+      cdo_sqr() |>
+      _[] |>
+      ReadNetCDF("aice") |>
+      na.omit()
+  ) |>
+    _[, correlate(hi, aice), by = .(xgrid, ygrid, month(time))] |>
+    na.omit()
+})
+```
+
+```{r}
+#| label: fig-hi-var-cor
+#| fig-cap: Correlation between monthly mean sea-ice thickness and squared monthly mean sea-ice concentration anomalies masked to areas with mean thinkes greater than 15cm (black contour) in the +S2 reanalysis. Regions where the correlation is significant at p-value < 0.05 are stipppled. In most regions and months, thicker ice is correlated with reduced sea-ice concentration anomalies.
+#| fig-height: 6
+
+cor_hi |>
+  rbindlist() |>
+  mask[i = _, on = .NATURAL] |>
+  _[mean > 0.15] |>
+  ggplot(aes(xgrid, ygrid)) +
+  geom_contour_fill(
+    aes(z = estimate, fill = ..level..),
+    breaks = AnchorBreaks(exclude = 0)
+  ) +
+  scale_fill_divergent_discretised(
+    NULL,
+    high = RColorBrewer::brewer.pal(9, "RdBu")[1],
+    low = rev(RColorBrewer::brewer.pal(9, "RdBu"))[1]
+  ) +
+  geom_contour_pval(aes(z = p.value)) +
+  geom_contour2(data = mask, aes(z = mean), breaks = 0.15, linewidth = 0.2) +
+  wide_legend +
+  facet_wrap(~month, labeller = labeller(month = setNames(month.abb, 1:12))) +
+  geom_antarctica_fill +
+  geomcoord_antarctica +
+  scale_y_continuous(NULL, breaks = NULL, expand = c(0, 0)) +
+  scale_x_continuous(NULL, breaks = NULL, expand = c(0, 0)) +
+  geom_coords() +
+  ggplot2::coord_sf(
+    xlim = box[1:2],
+    ylim = box[3:4],
+    crs = sic_projection,
+    lims_method = "box",
+    label_axes = "----"
+  )
+
+```
+
+\clearpage
+
+```{r, fig-rmse-osi, ref.label=I("fig-rmse")}
+
+```
+
+\clearpage
+
+
 
 ```{r fig-lead-time-window}
-#| fig-cap: Minimum lead time at which each forecast's mean RMSE becomes larger than the lower bound of the 95% confidence interval of persistence forecast RMSE (black lines) and maximum lead time at which each forecast's mean RMSE remains lower than the lower bound of the 95% confidence interval of climatological forecast RMSE (gray lines). Green shading indicates the window where forecasts outperform both persistence (lead times longer than black line) and climatology (lead times shorter than gray line). Text labels show the date corresponding to the maximum lead time at which each forecast outperforms climatology.
+#| fig-cap: Minimum lead time at which each forecast's mean RMSE becomes lower than the lower bound of the 95% confidence interval of persistence forecast RMSE (black lines) and maximum lead time at which each forecast's mean RMSE remains lower than the lower bound of the 95% confidence interval of climatological forecast RMSE (gray lines). Green shading indicates the window where forecasts outperform both persistence (lead times longer than black line) and climatology (lead times shorter than gray line). Text labels show the date corresponding to the maximum lead time at which each forecast outperforms climatology. Using CDR as the validation dataset.
 #| fig-height: 4
 
 rbind(
@@ -1236,8 +1969,9 @@ rbind(
     },
     aes(color = benchmark)
   ) +
-  scale_color_models +
-  scale_y_continuous("Lead time (days)") +
+  # geom_line(data = dif[obs_dataset == which_dataset]) +
+  scale_color_models() +
+  scale_y_continuous("Lead time [days]") +
   scale_x_continuous(
     "Forecast month",
     breaks = 1:12,
@@ -1254,556 +1988,10 @@ rbind(
 
 ```
 
-```{r topo_lonlat}
-topo_lonlat <- here::here("data/raw/ETOPO.nc") |>
-  zenodo("ETOPO topography") |>
-  ReadNetCDF() |>
-  na.omit()
-```
-
-```{r clim_std_lon} 
-clim_std_lon <- datasets |>
-  lapply(\(x) {
-    x |>
-      anomalies(climatology(x)) |>
-      cdo_sqr() |>
-      cdo_remapmean("r15x360") |>
-      cdo_mermean() |>
-      cdo_sqrt() |>
-      cdo_execute() |>
-      ReadNetCDF(c(climatology = "aice")) |>
-      _[, let(lat = NULL, lon = lon + 12)]
-  }) |>
-  rbindlist(idcol = "obs_dataset") |>
-  _[, time := as.Date(time)] |>
-  _[climatology == 0, climatology := NA] |>
-  _[climatology < 0.05, climatology := NA]
-
-```
-
-```{r rmse_lon_mean}
-rmse_lon_mean <- here::here("data/derived/rmse_lon.Rds") |>
-  zenodo("Hindcast RMSE in latitude slices") |>
-  readRDS() |>
-  overlap_range(forecast_time) |>
-  _[version == "persistence", member := "0em"] |>
-  _[member == "0em"] |>
-  _[, lon := lon + 12] |>
-  _[, time := update(time, hour = 0)] |>
-  _[, time := as.Date(time)]
-```
-
-
-```{r rmse_lon-gdata}
-
-rmse_lon_mean_gdata <- rmse_lon_mean |>
-  _[version != "persistence"] |>
-  _[, lag := as.numeric(as.Date(time) - time_forecast)] |>
-  clim_std_lon[i = _, on = .NATURAL] |>
-  _[,
-    .(
-      dif = mean(value - climatology, na.rm = TRUE),
-      skill = 1 - (mean(value, na.rm = TRUE) / mean(climatology, na.rm = TRUE))
-    ),
-    by = .(lag, lon, version, obs_dataset, month = factor(month(time_forecast)))
-  ]
-```
-
-
-
-```{r, fig.height=7, fig.width=10}
-#| label: rmse_lon_plots
-
-rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata[obs_dataset == which_dataset]
-
-range <- range(rmse_lon_mean_gdata2$skill)
-binwidth <- 0.1
-breaks <- AnchorBreaks(0, binwidth = binwidth)(range)
-rmse_lon_plots <- lapply(c("S1", "S2", "diff"), \(x) {
-  if (x == "diff") {
-    rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata2 |>
-      dcast(lag + lon + obs_dataset + month ~ version, value.var = "skill") |>
-      _[, skill := S1 - S2] |>
-      na.omit()
-    breaks <- NULL
-  } else {
-    rmse_lon_mean_gdata2 <- rmse_lon_mean_gdata2 |>
-      _[version == x]
-  }
-
-  rmse_lon_mean_gdata2 <- rbind(
-    rmse_lon_mean_gdata2,
-    rmse_lon_mean_gdata2 |>
-      copy() |>
-      _[, lon := lon - 360],
-
-    rmse_lon_mean_gdata2 |>
-      copy() |>
-      _[, lon := lon + 360]
-  ) |>
-    _[,
-      spline(lon, skill) |> setNames(c("lon", "skill")),
-      by = .(lag, month)
-    ] |>
-    _[,
-      approx(lon, skill, xout = seq(0, 360, by = 12)) |>
-        setNames(c("lon", "skill")),
-      by = .(lag, month)
-    ] |>
-    _[, skill := frollmean(skill, n = 11), by = .(month, lon)] |>
-
-    ggplot(aes(lon, lag)) +
-    geom_contour_fill(
-      aes(z = skill, fill = after_stat(level)),
-      breaks = AnchorBreaks(0)
-    ) +
-    geom_contour_tanaka(
-      aes(z = skill),
-      range = c(0.005, 0.05),
-      breaks = AnchorBreaks(0)
-    ) +
-
-    geom_contour_fill(
-      data = topo_lonlat,
-      aes(lon, scales::rescale(lat, c(-60, 1)), z = z, fill = NULL),
-      fill = "#FAFAFA",
-      breaks = c(0, Inf)
-    ) +
-
-    geom_contour2(
-      data = topo_lonlat,
-      aes(lon, scales::rescale(lat, c(-60, 1)), z = z),
-      linewidth = 0.2,
-      breaks = 0
-    ) +
-
-    geom_segment(
-      data = month_from_lag(1, 1),
-      aes(y = lag, yend = lag, x = 0, xend = 360),
-      colour = "gray50",
-      alpha = 0.5,
-      linewidth = 0.2
-    ) +
-
-    annotate(
-      "segment",
-      x = seq(0, 360, by = 90),
-      xend = seq(0, 360, by = 90),
-      y = 11,
-      yend = max(rmse_lon_mean_gdata2$lag),
-      colour = "gray50",
-      alpha = 0.5,
-      linewidth = 0.2
-    ) +
-
-    annotate(
-      "segment",
-      x = seq(45, 360 - 45, by = 90),
-      xend = seq(45, 360 - 45, by = 90),
-      y = 11,
-      yend = max(rmse_lon_mean_gdata2$lag),
-      colour = "gray50",
-      alpha = 0.3,
-      linewidth = 0.1
-    ) +
-
-    geom_text(
-      data = month_from_lag(15, 1),
-      aes(x = 360, label = month2),
-      size = 1.5,
-      hjust = -0.2
-    ) +
-
-    geom_text(
-      data = month_from_lag(1, 1),
-      aes(x = 0, label = lag),
-      size = 1.5,
-      hjust = 1.2
-    ) +
-    scale_fill_divergent_discretised(
-      high = RColorBrewer::brewer.pal(9, "RdBu")[1],
-      low = rev(RColorBrewer::brewer.pal(9, "RdBu"))[1],
-      mid = "#FAFAFA",
-    ) +
-    scale_x_longitude(ticks = 90, expand = c(0.07, 0)) +
-    scale_y_continuous(breaks = NULL, expand = expansion(mult = c(0, 0.02))) +
-    labs(fill = NULL, y = "Lead time (days)") +
-    wide_legend +
-    facet_wrap(~month, labeller = labeller(month = labels_month), ncol = 3) +
-    theme(
-      panel.background = element_blank(),
-      panel.grid = element_blank(),
-      tagger.panel.tag.background = element_rect(
-        colour = "white",
-        fill = "white"
-      )
-    ) +
-    tag_facets(position = "bl")
-})
-```
-
-```{r}
-#| label: fig-rmse_lon-1
-#| fig-cap: MSE skill score of +S1 forecasts with climatological forecast as reference computed on {uniqueN(rmse_lon_mean$lon)} meridional slices {diff(unique(rmse_lon_mean$lon))[1]}° wide as a function of lead time and longitude. Antarctica’s coastline is shown at the bottom of each panel for reference. Values were smoothed with an 11-day running mean to improve readability.
-#| fig-height: 7
-#| dev: png
-rmse_lon_plots[[1]]
-
-```
-
-```{r}
-#| label: fig-rmse_lon-2
-#| fig-cap: Same as @fig-rmse_lon-1 but for +S2.
-#| fig-height: 7
-#| dev: png
-rmse_lon_plots[[2]]
-```
-
-To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `r diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
-We control for some areas being naturally easier to forecast than others by computing the RMSE skill score with the climatological forecast RMSE as reference. 
-
-For +S1 forecasts (@fig-rmse_lon-1 and @fig-rmse_lon-1-osi), skill tends to be lower off the coast of Eastern Antarctica even at short lead times; for instance, the skill score for forecasts initialised in May and June are negative between 0° and 120°E even at almost zero lead time. 
-This mirrors @libera2022 findings of a “winter predictability barrier”, although they focus on the Weddell Sea and here we show that the effect seems to be stronger more to the east. 
-In West Antarctica there is a hint of easterly-propagating skill in forecasts initialised in February and March. 
-This is consistent with @holland2013 findings that memory of sea-ice anomalies are stored in ocean heat content anomalies that are transported east by the Antarctic Circumpolar Current. 
-
-+S2 forecasts  (@fig-rmse_lon-2 and @fig-rmse_lon-2-osi) also have lower skill over East Antarctica. 
-From July to December even though the pan-Antarctic average skill is negative at all lead times ([Fig. @fig-lead-time-window]), it is positive for up to a month in West Antarctica. 
-Since oceanic and atmospheric forcing is the only source of information, this suggests that sea-ice in this region is particularly sensitive to oceanic and atmospheric forcing and suggests a role of the Pacific-South American mode and the Amundsen Sea Low to shape sea-ice concentration anomalies. 
-The fact that this is evident in the months in which El Niño--Southern Oscillation teleconnections are more important for atmospheric circulation also suggests the influence of tropical Pacific variability.
-February and March are the only two months that can be forecasted with marginally positive skill in large regions. 
-
-```{r}
-#| label: fig-rmse_lon-3
-#| fig-cap: Same as @fig-rmse_lon-1 but for the difference between +S1 and +S2.
-#| fig-height: 7
-#| dev: png
-rmse_lon_plots[[3]]
-```
-
-Finally, @fig-rmse_lon-3 (@fig-rmse_lon-3-osi) shows the difference in skill between +S1 and +S2. 
-Large differences in skill indicate areas and months that are most affected by the data assimilation present in +S1.
-Between January and March, which are the months in which +S1 is the most skilful (@fig-lead-time-window), most of the improvement compared with +S2 is present in the Ross and Weddell Sea. 
-In April and May, the improvement seems more homogeneous. 
-
-```{r errors_ensemble} 
-errors_ensemble <- here::here("data/derived/rmse.Rds") |>
-  zenodo() |>
-  readRDS() |>
-  overlap_range(forecast_time) |>
-  _[version != "persistence"] |>
-  _[member != "0em"] |>
-  _[value < 0.01, value := NA] |>
-  _[value > 3e13, value := NA] |>
-  _[!is.na(value)] |>
-  _[, time := as.Date(time)] |>
-  _[, lag := as.numeric(time - time_forecast)] |>
-  _[lag > 0] |>
-  _[!(month(time_forecast) == 1 & member == "07" & version == "S1")]
-
-``` 
-
-```{r fig-spread}
-#| fig-cap: Ensemble Spread
-#| fig-height: 4
-spread <- errors_ensemble |>
-  _[measure == "rmse"] |>
-  _[obs_dataset == which_dataset] |>
-  _[, var(value, na.rm = TRUE), by = .(version, lag, time_forecast)] |>
-  _[,
-    average(V1),
-    by = .(version, month(time_forecast), lag)
-  ]
-
-
-min_lag_equal <- spread |>
-  copy() |>
-  _[, base := low[version == "S2"], by = .(lag, month)] |>
-  _[version != "S2"] |>
-  _[estimate > base] |>
-  _[, .SD[which.min(lag)], by = .(month)]
-
-labels_month_significant <- setNames(
-  paste0(month.abb, " (", min_lag_equal$lag, ")"),
-  1:12
-)
-
-spread |>
-  ggplot(aes(lag, estimate)) +
-  geom_ribbon(
-    aes(ymin = low, ymax = high, fill = version),
-    alpha = 0.5
-  ) +
-  geom_line(aes(color = version)) +
-  facet_wrap(~month, labeller = labeller(month = labels_month_significant)) +
-  scale_y_log10("Mean ensemble spread", guide = guide_axis_logticks()) +
-  scale_x_log10("Lead time (days)", guide = guide_axis_logticks()) +
-  scale_color_models +
-  scale_fill_models
-```
-
-As mentioned in @sec-systems, +S1 ensemble members are generated by adding random field perturbations to the atmosphere only, which then are transferred to the other components via the coupled simulation [@hudson2017] while +S2 ensemble members are generated by time-lagged ensemble. XXXX
-We believe this difference would only alter the ensemble spread and should have minimal impact in the dramatic differences in ensemble mean error shown in @fig-rmse. 
-In +S1's scheme, ensemble members are all but guaranteed to be underdispersed in the ocean and sea-ice components. 
-To test the effect of the ensemble generation scheme on ensemble spread, we compute the mean variance of RMSE of individual members as a function of lag for each forecasting system. 
-@fig-spread (@fig-spread-osi) shows that indeed +S1's initial spread is much lower than +S2's in every month. 
-However, +S1's ensemble spread grows quickly, and after less than a week, both systems's spread is comparable. 
-For forecasts initialised in February, March and April, +S1 even has significantly larger spread than +S2. 
-XXXX What does this mean for the results??? 
-
-\FloatBarrier
-
-## Conclusions
-
-Sea-ice forecasts from the +S2 system show a significant low extent bias, particularly during late summer and early autumn. 
-This bias is attributed to a faster and longer melt season between January and March, and slower growth between March and April. 
-This underestimation during the minimum and early freezing season is a common issue in many subseasonal-to-seasonal (S2S) systems, suggesting potential problems either with the model’s thermodynamic representation or with short wave radiation forcing, as shown in other climate models [@zampieri2019; @roach2020].
-Even though +S2 shares the same model components as +S1, the latter does not suffer from this bias, indicating that assimilating sea-ice concentrations successfully corrects for the negative bias that exists in the free-running model.
-
-Ensemble spread grows quickly even when perturbations are only implemented in the atmosphere component (in +S1), indicating that sea ice is indeed responding quickly to atmospheric perturbations. 
-However, our analysis suggests that the atmosphere and ocean data assimilation implemented in +S2 is only effectively influencing sea-ice initial conditions from June to October, while the rest of the year, the sea-ice component runs virtually free, reverting to its biased equilibrium state. 
-@zhou2022 had previously evaluated sea-ice forecasts in +S2 and also highlighted the poor performance of this forecasting system attributed to the lack of good initial conditions.
-
-Analysis of the error spread shows that +S2 initial conditions from December to May not only have large errors, but that the initial error spread is very large compared with +S1.
-This spread is not due to the perturbation scheme, since the mean error variance for individual forecasts is low and comparable with +S1.
-Instead, it is due to large variance of the mean error of individual forecasts, which is comparable to the climatology spread. This is further evidence that individual initial conditions are not being affected by the data assimilation scheme.
-
-Although +S1 only assimilates sea-ice concentration, it is clear that sea-ice thickness is also affected through the assimilation process. 
-+S1 simulates significantly thicker ice than +S2 and in both systems sea-ice is thicker at shorter lead times than at longer lead times. 
-Both the explicit data assimilation in +S2 and the effects of atmospheric and oceanic data assimilation in +S1 might be nudging simulated sea ice to be thicker than the model equilibrium state.
-We suggest that the thinner sea ice in +S2 contributes to the large sea-ice extent variance, but other mechanisms, such as unbalanced initial conditions might also be important. 
-
-Given that +S2 sea-ice extent is not directly initialised by sea-ice observations, comparing its forecasts with those of +S1 allows us to estimate the time-scale over which initial conditions are important. 
-We find that initial conditions affect Antarctic sea-ice forecasts in the order of a few months, but that effect is seasonally dependent. 
-January to April initial conditions improve forecasts for up to three months.
-February initial conditions in particular are shown to be crucial for determining sea-ice evolution at least up to May. 
-Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal summer, compared with boreal winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
-
-Forecasts initialised in winter have very little skill and +S1 and +S2 forecast errors are statistically indistinguishable after just two weeks. 
-This is consistent with @libera2022's finding of a “winter predictability barrier”, although they describe the barrier as a sharp loss of predictability in July in the Weddell Sea, and here we find a gradual reduction in skill compared with climatology around June that is more dramatic in the King Haakon Sea. 
-
-It's not straightforward to compare our results with their, since they defined predictability based on spatial autocorraltion 
-
-```{r}
-
-mean_weddell <- function(x) {
-  x |>
-    rcdo::cdo_sellonlatbox(300, 345, -90, -30) |>
-    rcdo::cdo_fldsum() |>
-    rcdo::cdo_execute()
-}
-
-mean_kh <- function(x) {
-  x |>
-    rcdo::cdo_sellonlatbox(0, 120, -90, -30) |>
-    rcdo::cdo_fldsum() |>
-    rcdo::cdo_execute()
-}
-
-
-weddel_hk <- CDR() |>
-  cdo_remapbil("r360x180") |>
-  # rcdo::cdo_sellonlatbox(300, 345, -90, -30) |>
-  cdo_monmean() |>
-  cdo_execute() |>
-  ReadNetCDF("aice", subset = list(lon = list(c(300, 345), c(0, 120)))) |>
-  _[, region := ifelse(lon > 120, "weddell", "kh")] |>
-  _[year(time) %between% c(1985, 2015)]
-
-weddell_hk_cor <- weddell_hk |>
-  copy() |>
-  _[, aice := Detrend(aice), by = .(lon, lat)] |>
-  _[, aice := Anomaly(aice), by = .(lon, lat, month(time))] |>
-  _[,
-    c(as.character(1:12)) := shift(aice, 1:12, type = 'lead'),
-    by = .(lon, lat)
-  ] |>
-  _[] |>
-  melt(id.vars = c("time", "aice", "lon", "lat", "region")) |>
-  _[, lag := as.numeric(variable)] |>
-  na.omit() |>
-  _[, cor(aice, value), by = .(lag, month(time), region)] |> 
-  _[, measure := "sic_cor"]
-
-list(weddell = mean_weddell, kh = mean_kh) |>
-  lapply(\(x) {
-    CDR() |>
-      cdo_remapbil("r360x180") |>
-      x() |>
-      cdo_monmean() |>
-      cdo_execute() |>
-      ReadNetCDF("aice") |>
-      _[, .(time, aice)]
-  }) |>
-  rbindlist(idcol = "region") |>
-  _[year(time) %between% c(1985, 2015)] |>
-  _[, aice := Detrend(aice), by = region] |>
-  _[,
-    c(as.character(1:12)) := shift(aice, 1:12, type = 'lead'),
-    by = region
-  ] |>
-  _[] |>
-  melt(id.vars = c("time", "aice", "region")) |>
-  _[, lag := as.numeric(variable)] |>
-  na.omit() |>
-  _[, cor(aice, value), by = .(lag, month(time), region)] |> 
-  _[, measure := "area_cor"] |> 
-  rbind(weddell_hk_cor) |>
-  # _[month == 7] |> 
-  # ggplot(aes(lag, V1)) +
-  # geom_line(aes(color = region))
-
-
-
-  ggplot(aes(lag + month, month)) +
-  geom_raster(aes(fill = V1)) +
-  scale_fill_divergent("Sea-ice concentration correlation") +
-  scale_y_continuous(breaks = 1:12) +
-  scale_x_continuous(breaks = 1:12, labels = month.abb) +
-  facet_grid(
-    measure ~region,
-    labeller = labeller(
-      region = c(
-        "kh" = "King Haakon (0°--120°)",
-        weddell = "Weddell Sea (300°--345°)"
-      )
-    )
-  ) +
-  coord_equal()
-
-
-weddell_hk_cor <- weddell_hk |>
-  copy() |>
-  _[, aice := Detrend(aice), by = .(lon, lat)] |>
-  _[, aice := Anomaly(aice), by = .(lon, lat, month(time))] |>
-  _[,
-    c(as.character(1:12)) := shift(aice, 1:12, type = 'lead'),
-    by = .(lon, lat)
-  ] |>
-  _[] |>
-  melt(id.vars = c("time", "aice", "lon", "lat", "region")) |>
-  _[, lag := as.numeric(variable)] |>
-  na.omit() |>
-  _[, cor(aice, value), by = .(lag, month(time), region)]
-
-
-weddell_hk_cor |>
-  ggplot(aes(lag, month)) +
-  geom_raster(aes(fill = V1)) +
-  scale_fill_divergent("Sea-ice concentration correlation") +
-  scale_y_continuous(breaks = 1:12) +
-  scale_x_continuous(breaks = 1:12, labels = month.abb) +
-  facet_wrap(
-    ~region,
-    ncol = 2,
-    labeller = labeller(
-      region = c(
-        "kh" = "King Haakon (0°--120°)",
-        weddell = "Weddell Sea (300°--345°)"
-      )
-    )
-  ) +
-  coord_equal()
-
-
-```
-
-```{r}
-weddell_hk_cor |>
-  _[month == 7] |>
-  ggplot(aes(lag, V1)) +
-  geom_line(aes(color = region))
-```
-
-
-This difference might be due to our use of pan-Antarctic RMSE, 
-
-These findings have important implications for both operational forecasting, model development and predictability studies.
-For operational centers, our results suggest that efforts to improve sea-ice data assimilation should prioritize the summer and autumn months when initial conditions have the greatest impact on forecast skill. 
-Additionally, the substantial bias in +S2 highlights the need for improved model physics, particularly in the representation of sea-ice thermodynamics and radiation processes. 
-Crucially, our results suggest dramatic seasonal variations in sea-ice predictability. 
-Future studies should therefore use initial conditions through the whole year rather than focusing on a limited number of initialisation dates. 
-
-
-# References
-
-::: {#refs}
-:::
-
-
-\clearpage
-
-
-
-# Appendix {.appendix}
-
-\appendixfigures
-
-The following are the same figures from the main paper but using the OSI dataset instead of CDR.
-
-```{r dataset_era}
-which_dataset <- "osi"
-```
-
-```{r fig-hindcast-extent-osi, ref.label=I('fig-hindcast-extent')}
-
-```
-
-\clearpage
-
-```{r, fig-mean-growth-osi, ref.label=I("fig-mean-growth")}
-
-```
-
-\clearpage
-
-```{r, plot_bias-osi, ref.label=I("plot_bias")}
-
-```
-
-\clearpage
-
-```{r, fig-bias-1-osi, ref.label=I("fig-bias-1")}
-
-```
-
-\clearpage
-
-```{r, fig-bias-2-osi, ref.label=I("fig-bias-2")}
-
-```
-
-\clearpage
-
-```{r, fig-extent-anom-osi, ref.label=I("fig-extent-anom")}
-
-```
-
-\clearpage
-
-```{r fig-extent-rmse-month}
-#| fig-cap: RMSE of monthly mean sea-ice extent anomalies as a function of lead time (months) for +S1 (green) and +S2 (purple). RMSE is computed over the overlapping period of +S1 and +S2 hindcasts (1990–2013). Each panel indicates the target month. Note the reverse horizontal axis.
-#| fig-height: 6
-
-fig_extent_rmse_month
-```
-
-
-\clearpage
-
-
-```{r, fig-extent-sd-osi, ref.label=I("fig-extent-sd")}
-```
-
-\clearpage
-
-```{r, fig-rmse-osi, ref.label=I("fig-rmse")}
-
-```
-
 \clearpage
 
 ```{r, fig-lead-time-window-osi, ref.label=I("fig-lead-time-window")}
+#| fig-cap: Same as @fig-lead-time-window but using OSI as the validation dataset.
 
 ```
 
@@ -1833,6 +2021,6 @@ fig_extent_rmse_month
 
 \clearpage
 
-```{r, fig-spread-osi, ref.label=I("fig-initial-spread")}
+```{r, fig-spread-osi, ref.label=I("fig-spread")}
 
 ```

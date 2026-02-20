@@ -55,17 +55,23 @@ labels_models <- c(
   climatology = "Climatology"
 )
 
-scale_color_models <- ggplot2::scale_color_manual(
-  NULL,
-  values = colours_models,
-  labels = labels_models
-)
+scale_color_models <- function(...) {
+  ggplot2::scale_color_manual(
+    NULL,
+    values = colours_models,
+    labels = labels_models,
+    ...
+  )
+}
 
-scale_fill_models <- ggplot2::scale_fill_manual(
-  NULL,
-  values = colours_models,
-  labels = labels_models
-)
+scale_fill_models <- function(...) {
+  ggplot2::scale_fill_manual(
+    NULL,
+    values = colours_models,
+    labels = labels_models,
+    ...
+  )
+}
 
 labels_extent <- function(x, sep = "\n", units = "M km²") {
   m <- which.max(x)
@@ -102,6 +108,7 @@ geom_antarctica_path <- ggplot2::geom_path(
   data = contour_antarctica,
   ggplot2::aes(x, y, group = group),
   inherit.aes = FALSE,
+  linewidth = 0.2,
   colour = "black"
 )
 
@@ -109,6 +116,7 @@ geom_antarctica_fill <- ggplot2::geom_polygon(
   data = contour_antarctica,
   ggplot2::aes(x, y, group = group),
   inherit.aes = FALSE,
+  linewidth = 0.2,
   colour = "black",
   fill = "#FAFAFA"
 )

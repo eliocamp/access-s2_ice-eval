@@ -7,7 +7,7 @@
 #PBS -l walltime=03:00:00
 #PBS -l wd
 #PBS -l jobfs=100GB
-#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/lo07
+#PBS -l storage=gdata/ux62+scratch/k10+gdata/ub7+gdata/rt52+gdata/dx2+gdata/lo70+gdata/hh5+gdata/k10
 #PBS -N hindcast_extent
 #PBS -o logs/
 #PBS -e logs/

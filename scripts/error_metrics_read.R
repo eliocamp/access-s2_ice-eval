@@ -4,7 +4,7 @@ log <- function(text) {
   if (interactive()) {
     message(messg)
   } else {
-    write(messg, logfile, append = TRUE)    
+    write(messg, logfile, append = TRUE)
   }
 }
 writeLines("", logfile)
@@ -27,22 +27,32 @@ iiee_dir <- here::here("data/derived", "iiee")
 
 
 read_measures <- function(dir) {
-  files <- list.files(dir, include.dirs = FALSE, recursive = TRUE, full.names = TRUE)
-  
-  dates <- paste0(here::here("data/derived"), "/(\\w*)/(\\w*)/(\\w*)/di_aice_(\\d{8})_e(\\d{2}|0em).nc") |>
-    utils::strcapture(files,
-                      proto = list(
-                        measure = character(),
-                        version = character(),
-                        obs_dataset = character(),
-                        time_forecast = character(),
-                        member = character()
-                      ), perl = TRUE
+  files <- list.files(
+    dir,
+    include.dirs = FALSE,
+    recursive = TRUE,
+    full.names = TRUE
+  )
+
+  dates <- paste0(
+    here::here("data/derived"),
+    "/(\\w*)/(\\w*)/(\\w*)/di_aice_(\\d{8})_e(\\d{2}|0em).nc"
+  ) |>
+    utils::strcapture(
+      files,
+      proto = list(
+        measure = character(),
+        version = character(),
+        obs_dataset = character(),
+        time_forecast = character(),
+        member = character()
+      ),
+      perl = TRUE
     ) |>
     data.table::as.data.table() |>
     _[, time_forecast := as.Date(time_forecast, format = "%Y%m%d")] |>
     _[]
-  
+
   # rmse_lon is 360 times larger than the other measures, so it
   # just doesnt fit into memory. :(
   # if (dates$measure[1] == "rmse_lon") {
@@ -50,18 +60,21 @@ read_measures <- function(dir) {
   #   files <- files[which_read]
   #   dates <- dates[which_read]
   # }
-  
+
   future_map(seq_along(files), \(i) {
     ncfile <- ncdf4::nc_open(files[[i]])
     on.exit(ncdf4::nc_close(ncfile))
-    data <- try(metR::ReadNetCDF(ncfile, vars = c(value = "aice")), silent = TRUE)
-    
+    data <- try(
+      metR::ReadNetCDF(ncfile, vars = c(value = "aice")),
+      silent = TRUE
+    )
+
     if (inherits(data, "try-error")) {
       file.remove(files[[i]])
       log(glue::glue("file {files[[i]]} deleted"))
       return(NULL)
     }
-    
+
     data |>
       _[, let(lat = NULL)] |>
       cbind(dates[i]) |>

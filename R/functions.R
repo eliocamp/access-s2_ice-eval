@@ -9,13 +9,58 @@ median_ci <- function(x, ci = .95) {
     as.list()
 }
 
-average <- function(x) {
-  test <- t.test(x)
-  list(
+average <- function(x, y = NULL, signif = 2, sep = "\ ", ...) {
+  if (is.null(y)) {
+    test <- t.test(x, ...)
+  } else {
+    test <- t.test(x, y, ...)
+  }
+  out <- list(
     estimate = test$estimate,
     low = test$conf.int[1],
-    high = test$conf.int[2]
+    high = test$conf.int[2],
+    p.value = test$p.value
   )
+
+  out$text <- with(
+    out,
+    paste0(
+      round(estimate, signif),
+      sep,
+      "(CI:\ ",
+      round(low, signif),
+      "\ —\ ",
+      round(high, signif),
+      ")"
+    )
+  )
+  return(out)
+}
+
+
+f_test <- function(x, y, signif = 2, sep = "\ ", ...) {
+  estimate <- x / y
+
+  out <- list(
+    estimate = test$estimate,
+    low = test$conf.int[1],
+    high = test$conf.int[2],
+    p.value = test$p.value
+  )
+
+  out$text <- with(
+    out,
+    paste0(
+      round(estimate, signif),
+      sep,
+      "(CI:\ ",
+      round(low, signif),
+      "\ —\ ",
+      round(high, signif),
+      ")"
+    )
+  )
+  return(out)
 }
 
 
@@ -304,4 +349,44 @@ rmse <- function(x, y, signif = 2, sep = "\ ", scale = 1) {
     )
   )
   return(out)
+}
+
+
+geom_contour_pval <- function(
+  mapping,
+  p.value = 0.01,
+  linewidth = 0.1,
+  hatch = 0,
+  pattern_density = 0.1,
+  pattern_spacing = 0.05,
+  ...
+) {
+  mapping2 <- mapping
+  mapping2$fill <- ggplot2::aes(fill = NA)$fill
+
+  pattern_dots <- ggplot2::ggproto("GeomDots", ggpattern::GeomPolygonPattern)
+  ggplot2::update_geom_defaults(
+    pattern_dots,
+    list(
+      pattern = "circle",
+      colour = NA,
+      pattern_colour = "black",
+      pattern_fill = "black",
+      pattern_density = pattern_density,
+      pattern_alpha = 0.8,
+      pattern_spacing = pattern_spacing,
+      fill = NA
+    )
+  )
+
+  list(
+    ggplot2::stat_contour_filled(
+      mapping2,
+      breaks = c(hatch, p.value),
+      fill = NA,
+      geom = pattern_dots,
+      ...
+    ),
+    metR::geom_contour2(mapping, breaks = p.value, linewidth = linewidth, ...)
+  )
 }

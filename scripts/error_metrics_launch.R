@@ -27,8 +27,7 @@ chunks <- 1:10
 
 for (chunk in chunks) {
   script <- glue::glue(here::here("scripts/pbs/error_metrics{chunk}.sh"))
-  
+
   writeLines(glue::glue(template), script)
   system(glue::glue("qsub {script}"))
-  
 }

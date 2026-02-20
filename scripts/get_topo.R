@@ -4,16 +4,14 @@ url <- "https://www.ngdc.noaa.gov/thredds/dodsC/global/ETOPO2022/60s/60s_surface
 
 etopo_file <- here::here("data/raw/ETOPO.nc")
 
-url |> 
-  cdo_copy() |> 
-  cdo_remapmean("r360x180") |> 
+url |>
+  cdo_copy() |>
+  cdo_remapmean("r360x180") |>
   cdo_execute(etopo_file, options = c("-f nc"))
 
-metR::ReadNetCDF(etopo_file) |> 
-  data.table::copy() |> 
-  # _[, z := Smooth2D(lon, lat, z)] |> 
+metR::ReadNetCDF(etopo_file) |>
+  data.table::copy() |>
+  # _[, z := Smooth2D(lon, lat, z)] |>
   ggplot(aes(lon, lat)) +
   geom_contour_fill(aes(z = z)) +
   geom_contour2(aes(z = z), breaks = 0)
-
-

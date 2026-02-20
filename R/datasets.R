@@ -204,36 +204,44 @@ BT <- function() {
   return(file_out)
 }
 
-S2_reanalysis <- function() {
-  file <- here::here("data/derived/access-s2_reanalylsis.nc")
-
-  if (file.exists(file)) {
-    return(file)
-  }
+S2_reanalysis <- function(variable = c("aice", "hi")) {
+  variable <- variable[[1]]
+  file <- glue::glue(here::here(
+    "data/derived/access-s2_reanalylsis_{variable}.nc"
+  ))
 
   years <- 1981:2023
   grid <- CDR_grid()
 
   weights <- rcdo::cdo_genbil(
-    "/g/data/ux62/access-s2/reanalysis/ice/aice/di_aice_1981.nc",
+    glue::glue(
+      "/g/data/ux62/access-s2/reanalysis/ice/{variable}/di_{variable}_1981.nc"
+    ),
     grid
   ) |>
     rcdo::cdo_execute(options = "-L")
 
-  out <- furrr::future_map_chr(years, \(year) {
-    file <- file.path("data", "temp", paste0("s2-reanalys_", year, ".nc"))
-    if (file.exists(file)) {
-      return(file)
+  out <- mirai::mirai_map(years, \(year) {
+    cdo_del29feb <- function(ifile, ofile = NULL) {
+      rcdo::cdo_operator("del29feb", params = NULL, 1, 1) |>
+        rcdo::cdo(
+          input = list(ifile),
+          params = NULL,
+          output = ofile
+        )
     }
+
     paste0(
-      "/g/data/ux62/access-s2/reanalysis/ice/aice/di_aice_",
+      "/g/data/ux62/access-s2/reanalysis/ice/{variable}/di_{variable}_",
       year,
       ".nc"
     ) |>
+      glue::glue() |>
       rcdo::cdo_remap(grid = grid, weights = weights) |>
       cdo_del29feb() |>
-      rcdo::cdo_execute(output = file, options = "-L")
-  })
+      rcdo::cdo_execute(options = "-L")
+  }) |>
+    _[.progress]
 
   out |>
     rcdo::cdo_mergetime() |>
