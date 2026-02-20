@@ -167,7 +167,7 @@ L245
 
 Figures 9 and 10
 
-:   Figure 9 provides information on magnitude and scale that cannot be seen in Figure 10, while Figure 10 serves as a summary of Figure 9 with clearer labels and also takes into account the uncertainty that we cannot show in Figure 9 for clarity.
+:   Me moved Figure 10 as a supplemental and replaced it with a figure highlighting the lead time at which +S1 and +S2 forecasts are statistically inditinguishable. 
 
 Figures 11–13
 
