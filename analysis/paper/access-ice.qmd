@@ -188,20 +188,20 @@ Accurately modelling Antarctic sea ice is essential for understanding processes 
 Accurate seasonal to sub-seasonal forecasts are also crucial for operation contingency planning in and around the Antarctic continent, including scientific missions, fisheries, and tourism [@desilva2020; @wagner2020].
 Improvements in modelled sea-ice might also help improve weather forecasts over and away from sea-ice regions [@rinke2006; @wang2024; @semmler2016].
 
-However, progress in Antarctic sea-ice forecasting system has lagged behind Arctic sea-ice forecasts due to model biases, and inherent large variability and complexity [@zampieri2019; @gao2024a].
-Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simpler statistical methods [@massonnet2023] and machine learning approaches (e.g. @dong2024, @lin2025), which also underscores the need for better understanding and physical modelling of sea-ice dynamics, and drivers of its variability.
+However, progress in Antarctic sea-ice forecasting has lagged behind Arctic sea-ice forecasting due to model biases and inherent large variability and complexity [@zampieri2019; @gao2024a].
+Dynamical seasonal forecasts of summer Antarctic sea ice have been shown to perform worse than relatively simple statistical methods [@massonnet2023] and machine learning approaches (e.g. @dong2024, @lin2025), which also underscores the need for better understanding and physical modelling of sea-ice dynamics and drivers of its variability.
 
 Good initial conditions are generally required for a good forecast, however, it is not entirely known to what extent accurate sea-ice initial conditions affect the quality of the forecast and at what timescales.
-Exploring seasonal predictions of Arctic sea ice, @guemas2016 found that sea-ice initial conditions are important in autumn to predict summer Arctic sea ice, but the impact wasn’t as dramatic when predicting winter Arctic sea ice.
+Exploring seasonal predictions of Arctic sea ice, @guemas2016 found that sea-ice initial conditions are important in autumn to predict summer Arctic sea ice, but the impact was not as dramatic when predicting winter Arctic sea ice.
 @day2014 also found seasonally-varying differences in the effect of initialisation, noting that accurate Arctic sea-ice thickness leads to improved sea-ice forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, @holland2013 studied the initial-value predictability of Antarctic sea ice in a perfect model study using the CCSM3 model.
 They found that sea-ice and ocean initial conditions provide predictive information to forecast sea-ice edge location several months in advance and that some predictability is retained for up to two years thanks to ocean heat content anomalies that are advected eastward.
 Similarly, @morioka2022 studied decadal forecasts of Antarctic sea ice and found that initialising ocean and sea ice improved the correlation between simulated and observed sea-ice concentration evolution in the Amundsen–Bellingshausen Sea.
 This is in contrast with @marchi2020, who ran perfect model experiments to argue that uncertainty in the predicted atmospheric state and evolution is the main driver of uncertainty in Antarctic sea-ice extent prediction on seasonal timescales, with sea-ice and ocean initial conditions having lesser importance.
-More recently, @xiu2025 contrasted Antarctic sea ice hindcasts based on different data assimilation sources. 
-The concluded that hindcast initialised only with atmospheric data lead to good predictions of sea-ice area in many regions that where comparable if not better than hindcasts initialised only with ocean data or with ocean and sea-ice concentration data. 
-Furthermore, they find little benefit in assimilation of sea-ice concentration data on top of ocean data. 
+More recently, @xiu2025 contrasted Antarctic sea ice hindcasts based on different data assimilation sources.
+They concluded that hindcasts initialised only with atmospheric data lead to good predictions of sea-ice area in many regions that were comparable, if not better, than hindcasts initialised only with ocean data or with ocean and sea-ice concentration data.
+Furthermore, they find that assimilation of sea-ice concentration data offered little benefit on top of assimilation of ocean data.
 
 It is hard to compare these studies since they are based on forecasts initialised at different times of the year and different frameworks.
 @holland2013 ran 20 ensemble members initialised on the 1st of January of a particular year, @marchi2020 ran forecasts from the 1st of March and 1st of September, and @morioka2022 ran forecasts only from the 1st of March.
@@ -214,7 +214,7 @@ In October 2021 the Australian Bureau of Meteorology (BoM) upgraded the Australi
 While the base model remained the same, the change in version was focused on using ocean, sea-ice and land initial conditions generated by the BoM instead of depending on the UK Met Office.
 Crucially, compared to +S1, +S2 does not assimilate sea-ice observations, so sea ice is only affected by the ocean and atmospheric data assimilation via the coupled integration.
 
-Since model configuration is identical between +S1 and +S2, they form a sort of "opportunistic experiment” where the same forecasting model was run over a long period of time with multiple ensemble forecasts initialised throughout the year, with the only difference being the initial conditions.
+Since model configuration is identical between +S1 and +S2, they form a sort of "opportunistic experiment" where the same forecasting model was run over a long period of time with multiple ensemble forecasts initialised throughout the year, with the only difference being the initial conditions.
 This provides an opportunity to test the effect of sea-ice initial conditions on the forecast of sea-ice concentrations and the climate.
 
 In this study we compare sea-ice hindcasts produced by +S1 and +S2.
@@ -509,7 +509,7 @@ Many sea-ice models exhibit this systematic underestimation during the sea-ice m
 It is also not surprising that both forecasting systems converge to a similar equilibrium state because they share the same model formulation.
 
 The difference between the initial conditions (circles) and the model equilibrium state (triangles) can be mostly attributed to the effect of data assimilation, which in +S2 is due solely to the coupling of sea-ice with the atmosphere and the ocean. 
-From April to September, in +S2 circles are closer to observations than the triangles are, indicating that the information from the ocean and atmosphere data assimilation is affecting sea ice and improving the initial conditions.
+From April to September, in +S2, circles are closer to observations than the triangles are, indicating that the information from the ocean and atmosphere data assimilation is affecting sea ice and improving the initial conditions.
 During these months, +S1 can overestimate the sea-ice extent at short lead time.
 For the rest of the year circles are overlaid with triangles in +S2, indicating that the ocean and atmosphere data assimilation is not affecting sea ice and that this component of the model is virtually free-running.
 
@@ -810,7 +810,7 @@ Compared with +S1, +S2 anomaly forecasts are relatively poor (large RMSE) even f
 Unexpectedly, for +S2, RMSE improves with lead time, even though the correlation degrades with lead time.
 This effect is seen in all months except from July to September [@fig-extent-rmse-month].
 This is puzzling behaviour that goes contrary to what is usually seen in prediction models.
-The explanation seems to be the mentioned increased interannual variability.
+The explanation seems to be the aforementioned increase in interannual variability.
 @fig-extent-sd (@fig-extent-sd-osi) shows the interannual standard deviation of monthly sea-ice extent of the forecasts as a function of lead time compared with observations.
 +S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at nine months lead time for most months.
 
@@ -1062,17 +1062,17 @@ hindcast_mean_thickness_data[
   facet_wrap(~month, labeller = labeller(month = labels_month))
 ```
 
-The reason for the increased variability in +S2 is not clear. 
+The reason for the increased variability in +S2 is not clear.
 One plausible explanation is that +S2 simulates thinner sea ice than +S1 (@fig-forecast-example bottom row) that is more sensitive to atmospheric and oceanic forcing (@fig-hi-var-cor).
-@fig-mean-thickness, shows that indeed +S2 simulates thinner sea ice compared to +S1 overall at almost all lead times and in all months except for summer at short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months).
-However, @fig-mean-thickness also shows that sea-ice thickness tends to decrease at longer leadtimes, when +S2' variability converges to observed variability. 
-Furthermore, the thickness difference between +S1 and +S2 is large also in the months in which +S2 sea-ice extent variabilty is comparable to +S1 and +S2 RMSE doesn't decrease with lead time, such as August and September. 
+@fig-mean-thickness shows that indeed +S2 simulates thinner sea ice compared to +S1 overall at almost all lead times and in all months except for summer at short lead times (Dec--Jan, 0--1 months; Feb--Mar, 0--2 months).
+However, @fig-mean-thickness also shows that sea-ice thickness tends to decrease at longer lead times, when +S2's variability converges to observed variability.
+Furthermore, the thickness difference between +S1 and +S2 is large also in months in which +S2 sea-ice extent variability is comparable to +S1 and where +S2's RMSE does not decrease with lead time, such as August and September.
 
-Even if +S2's sea ice is is more sensitive to forcing than +S1 by being overall thinner, this is not a sufficient explanation for the pattern of increased variability at shorter lead times and absent in particular months.
-Instead, the streangth of the atmospheric and oceanic forcing might also be playing a role. 
-The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-extent-sd]) suggests that the data assimilation procedure might also be partly responsible. 
-We speculate that it is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses that are amplified by the thinner ice. 
-Teasing this out would require an in-depth analysis of the data assimilation innovations which is out of scope for this work and requires data that is not available.
+Even if +S2's sea ice is more sensitive to forcing than +S1 by being overall thinner, this is not a sufficient explanation for the pattern of increased variability at shorter lead times and its absence in particular months.
+Instead, the strength of the atmospheric and oceanic forcing might also be playing a role.
+The fact that +S1 and +S2 share the same model configuration and that the increased variability is more extreme at short lead times ([Fig. @fig-extent-sd]) suggests that the data assimilation procedure might also be partly responsible.
+We speculate that it is possible that sea-ice in the +S2 system is left in an unbalanced state after assimilating atmospheric and oceanic data but not sea-ice data, leading to large responses that are amplified by the thinner ice.
+Teasing this out would require an in-depth analysis of the data assimilation innovations, which is out of scope for this work and requires data that is not available.
 
 ```{r errors}
 errors <- here::here("data/derived/rmse.Rds") |>
@@ -1569,9 +1569,9 @@ rmse_lon_plots[[2]]
 To analyse the spatial distribution of the model error, we computed the RMSE of zonal mean sea-ice concentration anomalies on `r uniqueN(rmse_lon_mean$lon)` slices of `r diff(unique(rmse_lon_mean$lon))[1]`° longitude span for each forecasting system.
 We control for some areas being naturally easier to forecast than others by computing the RMSE skill score with the climatological forecast RMSE as reference. 
 
-For +S1 forecasts (@fig-rmse_lon-1 and @fig-rmse_lon-1-osi), skill tends to be lower off the coast of Eastern Antarctica even at short lead times. 
-This is particularly important for forecasts initialised between May and July, where we see that the low skill in early Winter (@fig-rmse and @fig-lead-time-window) is only a feature in Eastern Antarctica where skill is evern negative at almost zero lead time. 
-+S1 forecats have relatively high predictive skill in the Weddell Sea in winter, consistent with other seasonal prediction systems [@bushuk2021].
+For +S1 forecasts (@fig-rmse_lon-1 and @fig-rmse_lon-1-osi), skill tends to be lower off the coast of Eastern Antarctica even at short lead times.
+This is particularly important for forecasts initialised between May and July, where we see that the low skill in early winter (@fig-rmse and @fig-lead-time-window) is only a feature in Eastern Antarctica where skill is even negative at almost zero lead time.
++S1 forecasts have relatively high predictive skill in the Weddell Sea in winter, consistent with other seasonal prediction systems [@bushuk2021].
 July forecasts have positive (albeit not statistically significant) skill with hindcasts initialised as early as February. 
 The winter predictive skill barrier thus seems to come in great part from large errors in East Antarctica. 
 
@@ -1579,7 +1579,7 @@ In West Antarctica there is a hint of easterly-propagating skill in forecasts in
 This is consistent with @holland2013 findings that memory of sea-ice anomalies are stored in ocean heat content anomalies that are transported east by the Antarctic Circumpolar Current. 
 
 +S2 forecasts  (@fig-rmse_lon-2 and @fig-rmse_lon-2-osi) also have lower skill over East Antarctica. 
-From July to December even though the pan-Antarctic average skill is negative at all lead times ([Fig. @fig-lead-time-window]), it is positive (but not statistically significnat) for up to a month in West Antarctic. 
+From July to December, even though the pan-Antarctic average skill is negative at all lead times ([Fig. @fig-lead-time-window]), it is positive (but not statistically significant) for up to a month in West Antarctic.
 Since oceanic and atmospheric forcing is the only source of information, this suggests that sea-ice in this region is particularly sensitive to oceanic and atmospheric forcing and suggests a role of the Pacific-South American mode and the Amundsen Sea Low to shape sea-ice concentration anomalies. 
 The fact that this is evident in the months in which El Niño--Southern Oscillation teleconnections are more important for atmospheric circulation also suggests the influence of tropical Pacific variability.
 February and March are the only two months that can be forecasted with marginally positive skill in large regions. 
@@ -1601,7 +1601,7 @@ In June and July, +S1 has higher skill only at very short lead times and in limi
 ## Limitations
 
 This analysis rests on the assumption that the main difference between +S1 and +S2 is the lack of data assimilation of sea-ice concentrations. 
-However, although both systems use the same model configuration and atmospheric initial conditions, they also differ in the ensamble generation scheme and their ocean initial conditions.
+However, although both systems use the same model configuration and atmospheric initial conditions, they also differ in the ensemble generation scheme and their ocean initial conditions.
 
 ```{r errors_ensemble} 
 errors_ensemble <- here::here("data/derived/rmse.Rds") |>
@@ -1674,11 +1674,11 @@ However, we believe there are reasons to consider that the effect would be of se
 
 While the ocean data assimilation process is different, the underlying observations are similar, especially in the high latitudes, where there are few direct observations in total. 
 As an indirect comparison of ocean initial conditions, @wedd2022 in their Figure 9 show the correlation of  ocean heat content in the upper 300m of the ocean between EN4 and +S2 and +S1 reanalysis. 
-In both systems, correlations are raltively high around 60° and very low in the Antarctic coast; importantly, their correlation patterns are very similar, suggesting that the initial conditions sare not too dissimilar between the two systems. 
-A limitation of this comparison is that the low correlations seen in both systems in the ice-covered regions only show that both systems have poor ocean initial conditions in that region but does not necessarily mean that their initial conditions are similar. 
-Even though the ocean initial conditions are similarly correlated with the reference dataset in both systems, SST forecast was shown by @wedd2022 to be extremely degraded in the Southern Ocean even at zero months lead time. 
-Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2 (@fig-hindcast-extent). 
-This is raises the possibility that it is the lack of assimilation of sea-ice data that is degradidng SST forecast and not the other way around. 
+In both systems, correlations are relatively high around 60° and very low in the Antarctic coast; importantly, their correlation patterns are very similar, suggesting that the initial conditions are not too dissimilar between the two systems.
+A limitation of this comparison is that the low correlation seen in both systems in the ice-covered regions only show that both systems have poor ocean initial conditions in that region but does not necessarily mean that their initial conditions are similar.
+Even though the ocean initial conditions are similarly correlated with the reference dataset in both systems, SST forecasts were shown by @wedd2022 to be highly degraded in the Southern Ocean even at zero months lead time in +S2 compared with +S1.
+Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2 (@fig-hindcast-extent).
+This raises the possibility that it is the lack of assimilation of sea-ice data that is degrading SST forecasts and not the other way around.
 
 
 \FloatBarrier
@@ -1697,7 +1697,7 @@ However, our analysis suggests that the atmosphere and ocean data assimilation i
 Although +S1 only assimilates sea-ice concentration, it is clear that sea-ice thickness is also affected through the assimilation process. 
 +S1 simulates significantly thicker ice than +S2 and in both systems sea-ice is thicker at shorter lead times than at longer lead times. 
 Both the explicit data assimilation in +S2 and the effects of atmospheric and oceanic data assimilation in +S1 might be nudging simulated sea ice to be thicker than the model equilibrium state.
-It still remains unclear why +S2 simulates much larger interannual variability than +S1 at shorter leadtimes. 
+It still remains unclear why +S2 simulates much larger interannual variability than +S1 at shorter lead times.
 We suggest that the thinner sea ice in +S2 contributes to the large sea-ice extent variance, but other mechanisms, such as unbalanced initial conditions might also be important. 
 
 Given that +S2 sea-ice extent is not directly initialised by sea-ice observations, comparing its forecasts with those of +S1 allows us to estimate the time-scale over which initial conditions are important. 
@@ -1706,14 +1706,14 @@ January to April initial conditions improve forecasts for up to three months.
 February initial conditions in particular are shown to be crucial for determining sea-ice evolution at least up to May. 
 Arctic sea-ice forecasts also show greater sensitivity to initial conditions in boreal summer, compared with boreal winter [@day2014; @bunzel2016], suggesting a similar mechanism might be playing a role. 
 
-These results contrasts with @xiu2025, which used a very similar methodology to our own.   
-Based on their claims that assimilation of sea-ice concentration data doesn't improve sea-ice forecasts compared with only assimilating ocean data and that atmosphere conditions are enough for a skillful sea-ice forecast we would have expected skillful forecast from +S2's atmosphere initial conditions. 
-It is possible that model biases are important to explain this discrepancy. 
-Their forecasting system simulated more sea ice than observations; the reverse of +S1 and +S2, which tended to drift into lower sea-ice concentration that needed to be corrected with data assimilation. 
-However, since they used anomaly field assimilation, which assimilates anomalies on top of the model's own climatology, their initial conditions were close to the model's own equilibrium state, reducing the strong drift the type we detected in +S1 and we speculate might be degrading +S2's variability. 
+These results contrast with @xiu2025, which used a very similar methodology to our own.
+Based on their claims that assimilation of sea-ice concentration data doesn't improve sea-ice forecasts compared with only assimilating ocean data and that atmospheric conditions are enough for a skillful sea-ice forecast, we would have expected skillful forecasts from +S2's atmosphere initial conditions.
+It is possible that model biases are important to explain this discrepancy.
+Their forecasting system simulated more sea ice than observations; the reverse of +S1 and +S2, which tended to drift into lower sea-ice concentration that needed to be corrected with data assimilation.
+However, since they used anomaly field assimilation, which assimilates anomalies on top of the model's own climatology, their initial conditions were close to the model's own equilibrium state, reducing the strong drift of the type we detected in +S1 and which we speculate might be degrading +S2's variability.
 
 Forecasts initialised in the winter have very little skill and +S1 and +S2 forecast errors are statistically indistinguishable after just two weeks. 
-Contra @libera2022 but consisitent with @xiu2025, we find that this predictive skill barrier is not apparent in the Weddell Sea and instead comes from low skill in the Indian Ocean sector. 
+Contra @libera2022 but consistent with @xiu2025, we find that this predictive skill barrier is not apparent in the Weddell Sea and instead comes from low skill in the Indian Ocean sector.
 However, we cannot make a direct comparison due to significant methodological differences.
 Their results were based on persistence of sea-ice area, whereas we study errors in sea-ice concentration anomalies of a dynamical model. 
 Further exploration of these differences could lead to more insight in how persistence-based measures of predictability translate to actual predictive skill. 

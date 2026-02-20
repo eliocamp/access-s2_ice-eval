@@ -1,5 +1,5 @@
 ---
-title: response to reviewers
+title: Response to reviewers
 format: pdf
 execute: 
   echo: false
@@ -25,21 +25,22 @@ bibliography: references.bib
 
 ### General comment 1
 
-We agree that the comparison between the two system is not perfect. The two other differences besides sea-ice initial conditions are the ocean initial conditions and the ensemble generation.
+We agree that the comparison between the two systems is not perfect. The two other differences besides sea-ice initial conditions are the ocean initial conditions and the ensemble generation.
 
-Ideally we would compare the ocean initial conditions --in particular Southern Ocean SSTs. Unfortunately, the +S1 hindcast is not longer available (we only have access to the postprocessed sea-ice hindcast) so we cannot test how similar +S1 and +S2 ocean initial conditions are. However, on their initial assessment of +S2, @wedd2022 suggest that initial conditions in the Southern Ocean are very similar between models
+Ideally we would compare the ocean initial conditions -- Southern Ocean SSTs in particular. 
+Unfortunately, the +S1 hindcast is no longer available (we only have access to the postprocessed sea-ice hindcast) so we cannot test how similar +S1 and +S2 ocean initial conditions are. However, on their initial assessment of +S2, @wedd2022 suggests that initial conditions in the Southern Ocean are similar between models.
 
-Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1. We believe this should only entail minor differences and mostly have an effect on ensemble spread.
+Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1. We believe this should only entail minor differences and mostly affect ensemble spread.
 
 We added a section pointing out these limitations.
 
 ### General comment 2
 
-We reworked that part of the manuscript to hopefully make it more clear. We added a figure showing the correlation between sea-ice thickness and sea-ice concentration amplitude which supports our assertion that thinner sea ice is more sensitive than thicker sea ice.
+We reworked that part of the manuscript to hopefully make it clearer. We added a figure showing the correlation between sea-ice thickness and sea-ice concentration amplitude, which supports our assertion that thinner sea ice is more sensitive than thicker sea ice.
 
 ### General comment 3
 
-Since we compute anomalies relative to each model's own lead time-dependent climatology, this applies a first order bias correction.
+Since we compute anomalies relative to each model's own lead-time-dependent climatology, this applies a first-order bias correction.
 
 ## Specific comments
 
@@ -57,11 +58,11 @@ We corrected the error.
 
 ### Specific comment 3
 
-That is true. However, in those months RMSE increases with lead time. We added Line XX: "This effect is seen in all months except from July to September." And a supplementary figure showing RMSE as a function of lead time for each month.
+That is true. However, in those months RMSE increases with lead time. We added Line XX: "This effect is seen in all months except for July to September." and a supplementary figure showing RMSE as a function of lead time for each month.
 
 ### Specific comment 4
 
-Yes, indirectly. Lines XXX now read: "The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50cm or removed from the thinnest category first and from thicker categories if needed. "
+Yes, indirectly. Lines XXX now read: "The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50 cm or removed from the thinnest category first and from thicker categories if needed."
 
 ### Specific comment 5
 
@@ -81,7 +82,7 @@ Yes. This is now corrected. We modified our discussion about @libera2022. See re
 
 ### Specific comment 9
 
-We are not aware of an objective criteria to derive propagation of error. We follow @holland2013 which based their conclusions on visual inspection of a similar Hovmoller plot.
+We are not aware of any objective criterion to derive propagation of error. We follow @holland2013, who based their conclusions on visual inspection of a similar Hovmoller plot.
 
 ### Specific comment 10
 
@@ -95,15 +96,15 @@ Figure 1
 
 Figure 5
 
-:   The numbers in brackets represent the 95% confidence interval. We clarified this in the caption. All correlations are statistically different from zero, but we don't think that's a meaningful comparison.
+:   The numbers in brackets represent the 95% confidence interval. We clarified this in the caption. All correlations are statistically different from zero, but we do not think that's a meaningful comparison.
 
 Figure 6
 
-:   We assume normal distribution for that sea-ice extent, so the standard deviation has a chi squared distribution with N - 1 degrees of freedom (where N is the number of samples). We then divide all the values by the observation standard deviation. We modified the caption to make it clearer.
+:   We assume a normal distribution for sea-ice extent, so the standard deviation has a chi-squared distribution with N - 1 degrees of freedom (where N is the number of samples). We then divide all the values by the observation standard deviation. We modified the caption to make it clearer.
 
 Figure 9:
 
-:   With our data is not possible to say to what extent the oceanic and atmospheric data assimilation improve sea-ice forecasting. It might very well be the case that if it not were for data assimilation, the forecasts would've been even worse. Clearly some information is being transferred from the atmosphere/ocean to the ice in some months (Figure 1).
+:   With our data, it is not possible to say to what extent the oceanic and atmospheric data assimilation improve sea-ice forecasting. It might very well be the case that if it were not for data assimilation, the forecasts would have been even worse. Clearly some information is being transferred from the atmosphere or ocean to the ice in some months (Figure 1).
 
 Figure 10-11
 
@@ -111,7 +112,7 @@ Figure 10-11
 
 Additional references
 
-:  We thank you for the recommendations. @xiu2025 was particularly useful since it uses similar methodology. 
+:  We thank you for the recommendations. @xiu2025 was particularly useful since it uses a similar methodology. 
 
 
 # R2
@@ -122,11 +123,11 @@ Additional references
 
 You are correct in pointing out that there are other differences between the two forecasting systems. The two other differences besides sea-ice initial conditions are the ocean initial conditions and the ensemble generation.
 
-Regarding ocean initial conditions, unfortunately we cannot directly compare +S1 and +S2 initial conditions because that data is currently not available. However, we believe there are reasons to consider that the effect would be of second order importance.
+Regarding ocean initial conditions, unfortunately we cannot directly compare +S1 and +S2 initial conditions because that data is currently not available. However, we believe there are reasons to consider that the effect would be of second-order importance.
 
-First, while the DA process is different, the underlying observations are similar, especially in the high latitudes, where there are few direct observations and the small correlation length-scale [@waters2015] reduces the influence of observations in further away locations. The similarity of ocean initial conditions is evident in @wedd2022's Figure 9, where they show the correlation between ocean heat content in the upper 300m of the ocean between EN4 and +S2 and +S1 reanalysis. In both systems, correlations are relatively high around 60° and very low in the Antarctic coast and present very similar patterns. Second, even though the ocean initial conditions are very similar between the two systems, SST forecast was shown by @wedd2022 to be extremely degraded in the Southern Ocean even at zero months lead time. Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2. This is suggests that it is the lack of data assimilation sea-ice that is degrading SST forecast and not the other way around.
+First, while the DA process is different, the underlying observations are similar, especially in the high latitudes, where there are few direct observations and the small correlation length-scale [@waters2015] reduces the influence of observations in more distant locations. The similarity of ocean initial conditions is evident in @wedd2022's Figure 9, where they show the correlation between ocean heat content in the upper 300 m of the ocean between EN4 and +S2 and +S1 reanalysis. In both systems, correlations are relatively high around 60° and very low along the Antarctic coast, and they exhibit very similar patterns. Second, even though the ocean initial conditions are very similar between the two systems, the SST forecast was shown by @wedd2022 to be extremely degraded in the Southern Ocean even at zero months lead time. Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2. This suggests that it is the lack of sea-ice data assimilation that is degrading SST forecasts and not the other way around.
 
-Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1. We believe this should only entail minor differences and mostly have an effect on ensemble spread. Our analysis of ensemble spread show that +S1 sea-ice starts underdispersed but matches +S2's spread after between 2 and 6 days depending on the initial date.
+Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1. We believe this should only entail minor differences and mostly affect ensemble spread. Our analysis of ensemble spread shows that +S1 sea-ice starts underdispersed but matches +S2's spread after 2 to 6 days depending on the initial date.
 
 We added a section pointing out these limitations.
 
@@ -138,11 +139,11 @@ We improved the figures based on reviewer feedback.
 
 L64, Section 2.1
 
-:   We modified the section title and made it cleared that ocean and sea-ice initial conditions are the only differences between +S1 and +S2.
+:   We modified the section title and made it clear that ocean and sea-ice initial conditions are the only differences between +S1 and +S2.
 
 L125, Section 2.3
 
-:   We added bias and correlation to the method section. We added confidence intervals when possible (Figures 5, 6, 8, 9, 14) and significant p-values to Figures 11-13.
+:   We added bias and correlation to the Methods section. We added confidence intervals when possible (Figures 5, 6, 8, 9, 14) and significant p-values to Figures 11-13.
 
 L126–127
 
@@ -166,11 +167,11 @@ L245
 
 Figures 9 and 10
 
-:   Figure 9 provides information on magnitude and scale that cannot be seen in Figure 10, while Figure 10 serves as a summary of Figure 9 with clearer labels and also takes into account the uncertainty that we can't show in Figure 9 for clarity.
+:   Figure 9 provides information on magnitude and scale that cannot be seen in Figure 10, while Figure 10 serves as a summary of Figure 9 with clearer labels and also takes into account the uncertainty that we cannot show in Figure 9 for clarity.
 
 Figures 11–13
 
-:   We altered the colour scale, added vertical grid and smoothed values to increase readability.
+:   We altered the colour scale, added a vertical grid, and smoothed values to increase readability.
 
 Caption of Figure 14
 
@@ -186,7 +187,7 @@ L279–280 and Figure 14
 
 L307–308
 
-:   Lines XX now read: The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50cm or removed from the thinnest category first and from thicker categories if needed.
+:   Lines XX now read: The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50 cm or removed from the thinnest category first and from thicker categories if needed.
 
 # R3
 
@@ -202,17 +203,17 @@ We made it clear that all computations were done using only the overlapping peri
 
 ### Major comment 3
 
-We reworked that part of the manuscript to hopefully make it more clear. We added a Supplementary Figure showing the correlation between sea-ice thickness and sea-ice concentration amplitude which supports the assertion that thinner sea ice is more sensitive than thicker sea ice.
+We reworked that part of the manuscript to hopefully make it clearer. We added a Supplementary Figure showing the correlation between sea-ice thickness and sea-ice concentration amplitude, which supports the assertion that thinner sea ice is more sensitive than thicker sea ice.
 
 ### Major comment 4
 
-We thought about the discrepancy further and came to the conclusions that there are many differences between our work and @libera2022 that actually prevent a direct comparison.
+We thought about the discrepancy further and came to the conclusion that there are many differences between our work and @libera2022 that actually prevent a direct comparison.
 
-First, is that @libera2022 looked at sea ice area and we looked at RMSE of sea ice concentration anomalies. This means that their results are insensitive to the distribution of sea ice within the Weddell Sea region, while ours do take it into account.
+First, @libera2022 looked at sea ice area and we looked at RMSE of sea ice concentration anomalies. This means that their results are insensitive to the distribution of sea ice within the Weddell Sea region, while ours do take it into account.
 
-Second, they use lagged autocorrelation as the definition of predictability --essentially measuring persistence-- while we are analysing predictions from a fully coupled model.
+Second, they use lagged autocorrelation as the definition of predictability -- essentially measuring persistence -- while we are analysing predictions from a fully coupled model.
 
-We decided to change our wording to make the distinction more clear.
+We decided to change our wording to make the distinction clearer.
 
 ### Major comment 5
 
@@ -228,13 +229,13 @@ You are absolutely right. We added a figure and a paragraph highlighting the key
 
 2.  We changed the section titles.
 
-3.  It is customary to use the cold colour to denote higher sea ice concentrations (which generally imply colder temperature) and the warm colour to denote lower sea ice concentrations (associates with higher temperatures). Some references that use this convention @espinosa2024 @massonnet2023 @morioka2022.
+3.  It is customary to use the cold colour to denote higher sea ice concentrations (which generally imply colder temperature) and the warm colour to denote lower sea ice concentrations (associated with higher temperatures). Some references use this convention [e.g. @espinosa2024 @massonnet2023 @morioka2022].
 
 4.  We changed the column order.
 
 5.  We added units to that and other figures.
 
-6.  As with warm/cold colours to represent sea-ice anomalies, different publciations adopt different conventions of how to spell "sea ice". According to [The Cryosphere Observing System blog](https://cryos.wordpress.com/2007/10/04/%E2%80%9Csea-ice%E2%80%9D-or-%E2%80%9Csea-ice%E2%80%9D/) "Strictly speaking, it should be spelled without hyphenation when it’s a noun, and hyphenated when it is an adjective". This is supported by [Merriam-Webster's article on compound nouns](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words):
+6.  As with warm/cold colours used to represent sea-ice anomalies, different publications adopt different conventions of how to spell "sea ice". According to [The Cryosphere Observing System blog](https://cryos.wordpress.com/2007/10/04/%E2%80%9Csea-ice%E2%80%9D-or-%E2%80%9Csea-ice%E2%80%9D/) "Strictly speaking, it should be spelled without hyphenation when it’s a noun, and hyphenated when it is an adjective". This is supported by [Merriam-Webster's article on compound nouns](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words):
 
     > For example, when a compound that is usually left open is used to modify another noun, that compound will usually take a hyphen. So you can speak of a person who loves science fiction going to a science-fiction convention.
 
@@ -243,7 +244,7 @@ You are absolutely right. We added a figure and a paragraph highlighting the key
 
     In the scientific literature, both terms can be found, even in some of the references in this manuscript. (e.g. "Impact of observed sea-ice concentration on the Southern Hemisphere extratropical atmospheric circulation in summer" vs. "Decadal Sea Ice Prediction in the West Antarctic Seas with Ocean and Sea Ice Initializations"). Amusingly, we find [a review comment](https://tc.copernicus.org/preprints/9/C3297/2016/tcd-9-C3297-2016.pdf) on this very journal where the authors originally used the open compound version in the manuscript and the reviewer suggested to use the hyphenated form.
 
-    We chose to follow Merriam-Webster's guidelines and use "sea ice" as an open compound noun when used on it's own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as an hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind...").
+    We chose to follow Merriam-Webster's guidelines and use "sea ice" as an open compound noun when used on its own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as a hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind...").
 
 ```{r}
 #| label: ggplot2
@@ -278,6 +279,6 @@ data.table::fread(here::here("data/raw/sea-ice_ngram.csv")) |>
 
 8.  We removed this panel in the revised version.
 
-9.  We moved Conclusions to it's own sections instead of subsection.
+9.  We moved Conclusions to its own section instead of a subsection.
 
 # References
