@@ -220,7 +220,7 @@ summer and autumn initial conditions (January-April) provide predictive
 skill for up to three months, with February initial conditions being
 particularly crucial. In contrast, winter forecasts of the two systems
 are statistically indistinguishable after only two weeks. Regional
-analysis of forecast skill suggests that this winter predictability
+analysis of forecast skill suggests that this winter predictive skill
 barrier is most dramatic over East Antarctica, where even ACCESS-S1
 shows negative skill. These findings highlight the critical importance
 of comprehensive year-round sampling in predictability studies and
@@ -256,10 +256,10 @@ however, it is not entirely known to what extent accurate sea-ice
 initial conditions affect the quality of the forecast and at what
 timescales. Exploring seasonal predictions of Arctic sea ice,
 \citet{guemas2016} found that sea-ice initial conditions are important
-in autumn to predict summer sea ice, but the impact wasn't as dramatic
-when predicting winter sea ice. \citet{day2014} also found
-seasonally-varying differences in the effect of initialisation, noting
-that accurate Arctic sea-ice thickness leads to improved sea-ice
+in autumn to predict summer Arctic sea ice, but the impact wasn't as
+dramatic when predicting winter Arctic sea ice. \citet{day2014} also
+found seasonally-varying differences in the effect of initialisation,
+noting that accurate Arctic sea-ice thickness leads to improved sea-ice
 forecasts initialised in July but not when initialised in January.
 
 For the Antarctic, \citet{holland2013} studied the initial-value
@@ -268,25 +268,36 @@ CCSM3 model. They found that sea-ice and ocean initial conditions
 provide predictive information to forecast sea-ice edge location several
 months in advance and that some predictability is retained for up to two
 years thanks to ocean heat content anomalies that are advected eastward.
-This is in contrast with \citet{marchi2020}, who ran perfect model
-experiments to argue that uncertainty in the predicted atmospheric state
-and evolution is the main driver of uncertainty in Antarctic sea-ice
-extent prediction on seasonal timescales, with sea-ice and ocean initial
-conditions having lesser importance. More recently, \citet{morioka2022}
-studied decadal forecasts of Antarctic sea ice and found that
-initialising ocean and sea ice improved the correlation between
-simulated and observed sea-ice concentration evolution in the
-Amundsen--Bellingshausen Sea. It is hard to compare these studies since
-they are based on forecasts initialised at different times of the year
-and different frameworks: \citet{holland2013} ran 20 ensemble members
-initialised on the 1st of January of a particular year,
-\citet{marchi2020} ran forecasts from the 1st of March and 1st of
-September, and \citet{morioka2022} ran forecasts only from the 1st of
-March. \citet{marchi2020} also used a coupled ocean--sea-ice model
-instead of a fully coupled model like \citet{holland2013} did.
-\citet{morioka2022} used observed sea-ice initial conditions and
-compared with observations, while \citet{marchi2020} and
-\citet{holland2013} were perfect model studies.
+Similarly, \citet{morioka2022} studied decadal forecasts of Antarctic
+sea ice and found that initialising ocean and sea ice improved the
+correlation between simulated and observed sea-ice concentration
+evolution in the Amundsen--Bellingshausen Sea. This is in contrast with
+\citet{marchi2020}, who ran perfect model experiments to argue that
+uncertainty in the predicted atmospheric state and evolution is the main
+driver of uncertainty in Antarctic sea-ice extent prediction on seasonal
+timescales, with sea-ice and ocean initial conditions having lesser
+importance. More recently, \citet{xiu2025} contrasted Antarctic sea ice
+hindcasts based on different data assimilation sources. The concluded
+that hindcast initialised only with atmospheric data lead to good
+predictions of sea-ice area in many regions that where comparable if not
+better than hindcasts initialised only with ocean data or with ocean and
+sea-ice concentration data. Furthermore, they find little benefit in
+assimilation of sea-ice concentration data on top of ocean data.
+
+It is hard to compare these studies since they are based on forecasts
+initialised at different times of the year and different frameworks.
+\citet{holland2013} ran 20 ensemble members initialised on the 1st of
+January of a particular year, \citet{marchi2020} ran forecasts from the
+1st of March and 1st of September, and \citet{morioka2022} ran forecasts
+only from the 1st of March. \citet{xiu2025} was the most comprehensive
+study, using hindcasts initialised on the 1st of January, April, July
+and October. \citet{marchi2020} also used a coupled ocean--sea-ice model
+instead of a fully coupled model like \citet{holland2013} and
+\citet{xiu2025} did. \citet{morioka2022} and \citet{xiu2025} both
+compared forecast with observations, but the former used observed
+sea-ice initial conditions while the latter used initial conditions
+derived from data asimilationand. On the other hand, \citet{marchi2020}
+and \citet{holland2013} were perfect model studies.
 
 In October 2021 the Australian Bureau of Meteorology (BoM) upgraded the
 Australian Community Climate and Earth System Simulator -- Seasonal
@@ -316,7 +327,7 @@ for future prediction systems to attempt to improve upon.
 
 \section{Data and methods}\label{data-and-methods}
 
-\subsection{Forecasting systems}\label{forecasting-systems}
+\subsection{Forecasting systems}\label{sec-systems}
 
 ACCESS-S2 \citep{wedd2022} is the Bureau of Meteorology's seasonal
 forecast system which became operational in October 2021, replacing the
@@ -335,7 +346,7 @@ version 4.1, has the same resolution as the ocean component and five
 sea-ice thickness categories as well as an open water category.
 
 Both systems take atmospheric initial conditions derived from
-ERA-interim \citep{dee2011} for their hindcasts. The main difference
+ERA-interim \citep{dee2011} for their hindcasts. The only difference
 between the hindcasts of the two systems are the ocean and sea-ice
 initial conditions.
 
@@ -389,6 +400,9 @@ initialised at the first of every month and the two previous days and
 run for 279 days. We analyse the ensemble mean hindcasts unless
 otherwise specified.
 
+Although the hindcast periods differ for each forecasting system, we
+only use data from the overlapping period to compute error measures.
+
 Anomalies for each hindcast set are taken with respect to their own
 climatology specific to each initialisation date and forecast lead time,
 for the period 1990--2012. This serves as a first-order correction of
@@ -440,8 +454,8 @@ threshold is motivated by the limitations in satellite retrieval, which
 is increasingly unreliable for lower sea-ice concentrations
 \citep{cavalieri1991}. We evaluate sea-ice extent anomaly hindcasts by
 their Root Mean Squared Error (RMSE) and correlation coefficient. The
-hindcast ensemble mean sea-ice extent is defined as the sea-ice extent
-of the ensemble mean hindcast.
+hindcast ensemble mean sea-ice extent is defined as the mean sea-ice
+extent of individual ensemble members.
 
 Pan-Antarctic (net) sea-ice extent serves as a hemispheric measure of
 the amount of sea ice, but it does not take into account the spatial
@@ -502,7 +516,7 @@ rendered using knitr and Quarto \citep{xie2015, allaire2022}.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hindcast-extent-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hindcast-extent-1.png}}
 
 }
 
@@ -513,8 +527,9 @@ purple). Observed mean sea-ice extent in each corresponding hindcast
 period is shown in black. Row b: Mean differences between the forecast
 and the observed values. Circles represent the initial conditions at the
 start of forecasts (i.e., the first of every month), and triangles
-represent the mean values at the lead time corresponding to the maximum
-lead time in S1 (between 213 and 216 days, depending on the month)}
+represent the mean values forecasted for the first of every month the
+lead time corresponding to the maximum lead time in S1 (between 213 and
+216 days, depending on the month).}
 
 \end{figure}%
 
@@ -542,10 +557,11 @@ slower growth during March and April. This is then followed by faster
 growth between May and July (Figure~\ref{fig-mean-growth} and
 Figure~\ref{fig-mean-growth-osi}). Many sea-ice models exhibit this
 systematic underestimation during the sea-ice minimum and early freezing
-season \citep{massonnet2023}, which could indicate problems in the
-representation of thermodynamics in the model \citep{zampieri2019}. It
-is also not surprising that both forecasting systems converge to a
-similar equilibrium state because they share the same model formulation.
+season \citep{bushuk2021, massonnet2023}, which could indicate problems
+in the representation of thermodynamics in the model
+\citep{zampieri2019}. It is also not surprising that both forecasting
+systems converge to a similar equilibrium state because they share the
+same model formulation.
 
 The difference between the initial conditions (circles) and the model
 equilibrium state (triangles) can be mostly attributed to the effect of
@@ -564,7 +580,7 @@ model is virtually free-running.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-growth-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-growth-1.png}}
 
 }
 
@@ -580,15 +596,14 @@ forecast month. Values are smoothed with a 11-day running mean.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-1-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-1-1.png}}
 
 }
 
-\caption{\label{fig-bias-1}expression(glue::glue(``Ensemble mean
-difference between monthly sea-ice concentration of ACCESS-S2 ensemble
-mean forecast at 0-month lead time (monthly mean values forecasted from
-the forecast initialised at the first of the month) and observations
-(CDR).''))}
+\caption{\label{fig-bias-1}Ensemble mean difference between monthly
+sea-ice concentration of ACCESS-S2 ensemble mean forecast at 0-month
+lead time (monthly mean values forecasted from the forecast initialised
+at the first of the month) and observations (CDR).}
 
 \end{figure}%
 
@@ -596,7 +611,7 @@ the forecast initialised at the first of the month) and observations
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-2-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-2-1.png}}
 
 }
 
@@ -627,13 +642,13 @@ Seas.
 
 \FloatBarrier
 
-\subsection{RMSE}\label{rmse}
+\subsection{Anomaly errors}\label{anomaly-errors}
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-anom-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-anom-1.png}}
 
 }
 
@@ -642,7 +657,7 @@ the observations (black) and forecasts from ACCESS-S1 (right column;
 purple) and ACCESS-S2 (left column; green) at lead times of 0, 2, 4, and
 6 months. The RMSE and correlation with their respective 95\% confidence
 interval during the overlapping period of ACCESS-S1 and ACCESS-S2
-hindcasts (1990--2013) are shown on the top left and bottom left of each
+hindcasts (1990--2012) are shown on the top left and bottom left of each
 panel respectively}
 
 \end{figure}%
@@ -651,10 +666,10 @@ Figure~\ref{fig-extent-anom} (Figure~\ref{fig-extent-anom-osi}) shows
 monthly sea-ice extent anomalies forecasted at selected lead times.
 Compared with ACCESS-S1, ACCESS-S2 anomaly forecasts are relatively poor
 (large RMSE) even for the first month (lead time 0), whereas ACCESS-S1
-forecasts stay relatively skilful even at a lead time of three months.
-ACCESS-S2 shows much larger interannual variability than observations,
-with dramatic lows between 1995 and 2007, and highs between 2007 and
-2015.
+forecasts have lower RMSE than ACCESS-S2 even at a lead time of four
+months. ACCESS-S2 shows much larger interannual variability than
+observations, with dramatic lows between 1995 and 2007, and highs
+between 2007 and 2015.
 
 Unexpectedly, for ACCESS-S2, RMSE improves with lead time, even though
 the correlation degrades with lead time. This effect is seen in all
@@ -667,14 +682,14 @@ deviation of monthly sea-ice extent of the forecasts as a function of
 lead time compared with observations. ACCESS-S1 standard deviation lies
 within the observed standard deviation regardless of lead time, while
 ACCESS-S2 standard deviation is more than twice that of observations at
-zero lead time and only approaches the observed value at nine month lead
-time for most months.
+zero lead time and only approaches the observed value at nine months
+lead time for most months.
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-sd-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-sd-1.png}}
 
 }
 
@@ -700,21 +715,19 @@ initialised one day prior; being that close to initialisation date,
 these are very approximately the initial conditions. ACCESS-S1 sea-ice
 concentrations anomalies are very close to observations as expected from
 the system assimilating these data. ACCESS-S2 sea-ice concentration
-anomalies, which are not assimilated, are not as close, but the
-large-scale pattern is aligned with observations. The system simulates
-large positive anomalies in the Weddell and Ross Seas and slight
-negative anomalies in the Amundsen and Bellingshausen Seas. The fact
-that ACCESS-S2 can simulate this pattern without assimilating sea-ice
-data suggests that atmospheric and oceanic forcing were the dominant
-drivers. However, the magnitude of the sea-ice anomalies is too big. It
-is plausible that this is due to the thinner ice simulated by ACCESS-S2
-(bottom row).
+anomalies, are not as close, but the large-scale pattern is aligned with
+observations. The system simulates large positive anomalies in the
+Weddell and Ross Seas and slight negative anomalies in the Amundsen and
+Bellingshausen Seas. The fact that ACCESS-S2 can simulate this pattern
+without assimilating sea-ice data suggests that atmospheric and oceanic
+forcing were the dominant drivers. However, the magnitude of the sea-ice
+concentration anomalies is too big.
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-forecast-example-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-forecast-example-1.png}}
 
 }
 
@@ -730,7 +743,7 @@ and ACCESS-S2.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-thickness-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-thickness-1.png}}
 
 }
 
@@ -741,42 +754,54 @@ horizontal axis.}
 
 \end{figure}%
 
-Extending beyond the one case in Figure~\ref{fig-forecast-example},
-Figure~\ref{fig-mean-thickness} shows monthly mean sea-ice thickness as
-a function of lead time for ACCESS-S1 and ACCESS-S2. Supporting the idea
-that thinner ice is what causes the increased extent variability in
-ACCESS-S2, this system simulates thinner sea-ice compared to ACCESS-S1
+The reason for the increased variability in ACCESS-S2 is not clear. One
+plausible explanation is that ACCESS-S2 simulates thinner sea ice than
+ACCESS-S1 (Figure~\ref{fig-forecast-example} bottom row) that is more
+sensitive to atmospheric and oceanic forcing
+(Figure~\ref{fig-hi-var-cor}). Figure~\ref{fig-mean-thickness}, shows
+that indeed ACCESS-S2 simulates thinner sea ice compared to ACCESS-S1
 overall at almost all lead times and in all months except for summer at
-short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months). However, in
-both systems, forecasted sea-ice is thicker at shorter lead times and
-then decreases, particularly in the summer months. If thinner ice were a
-sufficient cause of increased variability, then we would expect
-variability to increase with lead time in both forecasting systems.
+short lead times (Dec-Jan, 0-1 months; Feb-Mar, 0-2 months). However,
+Figure~\ref{fig-mean-thickness} also shows that sea-ice thickness tends
+to decrease at longer leadtimes, when ACCESS-S2' variability converges
+to observed variability. Furthermore, the thickness difference between
+ACCESS-S1 and ACCESS-S2 is large also in the months in which ACCESS-S2
+sea-ice extent variabilty is comparable to ACCESS-S1 and ACCESS-S2 RMSE
+doesn't decrease with lead time, such as August and September.
 
-The fact that ACCESS-S1 and ACCESS-S2 share the same model configuration
-and that the increased variability is more extreme at short lead times
+Even if ACCESS-S2's sea ice is is more sensitive to forcing than
+ACCESS-S1 by being overall thinner, this is not a sufficient explanation
+for the pattern of increased variability at shorter lead times and
+absent in particular months. Instead, the streangth of the atmospheric
+and oceanic forcing might also be playing a role. The fact that
+ACCESS-S1 and ACCESS-S2 share the same model configuration and that the
+increased variability is more extreme at short lead times
 (Fig.~\ref{fig-extent-sd}) suggests that the data assimilation procedure
-is partly responsible. It is possible that sea-ice in the ACCESS-S2
-system is left in an unbalanced state after assimilating atmospheric and
-oceanic data but not sea-ice data, leading to large responses that are
-amplified by the thin ice in the initial states which then subside at
-longer lead times when the model is balanced.
+might also be partly responsible. We speculate that it is possible that
+sea-ice in the ACCESS-S2 system is left in an unbalanced state after
+assimilating atmospheric and oceanic data but not sea-ice data, leading
+to large responses that are amplified by the thinner ice. Teasing this
+out would require an in-depth analysis of the data assimilation
+innovations which is out of scope for this work and requires data that
+is not available.
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse-1.png}}
 
 }
 
 \caption{\label{fig-rmse}Mean RMSE of sea-ice concentration anomalies as
 a function of forecast lead time for all forecasts initialised on the
 first of each month compared with a reference forecast of persistence of
-anomalies (black) and climatology (gray). Only the first 120 days are
-shown. In parentheses, the shortest time at which ACCESS-S1 and
-ACCESS-S2 mean RMSE is not statistically different at the 99\%
-confidence level.}
+anomalies (black) and climatology (gray). The shading indicates the 95\%
+confidence interval of the mean. Only the first 150 days are shown. In
+parentheses, the shortest time at which ACCESS-S1 and ACCESS-S2 mean
+RMSE is not statistically different at the 99\% confidence level. Note
+that the horizontal axis uses a square root transformation to expand the
+shorter lead times.}
 
 \end{figure}%
 
@@ -806,38 +831,41 @@ month with the minimum in June. ACCESS-S2 forecasts never have lower
 error than climatology, on the other hand, except marginally in October
 forecasts.
 
-Figure~\ref{fig-lead-time-window}
-(Figure~\ref{fig-lead-time-window-osi}) summarises the lead time window
-in which each hindcast is better than both the persistence forecast and
-the climatological forecast as a function of forecast month. ACCESS-S1
-forecasts have a wider lead time window in the summer than the other
-seasons and is not better than both benchmarks at forecasting June
-sea-ice concentration anomalies. Forecasts initialised between May and
-July are particularly poor, and June cannot be forecasted better than
-the benchmarks. This is consistent with the mid-winter loss of
-predictability observed by \citet{libera2022}, who attributed it to deep
-warm water entraining into the mixed layer.
+In summary, ACCESS-S1 forecasts have a wider lead time window in the
+summer than the other seasons and is not better than both benchmarks at
+forecasting June sea-ice concentration anomalies. Forecasts initialised
+between May and July are particularly poor, and June cannot be
+forecasted better than the benchmarks suggesting a winter barrier in
+predictive skill ( Figure~\ref{fig-lead-time-window} and
+Figure~\ref{fig-lead-time-window-osi}). This is similar to the
+mid-winter loss of predictability observed by \citet{libera2022}, who
+attributed it to deep warm water entraining into the mixed layer.
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-lead-time-window-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-improvement-1.png}}
 
 }
 
-\caption{\label{fig-lead-time-window}Minimum lead time at which each
-forecast's mean RMSE becomes larger than the lower bound of the 95\%
-confidence interval of persistence forecast RMSE (black lines) and
-maximum lead time at which each forecast's mean RMSE remains lower than
-the lower bound of the 95\% confidence interval of climatological
-forecast RMSE (gray lines). Green shading indicates the window where
-forecasts outperform both persistence (lead times longer than black
-line) and climatology (lead times shorter than gray line). Text labels
-show the date corresponding to the maximum lead time at which each
-forecast outperforms climatology.}
+\caption{\label{fig-improvement}Shortest lead time at which ACCESS-S1
+and ACCESS-S2 mean RMSE is not statistically different at the 99\%
+confidence level.}
 
 \end{figure}%
+
+We quantify the improvement in sea-ice forecast between ACCESS-S2 and
+ACCESS-S1 in Figure~\ref{fig-improvement} by computing the shortest lead
+time in which the mean RMSE of each system's forecast are not
+statistically different. The median improvement is around 35 days but
+the biggest improvement is between February and April, where ACCESS-S1
+forecasts have lower RMSE than ACCESS-S2's for more between 65 and 125
+days. The smallest difference, on the other hand, is in winter, when
+ACCESS-S1's forecast are statistically indistinguishable from
+ACCESS-S2's after less than 20 days. Assimilation of sea-ice
+concentration data seems to have a much greater effect in the late
+summer than in the winter.
 
 \begin{figure}[!htb]
 
@@ -849,9 +877,13 @@ forecast outperforms climatology.}
 
 \caption{\label{fig-rmse_lon-1}MSE skill score of ACCESS-S1 forecasts
 with climatological forecast as reference computed on 15 meridional
-slices 24° wide as a function of lead time and longitude. Antarctica's
+slices 24° wide as a function of lead time and longitude. Regions where
+the difference of means between ACCESS-S1 RMSE and climatological RMSE
+are significant at p-value \textless{} 0.05 are stipppled. Antarctica's
 coastline is shown at the bottom of each panel for reference. Values
-were smoothed with an 11-day running mean to improve readability.}
+were smoothed with an 11-day running mean to improve readability. Note
+that the vertical axis uses a 1.5 root transformation to expand the
+shorter lead times.}
 
 \end{figure}%
 
@@ -876,31 +908,39 @@ skill score with the climatological forecast RMSE as reference.
 
 For ACCESS-S1 forecasts (Figure~\ref{fig-rmse_lon-1} and
 Figure~\ref{fig-rmse_lon-1-osi}), skill tends to be lower off the coast
-of Eastern Antarctica even at short lead times; for instance, the skill
-score for forecasts initialised in May and June are negative between 0°
-and 120°E even at almost zero lead time. This mirrors \citet{libera2022}
-findings of a ``winter predictability barrier'', although they focus on
-the Weddell Sea and here we show that the effect seems to be stronger
-more to the east. In West Antarctica there is a hint of
-easterly-propagating skill in forecasts initialised in February and
-March. This is consistent with \citet{holland2013} findings that memory
-of sea-ice anomalies are stored in ocean heat content anomalies that are
-transported east by the Antarctic Circumpolar Current.
+of Eastern Antarctica even at short lead times. This is particularly
+important for forecasts initialised between May and July, where we see
+that the low skill in early Winter (Figure~\ref{fig-rmse} and
+Figure~\ref{fig-lead-time-window}) is only a feature in Eastern
+Antarctica where skill is evern negative at almost zero lead time.
+ACCESS-S1 forecats have relatively high predictive skill in the Weddell
+Sea in winter, consistent with other seasonal prediction systems
+\citep{bushuk2021}. July forecasts have positive (albeit not
+statistically significant) skill with hindcasts initialised as early as
+February. The winter predictive skill barrier thus seems to come in
+great part from large errors in East Antarctica.
+
+In West Antarctica there is a hint of easterly-propagating skill in
+forecasts initialised in February and March. This is consistent with
+\citet{holland2013} findings that memory of sea-ice anomalies are stored
+in ocean heat content anomalies that are transported east by the
+Antarctic Circumpolar Current.
 
 ACCESS-S2 forecasts (Figure~\ref{fig-rmse_lon-2} and
 Figure~\ref{fig-rmse_lon-2-osi}) also have lower skill over East
 Antarctica. From July to December even though the pan-Antarctic average
 skill is negative at all lead times (Fig.~\ref{fig-lead-time-window}),
-it is positive for up to a month in West Antarctica. Since oceanic and
-atmospheric forcing is the only source of information, this suggests
-that sea-ice in this region is particularly sensitive to oceanic and
-atmospheric forcing and suggests a role of the Pacific-South American
-mode and the Amundsen Sea Low to shape sea-ice concentration anomalies.
-The fact that this is evident in the months in which El Niño--Southern
-Oscillation teleconnections are more important for atmospheric
-circulation also suggests the influence of tropical Pacific variability.
-February and March are the only two months that can be forecasted with
-marginally positive skill in large regions.
+it is positive (but not statistically significnat) for up to a month in
+West Antarctic. Since oceanic and atmospheric forcing is the only source
+of information, this suggests that sea-ice in this region is
+particularly sensitive to oceanic and atmospheric forcing and suggests a
+role of the Pacific-South American mode and the Amundsen Sea Low to
+shape sea-ice concentration anomalies. The fact that this is evident in
+the months in which El Niño--Southern Oscillation teleconnections are
+more important for atmospheric circulation also suggests the influence
+of tropical Pacific variability. February and March are the only two
+months that can be forecasted with marginally positive skill in large
+regions.
 
 \begin{figure}[!htb]
 
@@ -919,60 +959,90 @@ Finally, Figure~\ref{fig-rmse_lon-3} (Figure~\ref{fig-rmse_lon-3-osi})
 shows the difference in skill between ACCESS-S1 and ACCESS-S2. Large
 differences in skill indicate areas and months that are most affected by
 the data assimilation present in ACCESS-S1. Between January and March,
-which are the months in which ACCESS-S1 is the most skilful
+which are the months in which ACCESS-S1 is the most skillful
 (Figure~\ref{fig-lead-time-window}), most of the improvement compared
 with ACCESS-S2 is present in the Ross and Weddell Sea. In April and May,
-the improvement seems more homogeneous.
+the improvement seems more homogeneous. In June and July, ACCESS-S1 has
+higher skill only at very short lead times and in limited regions; in
+particular we see that in June there is no improvement between 0° and
+90°.
+
+\subsection{Limitations}\label{limitations}
+
+This analysis rests on the assumption that the main difference between
+ACCESS-S1 and ACCESS-S2 is the lack of data assimilation of sea-ice
+concentrations. However, although both systems use the same model
+configuration and atmospheric initial conditions, they also differ in
+the ensamble generation scheme and their ocean initial conditions.
 
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-initial-spread-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-spread-1.png}}
 
 }
 
-\caption{\label{fig-initial-spread}Decomposition of forecast error
-spread at 1, 5 and 30 days lead time for ACCESS-S1 and ACCESS-S2
-hindcasts across initialization months. The left column shows the mean
-standard deviation of RMSE errors across ensemble members, while the
-right column shows the standard deviation of the ensemble mean RMSE
-error and the spread of the persistence and climatology forecasts
-errors.}
+\caption{\label{fig-spread}Mean variance of RMSE between ensemble
+members of each forecast. Note the double log scale. In parentheses, the
+shortest minimum lead time at which ACCESS-S1 mean spread becomes larger
+than the lower bound of the 95\% confidence interval of ACCESS-S2
+spread.}
 
 \end{figure}%
 
-In Figure~\ref{fig-rmse} the mean error was shown.
-Figure~\ref{fig-initial-spread} (Figure~\ref{fig-initial-spread-osi})
-column 1 shows the mean standard deviation of errors among ensemble
-members at various lead times. At one day lead time
-(Fig.~\ref{fig-initial-spread} a.1) ACCESS-S2 has a slightly larger
-spread than ACCESS-S1 due to the way that ensemble members are
-generated. ACCESS-S1 ensemble members are generated by adding random
-field perturbations to the atmosphere only, which then are transferred
-to the other components via the coupled simulation \citep{hudson2017}.
-With this scheme, ensemble members are all but guaranteed to be
-underdispersed in the ocean and sea-ice components. The time-lag
-ensemble used for ACCESS-S2 ensures greater spread. This difference is
-gone after about just two days, and both systems have a comparable
-spread in ensemble member error afterwards
-(Fig.~\ref{fig-initial-spread} b1 and c1).
+As mentioned in Section~\ref{sec-systems}, ACCESS-S1 ensemble members
+are generated by adding random field perturbations to the atmosphere
+only, which then are transferred to the other components via the coupled
+simulation \citep{hudson2017} while ACCESS-S2 ensemble members are
+generated by time-lagged ensemble.
 
-Figure~\ref{fig-initial-spread} column 2, on the other hand, shows the
-standard deviation of ensemble mean error of each hindcast and the
-persistence forecast. At one day lead time, ACCESS-S2 ensemble mean
-error standard deviation is much larger than ACCESS-S1's, which in turn
-is comparable to the persistence forecast error standard deviation. At
-longer lead times, the spread of ACCESS-S1 and persistence forecast
-standard deviation increases to eventually be comparable to ACCESS-S2
-and the standard deviation in climatological forecast errors. ACCESS-S2
-error standard deviation is fairly independent of lead time and similar
-to the climatological forecast error standard deviation at all lead
-times.
+We believe this difference would only alter the ensemble spread and
+should have minimal impact in the dramatic differences in ensemble mean
+error shown in Figure~\ref{fig-rmse}. In ACCESS-S1's scheme, ensemble
+members are all but guaranteed to be underdispersed in the ocean and
+sea-ice components. To test the effect of the ensemble generation scheme
+on ensemble spread, we compute the mean variance of RMSE of individual
+forecasts as a function of lag for each forecasting system.
+Figure~\ref{fig-spread} (Figure~\ref{fig-spread-osi}) shows that indeed
+ACCESS-S1's initial spread is much lower than ACCESS-S2's in every
+month. However, ACCESS-S1's ensemble spread grows quickly, and after
+less than a week, both systems's spread is comparable. For forecasts
+initialised in February, March and April, ACCESS-S1 even has larger
+spread than ACCESS-S2.
+
+Regarding ocean initial conditions, unfortunately we cannot directly
+compare ACCESS-S1 and ACCESS-S2 initial conditions because that data is
+currently not available. However, we believe there are reasons to
+consider that the effect would be of second order importance.
+
+While the ocean data assimilation process is different, the underlying
+observations are similar, especially in the high latitudes, where there
+are few direct observations in total. As an indirect comparison of ocean
+initial conditions, \citet{wedd2022} in their Figure 9 show the
+correlation of ocean heat content in the upper 300m of the ocean between
+EN4 and ACCESS-S2 and ACCESS-S1 reanalysis. In both systems,
+correlations are raltively high around 60° and very low in the Antarctic
+coast; importantly, their correlation patterns are very similar,
+suggesting that the initial conditions sare not too dissimilar between
+the two systems. A limitation of this comparison is that the low
+correlations seen in both systems in the ice-covered regions only show
+that both systems have poor ocean initial conditions in that region but
+does not necessarily mean that their initial conditions are similar.
+Even though the ocean initial conditions are similarly correlated with
+the reference dataset in both systems, SST forecast was shown by
+\citet{wedd2022} to be extremely degraded in the Southern Ocean even at
+zero months lead time. Correlation of SST anomalies in the ice-covered
+regions is much lower for ACCESS-S2 (\citet{wedd2022} Figure 13) and
+with a higher positive bias (their Figure 12), which is consistent with
+the greater negative sea-ice concentration bias in ACCESS-S2
+(Figure~\ref{fig-hindcast-extent}). This is raises the possibility that
+it is the lack of assimilation of sea-ice data that is degradidng SST
+forecast and not the other way around.
 
 \FloatBarrier
 
-\subsection{Conclusions}\label{conclusions}
+\section{Conclusions}\label{conclusions}
 
 Sea-ice forecasts from the ACCESS-S2 system show a significant low
 extent bias, particularly during late summer and early autumn. This bias
@@ -998,16 +1068,6 @@ equilibrium state. \citet{zhou2022} had previously evaluated sea-ice
 forecasts in ACCESS-S2 and also highlighted the poor performance of this
 forecasting system attributed to the lack of good initial conditions.
 
-Analysis of the error spread shows that ACCESS-S2 initial conditions
-from December to May not only have large errors, but that the initial
-error spread is very large compared with ACCESS-S1. This spread is not
-due to the perturbation scheme, since the mean error variance for
-individual forecasts is low and comparable with ACCESS-S1. Instead, it
-is due to large variance of the mean error of individual forecasts,
-which is comparable to the climatology spread. This is further evidence
-that individual initial conditions are not being affected by the data
-assimilation scheme.
-
 Although ACCESS-S1 only assimilates sea-ice concentration, it is clear
 that sea-ice thickness is also affected through the assimilation
 process. ACCESS-S1 simulates significantly thicker ice than ACCESS-S2
@@ -1015,9 +1075,11 @@ and in both systems sea-ice is thicker at shorter lead times than at
 longer lead times. Both the explicit data assimilation in ACCESS-S2 and
 the effects of atmospheric and oceanic data assimilation in ACCESS-S1
 might be nudging simulated sea ice to be thicker than the model
-equilibrium state. We suggest that the thinner sea ice in ACCESS-S2
-contributes to the large sea-ice extent variance, but other mechanisms,
-such as unbalanced initial conditions might also be important.
+equilibrium state. It still remains unclear why ACCESS-S2 simulates much
+larger interannual variability than ACCESS-S1 at shorter leadtimes. We
+suggest that the thinner sea ice in ACCESS-S2 contributes to the large
+sea-ice extent variance, but other mechanisms, such as unbalanced
+initial conditions might also be important.
 
 Given that ACCESS-S2 sea-ice extent is not directly initialised by
 sea-ice observations, comparing its forecasts with those of ACCESS-S1
@@ -1031,15 +1093,34 @@ sea-ice forecasts also show greater sensitivity to initial conditions in
 boreal summer, compared with boreal winter \citep{day2014, bunzel2016},
 suggesting a similar mechanism might be playing a role.
 
-Forecasts initialised in winter have very little skill and ACCESS-S1 and
-ACCESS-S2 forecast errors are statistically indistinguishable after just
-two weeks. This is consistent with \citet{libera2022}'s finding of a
-``winter predictability barrier'' in the Weddell Sea, although they
-describe the barrier as a sharp loss of predictability in July, and here
-we find a gradual reduction in skill compared with climatology around
-June. This difference might be due to our use of pan-Antarctic RMSE,
-since our regional analysis indicates that the degraded skill is most
-dramatic in the King Haakon Sea.
+These results contrasts with \citet{xiu2025}, which used a very similar
+methodology to our own.\\
+Based on their claims that assimilation of sea-ice concentration data
+doesn't improve sea-ice forecasts compared with only assimilating ocean
+data and that atmosphere conditions are enough for a skillful sea-ice
+forecast we would have expected skillful forecast from ACCESS-S2's
+atmosphere initial conditions. It is possible that model biases are
+important to explain this discrepancy. Their forecasting system
+simulated more sea ice than observations; the reverse of ACCESS-S1 and
+ACCESS-S2, which tended to drift into lower sea-ice concentration that
+needed to be corrected with data assimilation. However, since they used
+anomaly field assimilation, which assimilates anomalies on top of the
+model's own climatology, their initial conditions were close to the
+model's own equilibrium state, reducing the strong drift the type we
+detected in ACCESS-S1 and we speculate might be degrading ACCESS-S2's
+variability.
+
+Forecasts initialised in the winter have very little skill and ACCESS-S1
+and ACCESS-S2 forecast errors are statistically indistinguishable after
+just two weeks. Contra \citet{libera2022} but consisitent with
+\citet{xiu2025}, we find that this predictive skill barrier is not
+apparent in the Weddell Sea and instead comes from low skill in the
+Indian Ocean sector. However, we cannot make a direct comparison due to
+significant methodological differences. Their results were based on
+persistence of sea-ice area, whereas we study errors in sea-ice
+concentration anomalies of a dynamical model. Further exploration of
+these differences could lead to more insight in how persistence-based
+measures of predictability translate to actual predictive skill.
 
 These findings have important implications for both operational
 forecasting, model development and predictability studies. For
@@ -1049,9 +1130,14 @@ initial conditions have the greatest impact on forecast skill.
 Additionally, the substantial bias in ACCESS-S2 highlights the need for
 improved model physics, particularly in the representation of sea-ice
 thermodynamics and radiation processes. Crucially, our results suggest
-dramatic seasonal variations in sea-ice predictability. Future studies
-should therefore use initial conditions through the whole year rather
-than focusing on a limited number of initialisation dates.
+dramatic seasonal variations in sea-ice predictability. Our conclusions
+are limited by the fact that ACCESS-S1 and ACCESS-S2 differ in the ocean
+data assimilation and also the ensemble generation method. Although we
+believe these differences to be of minor importance compared with the
+wildly divergent sea-ice initial conditions, they motivate the need for
+targeted experiments. Future studies should therefore use initial
+conditions through the whole year rather than focusing on a limited
+number of initialisation dates.
 
 \section{References}\label{references}
 
@@ -1071,7 +1157,7 @@ dataset instead of CDR.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hindcast-extent-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hindcast-extent-osi-1.png}}
 
 }
 
@@ -1082,8 +1168,9 @@ purple). Observed mean sea-ice extent in each corresponding hindcast
 period is shown in black. Row b: Mean differences between the forecast
 and the observed values. Circles represent the initial conditions at the
 start of forecasts (i.e., the first of every month), and triangles
-represent the mean values at the lead time corresponding to the maximum
-lead time in S1 (between 213 and 216 days, depending on the month)}
+represent the mean values forecasted for the first of every month the
+lead time corresponding to the maximum lead time in S1 (between 213 and
+216 days, depending on the month).}
 
 \end{figure}%
 
@@ -1093,7 +1180,7 @@ lead time in S1 (between 213 and 216 days, depending on the month)}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-growth-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-mean-growth-osi-1.png}}
 
 }
 
@@ -1113,7 +1200,7 @@ forecast month. Values are smoothed with a 11-day running mean.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-1-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-1-osi-1.png}}
 
 }
 
@@ -1130,7 +1217,7 @@ at the first of the month) and observations (OSI).}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-2-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-bias-2-osi-1.png}}
 
 }
 
@@ -1145,7 +1232,7 @@ ACCESS-S1.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-anom-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-anom-osi-1.png}}
 
 }
 
@@ -1154,311 +1241,18 @@ anomalies of the observations (black) and forecasts from ACCESS-S1
 (right column; purple) and ACCESS-S2 (left column; green) at lead times
 of 0, 2, 4, and 6 months. The RMSE and correlation with their respective
 95\% confidence interval during the overlapping period of ACCESS-S1 and
-ACCESS-S2 hindcasts (1990--2013) are shown on the top left and bottom
+ACCESS-S2 hindcasts (1990--2012) are shown on the top left and bottom
 left of each panel respectively}
 
 \end{figure}%
 
 \clearpage
 
-\begin{verbatim}
-$data
-$data[[1]]
-     colour  x         y PANEL group flipped_aes linewidth linetype alpha
-1   #9C59D1 -9 0.5984605     1     1       FALSE       0.5        1    NA
-2   #9C59D1 -8 0.4772937     1     1       FALSE       0.5        1    NA
-3   #9C59D1 -7 0.6183552     1     1       FALSE       0.5        1    NA
-4   #9C59D1 -6 0.6039833     1     1       FALSE       0.5        1    NA
-5   #9C59D1 -5 0.6250643     1     1       FALSE       0.5        1    NA
-6   #9C59D1 -4 0.7092255     1     1       FALSE       0.5        1    NA
-7   #9C59D1 -3 0.7552064     1     1       FALSE       0.5        1    NA
-8   #9C59D1 -2 0.9081425     1     1       FALSE       0.5        1    NA
-9   #9C59D1 -1 1.0889439     1     1       FALSE       0.5        1    NA
-10  #9C59D1  0 1.1941767     1     1       FALSE       0.5        1    NA
-11  #ACA40A -7 0.7565361     1     2       FALSE       0.5        1    NA
-12  #ACA40A -6 0.5959845     1     2       FALSE       0.5        1    NA
-13  #ACA40A -5 0.5955162     1     2       FALSE       0.5        1    NA
-14  #ACA40A -4 0.4812004     1     2       FALSE       0.5        1    NA
-15  #ACA40A -3 0.6866438     1     2       FALSE       0.5        1    NA
-16  #ACA40A -2 0.4878597     1     2       FALSE       0.5        1    NA
-17  #ACA40A -1 0.3958258     1     2       FALSE       0.5        1    NA
-18  #ACA40A  0 0.2482179     1     2       FALSE       0.5        1    NA
-19  #9C59D1 -9 0.4784391     2     1       FALSE       0.5        1    NA
-20  #9C59D1 -8 0.4578146     2     1       FALSE       0.5        1    NA
-21  #9C59D1 -7 0.4339634     2     1       FALSE       0.5        1    NA
-22  #9C59D1 -6 0.4779146     2     1       FALSE       0.5        1    NA
-23  #9C59D1 -5 0.5586558     2     1       FALSE       0.5        1    NA
-24  #9C59D1 -4 0.5645042     2     1       FALSE       0.5        1    NA
-25  #9C59D1 -3 0.5796230     2     1       FALSE       0.5        1    NA
-26  #9C59D1 -2 0.8235551     2     1       FALSE       0.5        1    NA
-27  #9C59D1 -1 0.8542623     2     1       FALSE       0.5        1    NA
-28  #9C59D1  0 0.6718616     2     1       FALSE       0.5        1    NA
-29  #ACA40A -7 0.5247870     2     2       FALSE       0.5        1    NA
-30  #ACA40A -6 0.5405390     2     2       FALSE       0.5        1    NA
-31  #ACA40A -5 0.4929244     2     2       FALSE       0.5        1    NA
-32  #ACA40A -4 0.4194970     2     2       FALSE       0.5        1    NA
-33  #ACA40A -3 0.4611708     2     2       FALSE       0.5        1    NA
-34  #ACA40A -2 0.5108275     2     2       FALSE       0.5        1    NA
-35  #ACA40A -1 0.2220359     2     2       FALSE       0.5        1    NA
-36  #ACA40A  0 0.1245617     2     2       FALSE       0.5        1    NA
-37  #9C59D1 -9 0.4207578     3     1       FALSE       0.5        1    NA
-38  #9C59D1 -8 0.4177998     3     1       FALSE       0.5        1    NA
-39  #9C59D1 -7 0.4165393     3     1       FALSE       0.5        1    NA
-40  #9C59D1 -6 0.4958292     3     1       FALSE       0.5        1    NA
-41  #9C59D1 -5 0.4837393     3     1       FALSE       0.5        1    NA
-42  #9C59D1 -4 0.4255676     3     1       FALSE       0.5        1    NA
-43  #9C59D1 -3 0.4514970     3     1       FALSE       0.5        1    NA
-44  #9C59D1 -2 0.4883231     3     1       FALSE       0.5        1    NA
-45  #9C59D1 -1 0.4978986     3     1       FALSE       0.5        1    NA
-46  #9C59D1  0 0.4856632     3     1       FALSE       0.5        1    NA
-47  #ACA40A -7 0.4558333     3     2       FALSE       0.5        1    NA
-48  #ACA40A -6 0.4103865     3     2       FALSE       0.5        1    NA
-49  #ACA40A -5 0.3550077     3     2       FALSE       0.5        1    NA
-50  #ACA40A -4 0.3637343     3     2       FALSE       0.5        1    NA
-51  #ACA40A -3 0.3655096     3     2       FALSE       0.5        1    NA
-52  #ACA40A -2 0.2600277     3     2       FALSE       0.5        1    NA
-53  #ACA40A -1 0.1856420     3     2       FALSE       0.5        1    NA
-54  #ACA40A  0 0.1034259     3     2       FALSE       0.5        1    NA
-55  #9C59D1 -9 0.4748831     4     1       FALSE       0.5        1    NA
-56  #9C59D1 -8 0.5165270     4     1       FALSE       0.5        1    NA
-57  #9C59D1 -7 0.5554201     4     1       FALSE       0.5        1    NA
-58  #9C59D1 -6 0.5624090     4     1       FALSE       0.5        1    NA
-59  #9C59D1 -5 0.4981750     4     1       FALSE       0.5        1    NA
-60  #9C59D1 -4 0.5348628     4     1       FALSE       0.5        1    NA
-61  #9C59D1 -3 0.6254053     4     1       FALSE       0.5        1    NA
-62  #9C59D1 -2 0.6286052     4     1       FALSE       0.5        1    NA
-63  #9C59D1 -1 0.6668942     4     1       FALSE       0.5        1    NA
-64  #9C59D1  0 0.8824187     4     1       FALSE       0.5        1    NA
-65  #ACA40A -7 0.4521898     4     2       FALSE       0.5        1    NA
-66  #ACA40A -6 0.3974993     4     2       FALSE       0.5        1    NA
-67  #ACA40A -5 0.4270625     4     2       FALSE       0.5        1    NA
-68  #ACA40A -4 0.4026673     4     2       FALSE       0.5        1    NA
-69  #ACA40A -3 0.3582458     4     2       FALSE       0.5        1    NA
-70  #ACA40A -2 0.2900451     4     2       FALSE       0.5        1    NA
-71  #ACA40A -1 0.2854501     4     2       FALSE       0.5        1    NA
-72  #ACA40A  0 0.1821203     4     2       FALSE       0.5        1    NA
-73  #9C59D1 -9 0.5579666     5     1       FALSE       0.5        1    NA
-74  #9C59D1 -8 0.6127165     5     1       FALSE       0.5        1    NA
-75  #9C59D1 -7 0.6029918     5     1       FALSE       0.5        1    NA
-76  #9C59D1 -6 0.5841198     5     1       FALSE       0.5        1    NA
-77  #9C59D1 -5 0.7928835     5     1       FALSE       0.5        1    NA
-78  #9C59D1 -4 0.8556750     5     1       FALSE       0.5        1    NA
-79  #9C59D1 -3 0.8069800     5     1       FALSE       0.5        1    NA
-80  #9C59D1 -2 0.8437517     5     1       FALSE       0.5        1    NA
-81  #9C59D1 -1 1.0196410     5     1       FALSE       0.5        1    NA
-82  #9C59D1  0 1.1065527     5     1       FALSE       0.5        1    NA
-83  #ACA40A -7 0.4807941     5     2       FALSE       0.5        1    NA
-84  #ACA40A -6 0.5067542     5     2       FALSE       0.5        1    NA
-85  #ACA40A -5 0.5393445     5     2       FALSE       0.5        1    NA
-86  #ACA40A -4 0.4045959     5     2       FALSE       0.5        1    NA
-87  #ACA40A -3 0.3845793     5     2       FALSE       0.5        1    NA
-88  #ACA40A -2 0.3869069     5     2       FALSE       0.5        1    NA
-89  #ACA40A -1 0.2904025     5     2       FALSE       0.5        1    NA
-90  #ACA40A  0 0.3350960     5     2       FALSE       0.5        1    NA
-91  #9C59D1 -9 0.6660617     6     1       FALSE       0.5        1    NA
-92  #9C59D1 -8 0.6701446     6     1       FALSE       0.5        1    NA
-93  #9C59D1 -7 0.7190907     6     1       FALSE       0.5        1    NA
-94  #9C59D1 -6 0.9407559     6     1       FALSE       0.5        1    NA
-95  #9C59D1 -5 1.0161669     6     1       FALSE       0.5        1    NA
-96  #9C59D1 -4 0.8244582     6     1       FALSE       0.5        1    NA
-97  #9C59D1 -3 0.8373873     6     1       FALSE       0.5        1    NA
-98  #9C59D1 -2 0.9105125     6     1       FALSE       0.5        1    NA
-99  #9C59D1 -1 0.8492269     6     1       FALSE       0.5        1    NA
-100 #9C59D1  0 0.7665951     6     1       FALSE       0.5        1    NA
-101 #ACA40A -7 0.5531898     6     2       FALSE       0.5        1    NA
-102 #ACA40A -6 0.5026169     6     2       FALSE       0.5        1    NA
-103 #ACA40A -5 0.4387233     6     2       FALSE       0.5        1    NA
-104 #ACA40A -4 0.5029235     6     2       FALSE       0.5        1    NA
-105 #ACA40A -3 0.4217662     6     2       FALSE       0.5        1    NA
-106 #ACA40A -2 0.3496994     6     2       FALSE       0.5        1    NA
-107 #ACA40A -1 0.3387964     6     2       FALSE       0.5        1    NA
-108 #ACA40A  0 0.4231441     6     2       FALSE       0.5        1    NA
-109 #9C59D1 -9 0.6450049     7     1       FALSE       0.5        1    NA
-110 #9C59D1 -8 0.7003431     7     1       FALSE       0.5        1    NA
-111 #9C59D1 -7 0.8720344     7     1       FALSE       0.5        1    NA
-112 #9C59D1 -6 0.9102250     7     1       FALSE       0.5        1    NA
-113 #9C59D1 -5 0.6764296     7     1       FALSE       0.5        1    NA
-114 #9C59D1 -4 0.6273290     7     1       FALSE       0.5        1    NA
-115 #9C59D1 -3 0.5766315     7     1       FALSE       0.5        1    NA
-116 #9C59D1 -2 0.4778696     7     1       FALSE       0.5        1    NA
-117 #9C59D1 -1 0.4421313     7     1       FALSE       0.5        1    NA
-118 #9C59D1  0 0.3340629     7     1       FALSE       0.5        1    NA
-119 #ACA40A -7 0.3926180     7     2       FALSE       0.5        1    NA
-120 #ACA40A -6 0.4055218     7     2       FALSE       0.5        1    NA
-121 #ACA40A -5 0.4615250     7     2       FALSE       0.5        1    NA
-122 #ACA40A -4 0.4564888     7     2       FALSE       0.5        1    NA
-123 #ACA40A -3 0.3854216     7     2       FALSE       0.5        1    NA
-124 #ACA40A -2 0.3252267     7     2       FALSE       0.5        1    NA
-125 #ACA40A -1 0.4481883     7     2       FALSE       0.5        1    NA
-126 #ACA40A  0 0.3257066     7     2       FALSE       0.5        1    NA
-127 #9C59D1 -9 0.5283287     8     1       FALSE       0.5        1    NA
-128 #9C59D1 -8 0.6052768     8     1       FALSE       0.5        1    NA
-129 #9C59D1 -7 0.6068318     8     1       FALSE       0.5        1    NA
-130 #9C59D1 -6 0.4303770     8     1       FALSE       0.5        1    NA
-131 #9C59D1 -5 0.4173341     8     1       FALSE       0.5        1    NA
-132 #9C59D1 -4 0.3923987     8     1       FALSE       0.5        1    NA
-133 #9C59D1 -3 0.3123127     8     1       FALSE       0.5        1    NA
-134 #9C59D1 -2 0.3363830     8     1       FALSE       0.5        1    NA
-135 #9C59D1 -1 0.2675447     8     1       FALSE       0.5        1    NA
-136 #9C59D1  0 0.3365351     8     1       FALSE       0.5        1    NA
-137 #ACA40A -7 0.3268014     8     2       FALSE       0.5        1    NA
-138 #ACA40A -6 0.3875728     8     2       FALSE       0.5        1    NA
-139 #ACA40A -5 0.4307579     8     2       FALSE       0.5        1    NA
-140 #ACA40A -4 0.3423391     8     2       FALSE       0.5        1    NA
-141 #ACA40A -3 0.3293139     8     2       FALSE       0.5        1    NA
-142 #ACA40A -2 0.3821151     8     2       FALSE       0.5        1    NA
-143 #ACA40A -1 0.3452069     8     2       FALSE       0.5        1    NA
-144 #ACA40A  0 0.2554071     8     2       FALSE       0.5        1    NA
-145 #9C59D1 -9 0.4812590     9     1       FALSE       0.5        1    NA
-146 #9C59D1 -8 0.4743413     9     1       FALSE       0.5        1    NA
-147 #9C59D1 -7 0.4297590     9     1       FALSE       0.5        1    NA
-148 #9C59D1 -6 0.3962710     9     1       FALSE       0.5        1    NA
-149 #9C59D1 -5 0.3600449     9     1       FALSE       0.5        1    NA
-150 #9C59D1 -4 0.3618450     9     1       FALSE       0.5        1    NA
-151 #9C59D1 -3 0.3679888     9     1       FALSE       0.5        1    NA
-152 #9C59D1 -2 0.3721232     9     1       FALSE       0.5        1    NA
-153 #9C59D1 -1 0.3502792     9     1       FALSE       0.5        1    NA
-154 #9C59D1  0 0.3480131     9     1       FALSE       0.5        1    NA
-155 #ACA40A -7 0.4420522     9     2       FALSE       0.5        1    NA
-156 #ACA40A -6 0.4766696     9     2       FALSE       0.5        1    NA
-157 #ACA40A -5 0.4193247     9     2       FALSE       0.5        1    NA
-158 #ACA40A -4 0.4452902     9     2       FALSE       0.5        1    NA
-159 #ACA40A -3 0.4194858     9     2       FALSE       0.5        1    NA
-160 #ACA40A -2 0.3148970     9     2       FALSE       0.5        1    NA
-161 #ACA40A -1 0.2736958     9     2       FALSE       0.5        1    NA
-162 #ACA40A  0 0.1977477     9     2       FALSE       0.5        1    NA
-163 #9C59D1 -9 0.4864481    10     1       FALSE       0.5        1    NA
-164 #9C59D1 -8 0.4592050    10     1       FALSE       0.5        1    NA
-165 #9C59D1 -7 0.4305820    10     1       FALSE       0.5        1    NA
-166 #9C59D1 -6 0.3583702    10     1       FALSE       0.5        1    NA
-167 #9C59D1 -5 0.3875961    10     1       FALSE       0.5        1    NA
-168 #9C59D1 -4 0.3831390    10     1       FALSE       0.5        1    NA
-169 #9C59D1 -3 0.4452131    10     1       FALSE       0.5        1    NA
-170 #9C59D1 -2 0.3898225    10     1       FALSE       0.5        1    NA
-171 #9C59D1 -1 0.4459450    10     1       FALSE       0.5        1    NA
-172 #9C59D1  0 0.4557616    10     1       FALSE       0.5        1    NA
-173 #ACA40A -7 0.5307289    10     2       FALSE       0.5        1    NA
-174 #ACA40A -6 0.4979372    10     2       FALSE       0.5        1    NA
-175 #ACA40A -5 0.5037229    10     2       FALSE       0.5        1    NA
-176 #ACA40A -4 0.5176257    10     2       FALSE       0.5        1    NA
-177 #ACA40A -3 0.3819866    10     2       FALSE       0.5        1    NA
-178 #ACA40A -2 0.3222078    10     2       FALSE       0.5        1    NA
-179 #ACA40A -1 0.2436012    10     2       FALSE       0.5        1    NA
-180 #ACA40A  0 0.2279954    10     2       FALSE       0.5        1    NA
-181 #9C59D1 -9 0.3978157    11     1       FALSE       0.5        1    NA
-182 #9C59D1 -8 0.3974092    11     1       FALSE       0.5        1    NA
-183 #9C59D1 -7 0.3097370    11     1       FALSE       0.5        1    NA
-184 #9C59D1 -6 0.3419708    11     1       FALSE       0.5        1    NA
-185 #9C59D1 -5 0.3765437    11     1       FALSE       0.5        1    NA
-186 #9C59D1 -4 0.3672185    11     1       FALSE       0.5        1    NA
-187 #9C59D1 -3 0.3915742    11     1       FALSE       0.5        1    NA
-188 #9C59D1 -2 0.5181415    11     1       FALSE       0.5        1    NA
-189 #9C59D1 -1 0.4613723    11     1       FALSE       0.5        1    NA
-190 #9C59D1  0 0.6167969    11     1       FALSE       0.5        1    NA
-191 #ACA40A -7 0.4989726    11     2       FALSE       0.5        1    NA
-192 #ACA40A -6 0.4803765    11     2       FALSE       0.5        1    NA
-193 #ACA40A -5 0.4394459    11     2       FALSE       0.5        1    NA
-194 #ACA40A -4 0.3776623    11     2       FALSE       0.5        1    NA
-195 #ACA40A -3 0.3166791    11     2       FALSE       0.5        1    NA
-196 #ACA40A -2 0.2624609    11     2       FALSE       0.5        1    NA
-197 #ACA40A -1 0.2813278    11     2       FALSE       0.5        1    NA
-198 #ACA40A  0 0.1675816    11     2       FALSE       0.5        1    NA
-199 #9C59D1 -9 0.3440246    12     1       FALSE       0.5        1    NA
-200 #9C59D1 -8 0.3907403    12     1       FALSE       0.5        1    NA
-201 #9C59D1 -7 0.3898249    12     1       FALSE       0.5        1    NA
-202 #9C59D1 -6 0.3972901    12     1       FALSE       0.5        1    NA
-203 #9C59D1 -5 0.4323504    12     1       FALSE       0.5        1    NA
-204 #9C59D1 -4 0.4684049    12     1       FALSE       0.5        1    NA
-205 #9C59D1 -3 0.6148242    12     1       FALSE       0.5        1    NA
-206 #9C59D1 -2 0.5959746    12     1       FALSE       0.5        1    NA
-207 #9C59D1 -1 0.6667716    12     1       FALSE       0.5        1    NA
-208 #9C59D1  0 0.8636783    12     1       FALSE       0.5        1    NA
-209 #ACA40A -7 0.4544102    12     2       FALSE       0.5        1    NA
-210 #ACA40A -6 0.4791325    12     2       FALSE       0.5        1    NA
-211 #ACA40A -5 0.4166218    12     2       FALSE       0.5        1    NA
-212 #ACA40A -4 0.3897752    12     2       FALSE       0.5        1    NA
-213 #ACA40A -3 0.4265074    12     2       FALSE       0.5        1    NA
-214 #ACA40A -2 0.3779267    12     2       FALSE       0.5        1    NA
-215 #ACA40A -1 0.3372106    12     2       FALSE       0.5        1    NA
-216 #ACA40A  0 0.1711289    12     2       FALSE       0.5        1    NA
-
-
-$layout
-<ggproto object: Class Layout, gg>
-    coord: <ggproto object: Class CoordCartesian, Coord, gg>
-        aspect: function
-        backtransform_range: function
-        clip: on
-        default: TRUE
-        distance: function
-        expand: TRUE
-        is_free: function
-        is_linear: function
-        labels: function
-        limits: list
-        modify_scales: function
-        range: function
-        render_axis_h: function
-        render_axis_v: function
-        render_bg: function
-        render_fg: function
-        setup_data: function
-        setup_layout: function
-        setup_panel_guides: function
-        setup_panel_params: function
-        setup_params: function
-        train_panel_guides: function
-        transform: function
-        super:  <ggproto object: Class CoordCartesian, Coord, gg>
-    coord_params: list
-    facet: <ggproto object: Class FacetWrap, Facet, gg>
-        compute_layout: function
-        draw_back: function
-        draw_front: function
-        draw_labels: function
-        draw_panels: function
-        finish_data: function
-        init_scales: function
-        map_data: function
-        params: list
-        setup_data: function
-        setup_params: function
-        shrink: TRUE
-        train_scales: function
-        vars: function
-        super:  <ggproto object: Class FacetWrap, Facet, gg>
-    facet_params: list
-    finish_data: function
-    get_scales: function
-    layout: data.frame
-    map_position: function
-    panel_params: list
-    panel_scales_x: list
-    panel_scales_y: list
-    render: function
-    render_labels: function
-    reset_scales: function
-    resolve_label: function
-    setup: function
-    setup_panel_guides: function
-    setup_panel_params: function
-    train_position: function
-    super:  <ggproto object: Class Layout, gg>
-
-$plot
-\end{verbatim}
-
-\begin{verbatim}
-
-attr(,"class")
-[1] "ggplot_built"
-\end{verbatim}
-
 \begin{figure}[!htb]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-rmse-month-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-rmse-month-1.png}}
 
 }
 
@@ -1476,7 +1270,7 @@ indicates the target month. Note the reverse horizontal axis.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-sd-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-extent-sd-osi-1.png}}
 
 }
 
@@ -1495,17 +1289,16 @@ reverse horizontal axis.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-hi-var-cor-1.png}}
 
 }
 
-\caption{\label{fig-rmse-osi}Mean RMSE of sea-ice concentration
-anomalies as a function of forecast lead time for all forecasts
-initialised on the first of each month compared with a reference
-forecast of persistence of anomalies (black) and climatology (gray).
-Only the first 120 days are shown. In parentheses, the shortest time at
-which ACCESS-S1 and ACCESS-S2 mean RMSE is not statistically different
-at the 99\% confidence level.}
+\caption{\label{fig-hi-var-cor}Correlation between monthly mean sea-ice
+thickness and squared monthly mean sea-ice concentration anomalies
+masked to areas with mean thinkes greater than 15cm (black contour) in
+the ACCESS-S2 reanalysis. Regions where the correlation is significant
+at p-value \textless{} 0.05 are stipppled. In most regions and months,
+thicker ice is correlated with reduced sea-ice concentration anomalies.}
 
 \end{figure}%
 
@@ -1515,12 +1308,34 @@ at the 99\% confidence level.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-lead-time-window-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-rmse-osi-1.png}}
 
 }
 
-\caption{\label{fig-lead-time-window-osi}Minimum lead time at which each
-forecast's mean RMSE becomes larger than the lower bound of the 95\%
+\caption{\label{fig-rmse-osi}Mean RMSE of sea-ice concentration
+anomalies as a function of forecast lead time for all forecasts
+initialised on the first of each month compared with a reference
+forecast of persistence of anomalies (black) and climatology (gray). The
+shading indicates the 95\% confidence interval of the mean. Only the
+first 150 days are shown. In parentheses, the shortest time at which
+ACCESS-S1 and ACCESS-S2 mean RMSE is not statistically different at the
+99\% confidence level. Note that the horizontal axis uses a square root
+transformation to expand the shorter lead times.}
+
+\end{figure}%
+
+\clearpage
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-lead-time-window-1.png}}
+
+}
+
+\caption{\label{fig-lead-time-window}Minimum lead time at which each
+forecast's mean RMSE becomes lower than the lower bound of the 95\%
 confidence interval of persistence forecast RMSE (black lines) and
 maximum lead time at which each forecast's mean RMSE remains lower than
 the lower bound of the 95\% confidence interval of climatological
@@ -1528,7 +1343,23 @@ forecast RMSE (gray lines). Green shading indicates the window where
 forecasts outperform both persistence (lead times longer than black
 line) and climatology (lead times shorter than gray line). Text labels
 show the date corresponding to the maximum lead time at which each
-forecast outperforms climatology.}
+forecast outperforms climatology. Using CDR as the validation dataset.}
+
+\end{figure}%
+
+\clearpage
+
+\begin{figure}[!htb]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-lead-time-window-osi-1.png}}
+
+}
+
+\caption{\label{fig-lead-time-window-osi}Same as
+Figure~\ref{fig-lead-time-window} but using OSI as the validation
+dataset.}
 
 \end{figure}%
 
@@ -1547,9 +1378,12 @@ forecast outperforms climatology.}
 \caption{\label{fig-rmse_lon-1-osi}MSE skill score of ACCESS-S1
 forecasts with climatological forecast as reference computed on 15
 meridional slices 24° wide as a function of lead time and longitude.
-Antarctica's coastline is shown at the bottom of each panel for
-reference. Values were smoothed with an 11-day running mean to improve
-readability.}
+Regions where the difference of means between ACCESS-S1 RMSE and
+climatological RMSE are significant at p-value \textless{} 0.05 are
+stipppled. Antarctica's coastline is shown at the bottom of each panel
+for reference. Values were smoothed with an 11-day running mean to
+improve readability. Note that the vertical axis uses a 1.5 root
+transformation to expand the shorter lead times.}
 
 \end{figure}%
 
@@ -1589,17 +1423,15 @@ but for the difference between ACCESS-S1 and ACCESS-S2.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-initial-spread-osi-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{access-ice_files/figure-pdf/fig-spread-osi-1.png}}
 
 }
 
-\caption{\label{fig-initial-spread-osi}Decomposition of forecast error
-spread at 1, 5 and 30 days lead time for ACCESS-S1 and ACCESS-S2
-hindcasts across initialization months. The left column shows the mean
-standard deviation of RMSE errors across ensemble members, while the
-right column shows the standard deviation of the ensemble mean RMSE
-error and the spread of the persistence and climatology forecasts
-errors.}
+\caption{\label{fig-spread-osi}Mean variance of RMSE between ensemble
+members of each forecast. Note the double log scale. In parentheses, the
+shortest minimum lead time at which ACCESS-S1 mean spread becomes larger
+than the lower bound of the 95\% confidence interval of ACCESS-S2
+spread.}
 
 \end{figure}%
 
