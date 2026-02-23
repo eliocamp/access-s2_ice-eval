@@ -938,16 +938,15 @@
       ],
       "URL": "https://github.com/eliocamp/dtparallel",
       "BugReports": "https://github.com/eliocamp/dtparallel/issues",
+      "Author": "First Last [aut, cre]",
+      "Maintainer": "First Last <first.last@example.com>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "dtparallel",
       "RemoteUsername": "eliocamp",
       "RemotePkgRef": "eliocamp/dtparallel",
       "RemoteRef": "HEAD",
-      "RemoteSha": "578ca68a773bad7351152ee8fd0bc16c2ce9b45a",
-      "NeedsCompilation": "no",
-      "Author": "First Last [aut, cre]",
-      "Maintainer": "First Last <first.last@example.com>"
+      "RemoteSha": "578ca68a773bad7351152ee8fd0bc16c2ce9b45a"
     },
     "e1071": {
       "Package": "e1071",
@@ -2149,45 +2148,6 @@
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
     },
-    "icecdr": {
-      "Package": "icecdr",
-      "Version": "0.1.0",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "Download Sea Ice Concentation data from the NSIDC Climate Data Record",
-      "Authors@R": "person(\"Elio\", \"Campitelli\", , \"eliocampitelli@gmail.com\", role = c(\"cre\", \"aut\"), comment = c(ORCID = \"0000-0002-7742-9230\"))",
-      "Description": "More about what it does (maybe more than one line). Continuation lines should be indented.",
-      "License": "MIT + file LICENSE",
-      "Encoding": "UTF-8",
-      "Depends": [
-        "R (>= 3.5)"
-      ],
-      "RoxygenNote": "7.3.3",
-      "Suggests": [
-        "ncdf4",
-        "rcdo",
-        "testthat (>= 3.0.0)"
-      ],
-      "Imports": [
-        "checkmate",
-        "cli",
-        "digest",
-        "glue",
-        "rlang"
-      ],
-      "Roxygen": "list(markdown = TRUE)",
-      "URL": "https://github.com/eliocamp/icecdr",
-      "BugReports": "https://github.com/eliocamp/icecdr/issues",
-      "Config/testthat/edition": "3",
-      "Author": "Elio Campitelli [cre, aut] (<https://orcid.org/0000-0002-7742-9230>)",
-      "Maintainer": "Elio Campitelli <eliocampitelli@gmail.com>",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "eliocamp",
-      "RemoteRepo": "icecdr",
-      "RemoteRef": "main",
-      "RemoteSha": "b7c37f4633bbe480f88c96236bd5e9f5a80f9c61"
-    },
     "isoband": {
       "Package": "isoband",
       "Version": "0.2.7",
@@ -3199,6 +3159,7 @@
         "R (>= 3.5.0)"
       ],
       "SystemRequirements": "cdo",
+      "LazyData": "true",
       "URL": "https://eliocamp.github.io/rcdo/, https://github.com/eliocamp/rcdo",
       "Imports": [
         "cli",
@@ -3214,16 +3175,15 @@
       ],
       "VignetteBuilder": "knitr",
       "Config/testthat/edition": "3",
+      "Author": "Elio Campitelli [cre, aut, cph] (<https://orcid.org/0000-0002-7742-9230>), MPI für Meteorologie [cph]",
+      "Maintainer": "Elio Campitelli <eliocampitelli@gmail.com>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "rcdo",
       "RemoteUsername": "eliocamp",
       "RemotePkgRef": "eliocamp/rcdo",
       "RemoteRef": "HEAD",
-      "RemoteSha": "aa0b4ab3b0af4f85e8c123efe859f9c256b10bc3",
-      "NeedsCompilation": "no",
-      "Author": "Elio Campitelli [cre, aut, cph] (<https://orcid.org/0000-0002-7742-9230>), MPI für Meteorologie [cph]",
-      "Maintainer": "Elio Campitelli <eliocampitelli@gmail.com>"
+      "RemoteSha": "aa0b4ab3b0af4f85e8c123efe859f9c256b10bc3"
     },
     "renv": {
       "Package": "renv",
