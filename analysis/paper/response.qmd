@@ -31,12 +31,11 @@ editor:
 We agree that the comparison between the two systems is not perfect.
 The two other differences besides sea-ice initial conditions are the ocean initial conditions and the ensemble generation.
 
-Ideally we would compare the ocean initial conditions -- Southern Ocean SSTs in particular.
-Unfortunately, the +S1 hindcast is no longer available (we only have access to the postprocessed sea-ice hindcast) so we cannot test how similar +S1 and +S2 ocean initial conditions are.
-However, on their initial assessment of +S2, @wedd2022 suggests that initial conditions in the Southern Ocean are similar between models.
+Ideally we would compare the ocean initial conditions -- Southern Ocean SSTs in particular and recreate a time-lagged ensemble with +S1.
+Unfortunately, the raw +S1 hindcast is no longer available, so we cannot do either. 
 
-Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1.
-We believe this should only entail minor differences and mostly affect ensemble spread.
+However, on their initial assessment of +S2, @wedd2022 suggests that initial conditions in the Southern Ocean are similar between models, so we think that this should be a minor difference.
+The ensemble generation would mainly affect ensemble spread, which is comparable between systems after just a few days.
 
 We added a section pointing out these limitations.
 
@@ -53,11 +52,9 @@ Since we compute anomalies relative to each model's own lead-time-dependent clim
 
 ### Specific comment 1
 
-Section 5.3.2 in @murphy1985 gives examples of skill scores in terms of Mean Absolute Deviation and Mean Squared Error, but Root Mean Square Error is also a valid measurement from which to derive skill scores:
 
-> Finally, a skill score based on the root mean square error (RMSE) measure can be defined by replacing MSEFs and MSERs in (24) with RMSEFs and RMSERS respectively
-
-The general definition of skill score is given in section 4.3.
+The general definition of skill score in section 4.3 of @murphy1985 states that it can be derived from any error measure. 
+Section 5.3.2 in gives examples of skill scores in terms of Mean Absolute Deviation and Mean Squared Error, but Root Mean Square Error is also a valid measurement from which to derive skill scores. 
 
 ### Specific comment 2
 
@@ -71,8 +68,11 @@ We added Line XX: "This effect is seen in all months except for July to Septembe
 
 ### Specific comment 4
 
-Yes, indirectly.
-Lines XXX now read: "The way sea-ice thickness is handled is that sea-ice concentration innovations are either added to the first ice category with a fixed thickness of 50 cm or removed from the thinnest category first and from thicker categories if needed."
+During data assimilation, if sea-ice concentration innovations are positive, these are added to the first ice category with a fixed thickness of 50 cm. 
+If they are negative, they are removed from the thinnest category first and from thicker categories if needed. 
+Therefore, although this system only assimilates sea-ice concentration data, sea-ice thickness is noneless modified.
+
+We have added this clarification to the revised manuscript. 
 
 ### Specific comment 5
 
@@ -114,8 +114,8 @@ Figure 5
 
 :   The numbers in brackets represent the 95% confidence interval.
     We have now clarified this in the caption.
-    All correlations are statistically different from zero, however that comparison implies a "null hypothesis" of a constant forecast, which is not very informative.
-    A better comparison would be a naive forecast, and we perform that calculation in the next section.
+    All correlations are statistically different from zero, however that comparison implies a constant forecast as the "null hypothesis", which is not very informative.
+    A better comparison would be a naive forecast of persistence, and we perform that calculation in the next section.
 
 Figure 6
 
@@ -126,8 +126,7 @@ Figure 6
 Figure 9:
 
 :   With our data, it is not possible to say to what extent the oceanic and atmospheric data assimilation improve sea-ice forecasting.
-    It might very well be the case that if it were not for data assimilation, the forecasts would have been even worse.
-    Clearly some information is being transferred from the atmosphere or ocean to the ice in some months (Figure 1).
+    It might very well be the case that if it were not for data assimilation, the forecasts would have been even worse as it is evident that some information is being transferred from the atmosphere or ocean to the ice in some months (Figure 1).
 
 Figure 10-11
 
@@ -147,21 +146,14 @@ Additional references
 You are correct in pointing out that there are other differences between the two forecasting systems.
 The two other differences besides sea-ice initial conditions are the ocean initial conditions and the ensemble generation.
 
-Regarding ocean initial conditions, unfortunately we cannot directly compare +S1 and +S2 initial conditions because that data is currently not available.
-However, we believe there are reasons to consider that the effect would be of second-order importance.
+Ideally we would compare the ocean initial conditions -- Southern Ocean SSTs in particular and recreate a time-lagged ensemble with +S1.
+Unfortunately, the raw +S1 hindcast is no longer available, so we cannot do either. 
 
-First, while the DA process is different, the underlying observations are similar, especially in the high latitudes, where there are few direct observations and the small correlation length-scale [@waters2015] reduces the influence of observations in more distant locations.
-The similarity of ocean initial conditions is evident in Figure 9 of @wedd2022's, where they show the correlation between ocean heat content in the upper 300 m of the ocean between EN4 and +S2 and +S1 reanalysis.
-In both systems, correlations are relatively high around 60° and very low along the Antarctic coast, and their correlation patterns are very similar to eachother.
-Second, even though the ocean initial conditions are very similar between the two systems, the SST forecast was shown by @wedd2022 to be extremely degraded in the Southern Ocean even at zero months lead time.
-Correlation of SST anomalies in the ice-covered regions is much lower for +S2 (@wedd2022 Figure 13) and with a higher positive bias (their Figure 12), which is consistent with the greater negative sea-ice concentration bias in +S2.
-This suggests that it is the lack of sea-ice data assimilation that is degrading SST forecasts and not the other way around.
+However, on their initial assessment of +S2, @wedd2022 suggests that initial conditions in the Southern Ocean are similar between models, so we think that this should be a minor difference.
+The ensemble generation would mainly affect ensemble spread, which is comparable between systems after just a few days.
 
-Similarly, since we don't have access to the raw sea-ice hindcast, we cannot produce equivalent time-lagged ensembles for +S1.
-We believe this should only entail minor differences and mostly affect ensemble spread.
-Our analysis of ensemble spread shows that +S1 sea-ice starts underdispersed but matches +S2's spread after 2 to 6 days depending on the initial date.
+We added a section pointing out these limitations.
 
-We added a section pointing out these limitations to the revised manuscript.
 
 ### Quality of figures
 
@@ -248,9 +240,8 @@ We have also added a Supplementary Figure showing the correlation between sea-ic
 We thank the reviewer for this comment.
 We have thought about the discrepancy further and come to the conclusion that there are many differences between our work and @libera2022 that actually prevent a direct comparison.
 
-First, @libera2022 looked at sea ice area, while we look at RMSE of sea ice concentration anomalies.
-This means that their results are insensitive to the distribution of sea ice within the Weddell Sea region, whereas ours take this spatial distribution it into account.
-@fig-autocor illustrates that the choice of method can lead to different results in the Weddell Sea region. 
+First, by analysing sea-ice area, @libera2022's results are insensitive to the diestribution of sea ice within the Weddell Sea region, while our use of RMSE of sea ice concentration anomalies takes this spatial distribution it into account.
+@fig-autocor illustrates how the choice of method can lead to different results.
 
 ```{r}
 #| label: setup
@@ -446,28 +437,13 @@ We have added a figure and a paragraph highlighting the key result.
 
 2.  We changed the section titles.
 
-3.  It is customary to use the cold colour to denote higher sea ice concentrations (which generally imply colder temperature) and the warm colour to denote lower sea ice concentrations (associated with higher temperatures).
-    Some references use this convention [e.g. @espinosa2024; @massonnet2023; @morioka2022].
+3.  It is not uncommon to use the cold colour to denote higher sea ice concentrations (which generally imply colder temperature) and the warm colour to denote lower sea ice concentrations (associated with higher temperatures) [e.g. @espinosa2024; @massonnet2023; @morioka2022]. We prefer to use this convention. 
 
 4.  We have changed the column order.
 
 5.  We have added units to that and other figures.
 
-6.  As with warm/cold colours used to represent sea-ice anomalies, different publications adopt different conventions of how to spell "sea ice".
-    According to [The Cryosphere Observing System blog](https://cryos.wordpress.com/2007/10/04/%E2%80%9Csea-ice%E2%80%9D-or-%E2%80%9Csea-ice%E2%80%9D/) "Strictly speaking, it should be spelled without hyphenation when it’s a noun, and hyphenated when it is an adjective".
-    This is supported by [Merriam-Webster's article on compound nouns](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words):
-
-    > For example, when a compound that is usually left open is used to modify another noun, that compound will usually take a hyphen.
-    > So you can speak of a person who loves science fiction going to a science-fiction convention.
-
-    As with almost everything in the English language, this is more a guideline than a rule.\
-    In the case of "sea ice", Google Ngram Viewer shows that although "sea ice extent" is more frequent than "sea-ice extent", both phrases are in common use (@fig-ngram).
-
-    In the scientific literature, both terms can be found, even in some of the references in this manuscript.
-    (e.g. "Impact of observed sea-ice concentration on the Southern Hemisphere extratropical atmospheric circulation in summer" vs. "Decadal Sea Ice Prediction in the West Antarctic Seas with Ocean and Sea Ice Initializations").
-    Amusingly, we find [a review comment](https://tc.copernicus.org/preprints/9/C3297/2016/tcd-9-C3297-2016.pdf) on this very journal where the authors originally used the open compound version in the manuscript and the reviewer suggested to use the hyphenated form.
-
-    We chose to follow Merriam-Webster's guidelines and use "sea ice" as an open compound noun when used on its own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as a hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind...").
+6.  As with warm/cold colours used to represent sea-ice anomalies, different publications adopt different conventions of how to spell "sea ice". We chose to follow [Merriam-Webster's guidelines](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words) and use "sea ice" as an open compound noun when used on its own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as a hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind..."). Both terms can be found in the litierature [eg. @raphael2003; @morioka2022] and are in common usage (@fig-ngram). 
 
 
 ```{r}
