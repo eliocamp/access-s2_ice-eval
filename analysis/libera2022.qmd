@@ -1,0 +1,544 @@
+
+
+```{r}
+library(ggplot2)
+library(data.table)
+library(metR)
+library(rcdo)
+library(patchwork)
+library(lubridate)
+library(mirai)
+
+if (!mirai::daemons_set()) {
+  invisible(daemons(6))
+}
+
+everywhere({
+  library(data.table)
+  rcdo::cdo_options_set("-L")
+  rcdo::cdo_cache_set(here::here("data/temp/cache"))
+})
+
+cdo_options_set("-L")
+cdo_cache_set(here::here("data/temp/cache"))
+
+source(here::here("R/functions.R"))
+source(here::here("R/datasets.R"))
+source(here::here("R/ggplot.R"))
+
+# future::plan("multicore", workers = parallelly::availableCores())
+```
+
+
+```{r}
+knitr::knit_exit()
+```
+
+
+
+```{r}
+cdr <- icecdr::cdr_antarctic_daily(
+  date_range = c(1985, 2023),
+  use_cache = TRUE,
+  dir = here::here("data/temp")
+) |>
+  cdo_mergetime() |>
+  cdo_execute() |>
+  icecdr::cdr_fix_grid()
+```
+
+
+```{r}
+mean_weddell <- function(x, sum = TRUE) {
+  if (sum) {
+    sum <- rcdo::cdo_fldsum
+  } else {
+    sum <- identity
+  }
+  x |>
+    rcdo::cdo_sellonlatbox(300, 345, -90, -30) |>
+    # rcdo::cdo_setvrange(0.15, 1) |>
+    sum() |>
+    rcdo::cdo_execute()
+}
+
+mean_kh <- function(x, sum = TRUE) {
+  if (sum) {
+    sum <- rcdo::cdo_fldsum
+  } else {
+    sum <- identity
+  }
+  x |>
+    rcdo::cdo_sellonlatbox(0, 120, -90, -30) |>
+    # rcdo::cdo_setvrange(0.15, 1) |>
+    sum() |>
+    rcdo::cdo_execute()
+}
+
+detrend <- function(x, period = rep(TRUE, length(x))) {
+  x_period <- x[period]
+  i <- seq_along(x)
+  i_period <- i[period]
+  mod <- lm(x_period ~ i_period)
+  x - unname(predict(mod, newdata = data.frame(i_period = i)))
+}
+
+concentration_cor <- list(weddell = mean_weddell, kh = mean_kh) |>
+  lapply(\(x) {
+    cdr |>
+      cdo_remapbil("r360x180") |>
+      x(sum = FALSE) |>
+      cdo_monmean() |>
+      cdo_execute() |>
+      ReadNetCDF("aice")
+  }) |>
+  rbindlist(idcol = "region") |>
+
+  na.omit() |>
+  #   _[, aice := Detrend(aice), by = .(lon, lat)] |>
+  _[, aice := Anomaly(aice), by = .(lon, lat, month(time))] |>
+  _[,
+    c(as.character(1:12)) := shift(aice, 1:12, type = 'lead'),
+    by = .(lon, lat)
+  ] |>
+  _[] |>
+  melt(id.vars = c("time", "aice", "lon", "lat", "region")) |>
+  _[, lag := as.numeric(variable)] |>
+  na.omit() |>
+  _[year(time) %between% c(1985, 2015)] |>
+  _[, cor(aice, value), by = .(lag, time, region)] |>
+  _[, average(V1), by = .(lag, month(time), region)] |>
+  _[, measure := "concentration_cor"]
+
+
+area_cor <- list(weddell = mean_weddell, kh = mean_kh) |>
+  lapply(\(x) {
+    CDR() |>
+      cdo_remapbil("r360x180") |>
+      x() |>
+      cdo_monmean() |>
+      cdo_execute() |>
+      ReadNetCDF("aice") |>
+      _[, .(time, aice)]
+  }) |>
+  rbindlist(idcol = "region") |>
+  _[, aice := detrend(aice, year(time) %between% c(1978, 2019)), by = region] |>
+  _[,
+    c(as.character(1:12)) := shift(aice, 1:12, type = 'lead'),
+    by = region
+  ] |>
+  _[] |>
+  melt(id.vars = c("time", "aice", "region")) |>
+  _[, lag := as.numeric(variable)] |>
+  na.omit() |>
+  _[year(time) %between% c(1985, 2015)] |>
+  _[, correlate(aice, value), by = .(lag, month(time), region)] |>
+  _[, measure := "area_cor"]
+```
+
+
+```{r}
+#| fig.cap: Autocorrelation of monthly sea ice area and mean lagged sea ice concentration anomaly correaltion in the Weddell and King Haakon regions.
+rbind(area_cor, concentration_cor) |>
+  # _[region == "weddell"] |>
+  ggplot(aes(lag + month, month)) +
+  geom_tile(aes(fill = estimate), colour = "#e6e9f0") +
+  geom_contour2(
+    aes(z = month + lag, label = month.abb[ceiling(..level..) %% 12]),
+    breaks = c(6, 6 + 12),
+    skip = 0,
+    colour = "black",
+    label.placer = label_placer_fraction(0.5)
+  ) +
+  #   geom_point(data = \(x) x[p.value < 0.05]) +
+  scale_fill_divergent(
+    "Correlation",
+    high = pink,
+    low = blue,
+    # high = "#b60e28",
+    # low = "#3b4ec1",
+    # mid = "#dddcda",
+    breaks = seq(-1, 1, by = 0.25),
+    limits = c(-1, 1)
+  ) +
+  scale_y_continuous(
+    "Initial month",
+    breaks = 1:12,
+    labels = month.abb,
+    expand = c(0, 0)
+  ) +
+  scale_x_continuous(
+    "Lag",
+    breaks = 1:24,
+    expand = c(0, 0)
+  ) +
+  facet_grid(
+    region ~ measure,
+    labeller = labeller(
+      region = c(
+        "kh" = "King Haakon (0°--120°)",
+        weddell = "Weddell Sea (300°--345°)"
+      ),
+      measure = c(
+        area_cor = "Sea Ice Area",
+        concentration_cor = "Sea Ice Concentration"
+      )
+    )
+  ) +
+  coord_equal() +
+  theme(legend.key.width = unit(1, "null"), panel.grid.minor = element_blank())
+
+```
+
+
+```{r}
+#| fig.cap: Lag-1 correlation of the previous figure.
+rbind(area_cor, concentration_cor) |>
+  _[lag == 1] |>
+  ggplot(aes(month + 1, estimate)) +
+  geom_ribbon(aes(fill = region, ymin = low, ymax = high), alpha = 0.2) +
+  geom_line(aes(colour = region)) +
+  scale_x_continuous(NULL, breaks = 1:12, labels = month.abb) +
+  scale_y_continuous("Lag 1 month correlation") +
+  scale_color_discrete(
+    labels = c(
+      "kh" = "King Haakon (0°--120°)",
+      weddell = "Weddell Sea (300°--345°)"
+    ),
+    aesthetics = c("colour", "fill")
+  ) +
+  facet_grid(
+    . ~ measure,
+    labeller = labeller(
+      region = c(
+        "kh" = "King Haakon (0°--120°)",
+        weddell = "Weddell Sea (300°--345°)"
+      ),
+      measure = c(
+        area_cor = "Sea Ice Area",
+        concentration_cor = "Sea Ice Concentration"
+      )
+    )
+  )
+```
+
+
+```{r}
+
+# icecdr::cdr_antarctic_daily(date_range = c(1985, 2023), use_cache = TRUE, dir = "data/temp")
+
+area_cor_daily <- list(weddell = mean_weddell, kh = mean_kh) |>
+  lapply(\(x) {
+    cdr |>
+      cdo_remapbil("r360x180") |>
+      x() |>
+      ReadNetCDF("aice") |>
+      _[, .(time, aice)]
+  }) |>
+  rbindlist(idcol = "region") |>
+  _[year(time) > 1990] |>
+  _[, aice := aice - mean(aice, na.rm = TRUE), by = .(region, yday(time))] |>
+  #   _[, aice := frollmean(aice, n = 5), by = .(region)] |>
+  #   _[, aice := detrend(aice, year(time) %between% c(1985, 2019)), by = region] |>
+  _[,
+    c(as.character(1:360)) := shift(aice, 1:360, type = 'lead'),
+    by = region
+  ] |>
+  _[] |>
+  melt(id.vars = c("time", "aice", "region")) |>
+  _[, lag := as.numeric(variable)] |>
+  na.omit() |>
+  #   _[mday(time) %in% c(1, 8, 15, 22)] |>
+  _[, forecast_time := as.Date(update(time, year = 2000))] |>
+  _[, correlate(aice, value), by = .(lag, forecast_time, region)] |>
+  _[, measure := "area_cor"] |>
+  _[, time := as.Date(forecast_time + lag)]
+
+
+```
+
+
+```{r}
+#| fig.cap: Same as the first figure but in daily resolution.
+area_cor_daily |>
+  # _[region == "weddell"] |>
+  # _[mday(forecast_time) == 1] |>
+  ggplot(aes(time, forecast_time)) +
+  geom_tile(aes(fill = estimate)) +
+  # geom_contour2(
+  #   aes(z = month + lag, label = month.abb[ceiling(..level..) %% 12]),
+  #   breaks = c(6, 6 + 12),
+  #   skip = 0,
+  #   colour = "black",
+  #   label.placer = label_placer_fraction(0.5)
+  # ) +
+  # geom_path(aes(
+  #   group = forecast_time,
+  #   colour = I(ifelse(p.value > 0.05, NA, "black"))
+  # )) +
+  scale_fill_divergent(
+    "Correlation",
+    high = pink,
+    low = blue,
+    # high = "#b60e28",
+    # low = "#3b4ec1",
+    # mid = "#dddcda",
+    breaks = seq(-1, 1, by = 0.25),
+    limits = c(-1, 1)
+  ) +
+  # scale_y_date(
+  #   "Initial time",
+  #   # breaks = 1:12,
+  #   # labels = month.abb,
+  #   expand = c(0, 0)
+  # ) +
+  scale_y_date(
+    "Initial time",
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = c(0, 0)
+  ) +
+  scale_x_date("Time", date_breaks = "1 month", date_labels = "%b") +
+  facet_grid(
+    region ~ measure,
+    labeller = labeller(
+      region = c(
+        "kh" = "King Haakon (0°--120°)",
+        weddell = "Weddell Sea (300°--345°)"
+      ),
+      measure = c(
+        area_cor = "Sea Ice Area",
+        concentration_cor = "Sea Ice Concentration"
+      )
+    )
+  ) +
+  theme(
+    legend.key.width = unit(1, "null"),
+    panel.grid.minor = element_blank()
+  ) +
+  coord_equal()
+
+```
+
+```{r}
+#| fig.cap: Same as previous figure but with lines. Only showing initial dates for the 1st, 8th, 15th and 22nd of each month.
+area_cor_daily |>
+  # _[region == "weddell"] |>
+  _[mday(forecast_time) %in% c(1, 8, 15, 22)] |>
+  #   _[, estimate := frollmean(estimate, n = 5, align = "center"), by = .(region, forecast_time)] |>
+  ggplot(aes(time, estimate)) +
+  geom_line(aes(group = forecast_time)) +
+  #   geom_smooth(
+  #     data = \(x) x[lag < 2 * 30],
+  #     aes(group = forecast_time),
+  #     method = "lm"
+  #   ) +
+  geom_point(data = \(x) x[lag == 1]) +
+  scale_x_date(
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = expansion(c(0.01, 0.1))
+  ) +
+  facet_grid(
+    region ~ measure,
+    labeller = labeller(
+      region = c(
+        "kh" = "King Haakon (0°--120°)",
+        weddell = "Weddell Sea (300°--345°)"
+      ),
+      measure = c(
+        area_cor = "Sea Ice Area",
+        concentration_cor = "Sea Ice Concentration"
+      )
+    )
+  )
+
+
+```
+
+```{r}
+#| fig.cap: 15-day lag correlation of sea ice area in each region.
+area_cor_daily[lag == 15] |>
+  ggplot(aes(time, estimate)) +
+  geom_ribbon(aes(fill = region, ymin = low, ymax = high), alpha = 0.2) +
+  geom_line(aes(colour = region)) +
+  scale_color_discrete(
+    labels = c(
+      "kh" = "King Haakon (0°--120°)",
+      weddell = "Weddell Sea (300°--345°)"
+    ),
+    aesthetics = c("colour", "fill")
+  ) +
+  scale_x_date(
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = c(0, 0)
+  )
+```
+
+
+
+```{r}
+errors <- here::here("data/derived/rmse.Rds") |>
+  zenodo("Hindcast RMSE of sea-ice concentration anomalies") |>
+  readRDS() |>
+  _[value < 0.01, value := NA] |>
+  _[value > 3e13, value := NA] |>
+  _[, time := as.Date(time)] |>
+  _[, lag := as.numeric(time - time_forecast)] |>
+  _[version == "persistence"] |>
+  _[obs_dataset == "cdr"]
+```
+
+
+```{r}
+persistence_rmse_lon <- here::here("data/derived/rmse_lon.Rds") |>
+  readRDS() |>
+  _[version == "persistence"] |>
+  _[obs_dataset == "cdr"] |>
+  _[, lon := lon + 12] |>
+  _[, time := update(time, hour = 0)] |>
+  _[, time := as.Date(time)] |>
+  _[obs_dataset == "cdr"] |>
+  _[, lag := as.numeric(time - time_forecast)] |>
+  _[lag > 0]
+```
+
+```{r}
+persistence_rmse_lon |>
+  _[,
+    .(estimate = mean(value, na.rm = TRUE)),
+    by = .(forecast_time = update(time_forecast, year = 2000), lag, lon)
+  ] |>
+  _[, time := as.Date(forecast_time + lag)] |>
+  _[lon %in% c(12, 324, 348)] |>
+  ggplot(aes(time, month(forecast_time))) +
+  geom_tile(aes(fill = estimate)) +
+
+  scale_fill_viridis_c() +
+
+  scale_y_continuous(
+    "Initial month",
+    breaks = 1:12,
+    labels = month.abb,
+    expand = c(0, 0)
+  ) +
+  scale_x_date("Time", date_breaks = "1 month", date_labels = "%b") +
+
+  theme(
+    legend.key.width = unit(1, "null"),
+    panel.grid.minor = element_blank()
+  ) +
+  facet_wrap(~lon, ncol = 1)
+```
+
+```{r}
+errors <- here::here("data/derived/rmse_lon.Rds") |>
+  readRDS() |>
+  _[version != "persistence"] |>
+  _[obs_dataset == "cdr"] |>
+  _[member != "0em"] |>
+  _[, lon := lon + 12] |>
+  _[, time := update(time, hour = 0)] |>
+  _[, time := as.Date(time)] |>
+  _[obs_dataset == "cdr"] |>
+  _[, lag := as.numeric(time - time_forecast)] |>
+  _[lag > 0] |>
+  _[,
+    .(spread = var(value, na.rm = TRUE)),
+    by = .(time_forecast, lag, version, lon)
+  ] |>
+  _[,
+    .(estimate = mean(spread, na.rm = TRUE)),
+    by = .(
+      lag,
+      forecast_time = update(time_forecast, year = 2000),
+      version,
+      lon
+    )
+  ] |>
+  _[, time := as.Date(forecast_time + lag)]
+```
+
+
+```{r}
+errors |>
+  _[lag > 0] |>
+  _[, .(estimate = mean(estimate)), by = .(time, version, lon)] |>
+  ggplot(aes(time, estimate)) +
+  geom_line(aes(group = lon)) +
+  facet_wrap(~version)
+
+```
+
+
+```{r}
+errors |>
+  _[lon %in% c(12, 324, 348)] |>
+  _[version == "S2"] |>
+  _[lag > 0] |>
+  ggplot(aes(time, month(forecast_time))) +
+  geom_tile(aes(fill = estimate)) +
+  # geom_contour2(
+  #   aes(z = month + lag, label = month.abb[ceiling(..level..) %% 12]),
+  #   breaks = c(6, 6 + 12),
+  #   skip = 0,
+  #   colour = "black",
+  #   label.placer = label_placer_fraction(0.5)
+  # ) +
+  scale_fill_viridis_c() +
+  # scale_fill_divergent(
+  #   "Correlation",
+  #   high = pink,
+  #   low = blue,
+  #   # high = "#b60e28",
+  #   # low = "#3b4ec1",
+  #   # mid = "#dddcda",
+  #   breaks = seq(-1, 1, by = 0.25),
+  #   limits = c(-1, 1)
+  # ) +
+  scale_y_continuous(
+    "Initial month",
+    breaks = 1:12,
+    labels = month.abb,
+    expand = c(0, 0)
+  ) +
+  scale_x_date("Time", date_breaks = "1 month", date_labels = "%b") +
+
+  theme(
+    legend.key.width = unit(1, "null"),
+    panel.grid.minor = element_blank()
+  ) +
+  facet_wrap(~lon, ncol = 1)
+```
+
+```{r}
+errors[lag == 5] |>
+  _[version == "S2"] |>
+  ggplot(aes(time, lon)) +
+  geom_raster(aes(fill = estimate)) +
+  facet_wrap(~version, ncol = 1)
+
+```
+
+```{r}
+errors |>
+  _[mday(forecast_time) %in% c(1, 8, 15, 22)] |>
+  #   _[, estimate := frollmean(estimate, n = 5, align = "center"), by = .(region, forecast_time)] |>
+  ggplot(aes(time, estimate)) +
+  geom_line(aes(group = forecast_time)) +
+  #   geom_smooth(
+  #     data = \(x) x[lag < 2 * 30],
+  #     aes(group = forecast_time),
+  #     method = "lm"
+  #   ) +
+  geom_point(data = \(x) x[lag == 1]) +
+  scale_x_date(
+    date_breaks = "1 month",
+    date_labels = "%b",
+    expand = expansion(c(0.01, 0.1))
+  ) +
+  facet_wrap(~version, ncol = 1)
+```
+
+
