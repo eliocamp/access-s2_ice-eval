@@ -147,8 +147,7 @@ We have now clarified this in the caption.
 
 The numbers in brackets represent the 95% confidence interval.
 We have now clarified this in the caption.
-All correlations are statistically significantly different from zero, however that comparison implies a constant forecast as the "null hypothesis", which is not very informative.
-A better comparison would be a naive forecast of persistence, and we perform that calculation in the next section.
+We added asterisks to correlation values statistically different from zero at the 95% confidence level.
 
 > Figure 6, how do you compute the 95% confidence level?
 > Is it based on an assumption of normal distribution for the ratio of SIE between the prediction and the reference?
@@ -280,7 +279,7 @@ Lines XX now read: The way sea-ice thickness is handled is that sea-ice concentr
 
 > L313–314: I kindly disagree with the authors’ statement here; please refer to my general comments for further explanation
 
-XXXX
+See response to the general comments. 
 
 > Additional references: I recommend citing the following two studies, which are highly relevant to the discussion of Antarctic sea ice initialization and predictability: <https://journals.ametsoc.org/view/journals/clim/34/15/JCLI-D-20-0965.1.xml> <https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2024MS004382>
 
@@ -517,6 +516,9 @@ We have added a figure (Fig. XX in the revised manuscript) and a paragraph highl
 > Figures 11–13 are information-dense but low in informativeness, with cumbersome correspondence between text and subplots.
 > Alternative visualization methods (e.g., spatial aggregation, key region highlighting, or summary statistics) are recommended to convey core messages (e.g., regional skill differences) more directly.
 
+Similarly to the answer to Major comment 2, we believe that in order to show how the results depend on seasonality, we want to show as much information as possible. 
+Other researchers might be interested in what results look at different months of the year as well. 
+
 ## Minor comments
 
 > Line 30 has an ambiguity: clarify whether sea ice initial conditions are important in "autumn" (as per Arctic studies) or "spring" (relevant to Antarctic seasons).
@@ -544,11 +546,9 @@ XXX Did we add labels?
 We have added units to that and other figures.
 
 > Consistently use "sea ice" (instead of "sea-ice") throughout the text.
-> Define abbreviations for key terms at their first appearance: sea ice concentration (SIC), sea ice thickness (SIT), and sea ice extent (SIE).
 
-As with warm/cold colours used to represent sea-ice anomalies, different publications adopt different conventions of how to spell "sea ice".
-We chose to follow [Merriam-Webster's guidelines](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words) and use "sea ice" as an open compound noun when used on its own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as a hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind...").
-Both terms can be found in the litierature [eg. @raphael2003; @morioka2022] and are in common usage (@fig-ngram).
+We chose to use "sea ice" as an open compound noun when used on its own ("Accurately modelling Antarctic sea ice is essential...") and "sea-ice" as a hyphenated adjective ("...progress in Antarctic sea-ice forecasting system has lagged behind...") [@hyphen].
+<!-- Both terms can be found in the litierature [eg. @raphael2003; @morioka2022] and are in common usage (@fig-ngram).
 
 ```{r}
 #| label: fig-ngram
@@ -560,7 +560,12 @@ data.table::fread(here::here("data/raw/sea-ice_ngram.csv")) |>
   geom_line(aes(color = Phrase)) +
   geom_smooth(aes(color = Phrase)) +
   scale_colour_manual(values = c("#d84a4a", "#1976d2"))
-```
+``` 
+-->
+
+We corrected some instances in which we used the hyphenated version when used as a noun. 
+
+> Define abbreviations for key terms at their first appearance: sea ice concentration (SIC), sea ice thickness (SIT), and sea ice extent (SIE).
 
 > In Figure 10’s caption, correct "larger than" to "lower than" (consistent with the logic of RMSE exceeding the 95% confidence interval lower bound of persistence forecast RMSE).
 
