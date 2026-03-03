@@ -1,5 +1,5 @@
 # Hard-coded deposition ID for this project.
-ZENODO_DEPOSITION_ID <- 17479538
+ZENODO_DEPOSITION_ID <- 18844394
 
 # Internal: read the token from environment and validate
 .zenodo_get_token <- function() {
@@ -131,10 +131,8 @@ zenodo_upload_file <- function(path, deposition_id = ZENODO_DEPOSITION_ID) {
 }
 
 zenodo_checksum_matches <- function(files) {
-
   cli::cli_inform("Downloading remote checksum")
   checksum_remote <- readLines(zenodo_download_file("checksum", tempdir()))
-
 
   cli::cli_inform("Computing local checksum")
   checksum_local <- files |>
@@ -173,9 +171,22 @@ zenodo_upload_data <- function(force = FALSE) {
     return(invisible(NULL))
   }
 
-  cli::cli_inform("Creating zip file")
-  zipfile <- file.path(tempdir(), "data.zip")
-  zip(zipfile, files$file)
+  zipfile <- here::here("data/data.zip")
+  zip_checksum_file <- here::here("data/data.zip.hash")
+
+  need2zip <- TRUE
+  if (file.exists(zipfile) & file.exists(zip_checksum_file)) {
+    checksum_zip <- readLines(zip_checksum_file, n = 1)
+    if (checksum$local == checksum_zip) {
+      cli::cli_inform("data.zip file found and checksum matches")
+      need2zip <- FALSE
+    }
+  }
+
+  if (need2zip) {
+    cli::cli_inform("Creating zip file")
+    zip(zipfile, files$file)
+  }
 
   cli::cli_inform("Uploading zip file")
   zenodo_upload_file(zipfile)
