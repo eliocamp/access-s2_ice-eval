@@ -15,6 +15,16 @@ average <- function(x, y = NULL, signif = 2, sep = "\ ", ...) {
   } else {
     test <- t.test(x, y, ...)
   }
+
+  if (length(x) <= 3) {
+    return(list(
+      estimate = NA_real_,
+      p.value = NA_real_,
+      low = NA_real_,
+      high = NA_real_,
+      text = NA_character_
+    ))
+  }
   out <- list(
     estimate = test$estimate,
     low = test$conf.int[1],
@@ -292,7 +302,17 @@ sd_ci <- function(x, signif = 2, sep = "\ ", ...) {
 
 
 correlate <- function(x, y, signif = 2, sep = "\ ", ...) {
+  if (length(x) <= 3) {
+    return(list(
+      estimate = NA_real_,
+      p.value = NA_real_,
+      low = NA_real_,
+      high = NA_real_,
+      text = NA_character_
+    ))
+  }
   correlation <- stats::cor.test(x, y, ...)
+
   out <- with(
     correlation,
     list(
@@ -389,4 +409,9 @@ geom_contour_pval <- function(
     ),
     metR::geom_contour2(mapping, breaks = p.value, linewidth = linewidth, ...)
   )
+}
+
+
+months_difference <- function(x, y) {
+  lubridate::interval(y, x) %/% months(1)
 }
