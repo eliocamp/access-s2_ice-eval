@@ -705,6 +705,12 @@ plot_bias[[1]]
 plot_bias[[2]]
 ```
 
+```{r}
+#| label: cleanup-plot_bias
+# This one's heavy
+rm(plot_bias)
+```
+
 
 To further understand the bias in +S2, @fig-bias-1 (@fig-bias-1-osi) shows spatial patterns of the differences of monthly mean sea-ice concentrations between NOAA/NSIDC CDRV4 and +S2 hindcasts at the shortest monthly lead time.
 From October to May, the model underestimates sea-ice concentrations in most regions except for the inner Weddell Sea in April and May, where sea-ice concentrations saturate to 1 both in the observations and forecasts.

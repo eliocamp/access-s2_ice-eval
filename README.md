@@ -5,7 +5,7 @@ This repository contains data, code and other source files associated with Evalu
 First clone or download this repository with
 
 ```bash
-git clone --depth 1 git@github.com:eliocamp/rcdo.git
+git clone --depth 1 git@github.com:eliocamp/access-s2_ice-eval.git
 ```
 
 ## Runing with docker
@@ -24,7 +24,6 @@ Open your web browser to [localhost:8787](http://127.0.0.1:8787/) and you'll be 
 ## Running locally
 
 If you can't or don't want to use Docker, then you need to install all the requires packages. 
-
 
 1. [Quarto](https://quarto.org/) (version 1.8 was used )
 
@@ -51,7 +50,6 @@ renv::restore()
 ```
 
 Depending on your operating system, this could take a while!
-
 
 ## Compiling the manuscript
 

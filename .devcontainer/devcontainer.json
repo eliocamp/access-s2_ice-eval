@@ -1,0 +1,15 @@
+{
+  "name": "R Project",
+  "image": "eliocamp/access-s2_ice",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/home/rstudio/project,type=bind",
+    "target=/home/rstudio/project/renv,type=volume",
+    "target=/home/rstudio/project/analysis/data,type=volume"
+  ],
+  "workspaceFolder": "/home/rstudio/project",
+  "customizations": {
+    "vscode": {
+      "extensions": ["REditorSupport.r", "quarto.quarto"]
+    }
+  }
+}
