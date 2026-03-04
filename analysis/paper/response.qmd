@@ -47,7 +47,7 @@ cdr <- CDR()
 ```
 
 We thank the reviewers for their careful reading of our manuscript and their feedback. 
-Below we include our response and changes to the manuscript below. 
+Below we include our response and changes to the manuscript.
 The original comments are quoted in gray. 
 
 # Reviewer 1
@@ -61,7 +61,7 @@ The original comments are quoted in gray.
 > This raises the question of which components of the initial conditions are truly responsible for the skill differences.
 > In this manuscript, the authors mostly examine the role of sea ice initial condition but the potential influence of other variables appears to be underexplored and should be discussed more explicitly.
 
-We thank the reviewer for their comment and agree the sea ice initial conditions are not the sole difference; the ocean initial conditions and ensemble generation also differ slightly. 
+We thank the reviewer for their comment and agree the sea ice initial conditions are not the sole difference between the two systems; the ocean initial conditions and ensemble generation also differ slightly. 
 Unfortunately, the raw +S1 hindcast is no longer available, so we cannot directly compare these aspects between the systems.
 
 We have tried to address the difference of ocean initial conditions through previous literature. 
@@ -141,7 +141,7 @@ This is now corrected.
 > In addition, the metric employed in Libera et al (2022) was ACC, which is slightly different from the RMSE used in this study.
 
 Yes, you are correct. 
-Based on reviewers' comments we realised that there are several methodolodical differences that prevent a direct comparison between our results and those of @liebra2022 and modified our discussion about them in the revised manuscript. 
+Based on reviewers' comments we realised that there are several methodolodical differences that prevent a direct comparison between our results and those of @libera2022 and modified our discussion about their work in the revised manuscript. 
 See response to R3's Major comment 4. 
 
 > P17 Line 255, Is the eastward propagation feature also evident in December?
