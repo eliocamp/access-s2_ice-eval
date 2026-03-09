@@ -351,7 +351,7 @@ The paper was rendered using knitr and Quarto [@xie2015; @allaire2022].
 
 # Results and discussion
 
-. ## Bias
+## Bias
 
 ```{r extent_daily}
 extent_daily <- datasets |>
