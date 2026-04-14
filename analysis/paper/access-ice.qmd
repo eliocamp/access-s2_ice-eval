@@ -299,7 +299,7 @@ which_dataset <- "cdr"
 
 For verification we use satellite-derived sea-ice concentration, which estimates the proportion of each grid area that is covered with ice.
 Different datasets are derived using different algorithms and satellite platforms, and each have their own biases and uncertainties.
-Estimates of inter-product uncertainty of sea-ice extent (defined as the total region of the Southern Ocean with at least 15% sea-ice cover [@@cavalieri1991]) are of the order of 0.5 million $km^2$ [@meier2019].
+Estimates of inter-product uncertainty of sea-ice extent (defined as the total region of the Southern Ocean with at least 15% sea-ice cover [@cavalieri1991]) are of the order of 0.5 million $km^2$ [@meier2019].
 As will be shown below, this spread is minimal compared with the typical errors in the +S2 and +S1 forecasts, so the overall conclusions of this study are independent of the verification dataset used.
 
 We use NOAA/NSIDC's Climate Data Record V4 [CDR; @meier2014] as the primary sea-ice verification dataset.
