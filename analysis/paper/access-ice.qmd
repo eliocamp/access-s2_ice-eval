@@ -993,7 +993,7 @@ hi_cor |>
 
 The reason for the increased variability in +S2 is not clear.
 One possible explanation is that +S2 simulates thinner sea ice than +S1 (@fig-forecast-example bottom row) that is more sensitive to atmospheric and oceanic forcing. 
-To explore this possibility, Figure @fig-hi-aice-cor shows the correlation between sea-ice thickness and the magnitude of sea-ice concentration anomalies in the +S2 reanalysis. 
+To explore this possibility, @fig-hi-aice-cor shows the correlation between sea-ice thickness and the magnitude of sea-ice concentration anomalies in the +S2 reanalysis. 
 It shows that in most regions and months, thinner ice is correlated with stronger sea-ice concentration anomalies.
 
 ```{r hindcast_mean_thickness}
