@@ -144,7 +144,7 @@ knitr::opts_hooks$set(fig.cap = function(options) {
   return(options)
 })
 
-knitr::opts_chunk$set(cache.extra = 47)
+knitr::opts_chunk$set(cache.extra = 48)
 ```
 
 ```{r zenodo, cache = FALSE}
@@ -1921,7 +1921,7 @@ spread |>
   scale_color_models() +
   scale_fill_models()
 
-# saveRDS(last_plot(), here::here("data/derived/spread-plot.Rds"))
+saveRDS(last_plot(), here::here("data/derived/spread-plot.Rds"))
 ```
 
 \clearpage
