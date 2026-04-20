@@ -28,7 +28,19 @@ header-includes: |
     \AtBeginEnvironment{quote}{\color[gray]{0.3}}
 ---
 
+```{r}
+library(rcdo)
+library(ggplot2)
+library(metR)
+library(data.table)
 
+cdo_options_set("-L")
+cdo_cache_set(here::here("data/temp/cache"))
+
+source(here::here("R/functions.R"))
+source(here::here("R/datasets.R"))
+source(here::here("R/ggplot.R"))
+```
 
 # Reviewer 2
 
@@ -52,30 +64,19 @@ We used a vertical log scale in Figure A15 so that the differences at the shorte
 
 ```{r}
 #| label: fig-spread-nolog
-#| fig-cap: Mean variance of RMSE between ensemble members of each forecast. In parentheses, the shortest minimum  lead time at which +S1 mean spread becomes larger than the lower bound of the 95% confidence interval of +S2 spread. Note the double log scale.
-#| fig-height: 4
-library(rcdo)
-library(ggplot2)
-library(metR)
-library(data.table)
-
-cdo_options_set("-L")
-cdo_cache_set(here::here("data/temp/cache"))
-
-source(here::here("R/functions.R"))
-source(here::here("R/datasets.R"))
-source(here::here("R/ggplot.R"))
-
+#| fig-cap: Mean variance of RMSE between ensemble members of each forecast. In parentheses, the shortest minimum  lead time at which +S1 mean spread becomes larger than the lower bound of the 95% confidence interval of +S2 spread. The top plot uses a vertical log scale as depicted in the manuscript and the bottom plot uses a linear scale. 
+#| fig-height: 8
 readRDS(here::here("data/derived/spread-plot.Rds")) +
-  scale_y_continuous("Mean ensemble spread")
+  readRDS(here::here("data/derived/spread-plot.Rds")) +
+  scale_y_continuous("Mean ensemble spread") +
+  patchwork::plot_layout(ncol = 1)
 ```
 
 > In addition, the impact of differences in oceanic initial conditions remains unclear. The authors state in the revised manuscript that “we believe there are reasons to consider that the effect would be of second-order importance.” I do not find this statement sufficiently rigorous to support the conclusion regarding the role of initial conditions in seasonal prediction of Antarctic sea ice. A more quantitative or evidence-based assessment would be necessary to substantiate this claim.
 
-We agree that the role of initial conditions cannot be directly quantified based on our work and that our arguments to support the secondary role of the ocean initial conditions are limited. 
-We deliberately use subjective language to make it clear that we don't consider the question settled.  
-
-We modified lines XXX to reflect that limitation more explicitly: "Although we believe these differences to be of second-order importance compared with the wildly divergent sea-ice initial conditions, we cannot rigorously discard nor directly quantify their influence; these issues motivate the need for more targeted experiments. "
+Unfortunately, the ocean initial conditions are no longer available for further analysis, and therefore, the role of ocean initial conditions cannot be directly quantified for the forecast spread. 
+As a results, our arguments for the secondary role of the ocean initial conditions are qualitative, based on indirect evidence as provided. 
+In this round of revision, we state this limitation more explicitly: "Although we believe these differences to be of second-order importance compared with the wildly divergent sea-ice initial conditions, we cannot rigorously discard nor directly quantify their influence; these issues motivate the need for more targeted experiments. "
 
 
 > P2 Line 54, Please clarify what is meant by “observed sea ice initial condition”
@@ -97,7 +98,7 @@ We have corrected this.
 
 > Figures: Several figures contain a large number of subplots, which makes it difficult to identifythe key messages. I recommend simplifying the figures and retaining only the panels that convey the essential information.
 
-As we commented on our response to Reviewer 3 in the previous round, while we appreciate the concern, we believe that readers may be interested in seeing the complete evolution of results over the year.
-Hence for consistency across all figures and to show the evolution of results over the year we have decided to keep monthly subplots.
+The same suggestion was made by Reviewer 3 in the previous round of review, and we agree that a multi-panel figure can be somewhat difficult to display key results. 
+However, we believe that readers may be interested in seeing the complete evolution of results over the year. Hence, for consistency across all figures and to show the evolution of results over the year we have decided to keep monthly subplots.
 
 # References
