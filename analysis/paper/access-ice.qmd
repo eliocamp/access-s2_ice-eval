@@ -151,7 +151,7 @@ knitr::opts_hooks$set(fig.cap = function(options) {
   return(options)
 })
 
-knitr::opts_chunk$set(cache.extra = 48)
+knitr::opts_chunk$set(cache.extra = 49)
 ```
 
 ```{r zenodo, cache = FALSE}
