@@ -4,7 +4,7 @@
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
-\documentclass[bg, manuscript]{copernicus}
+\documentclass[tc, manuscript]{copernicus}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{5}
@@ -104,6 +104,12 @@
 
 \usepackage[inline]{trackchanges}
 \usepackage[section]{placeins}
+\AtBeginDocument{
+         \hypersetup{
+           colorlinks=false,
+           hidelinks
+         }
+}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%

@@ -2,7 +2,7 @@
 title: The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice
 pdf-engine: pdflatex
 journal:
-  name: bg
+  name: tc
 author:
   - given_name: Elio 
     surname: Campitelli
@@ -92,8 +92,15 @@ format:
       fig-pos: "!htb"
       fig-dpi: 300    
       fig-format: png
+
 header-includes: | 
-   \usepackage[section]{placeins}    
+   \usepackage[section]{placeins}
+   \AtBeginDocument{
+            \hypersetup{
+              colorlinks=false,
+              hidelinks
+            }
+   }
 
 keywords: [sea ice, seasonal predictability, initial conditions, forecasting]
 
