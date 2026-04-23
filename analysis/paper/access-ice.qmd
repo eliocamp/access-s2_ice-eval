@@ -151,8 +151,52 @@ knitr::opts_hooks$set(fig.cap = function(options) {
   return(options)
 })
 
-knitr::opts_chunk$set(cache.extra = 49)
+knitr::opts_chunk$set(cache.extra = 54)
 ```
+
+```{r}
+#| label: rename_fig
+# Publisher asked for figures to be renamed "fig1.png", etc.. 
+knitr::opts_hooks$set(label = function(options) {
+  
+  this_label <- knitr::opts_current$get("label")
+
+  if (!startsWith(this_label, "fig")) {
+    return(options)
+  }
+  main_n <- 13
+  all_chunks <- knitr::all_labels(startsWith(label, "fig"))
+
+  fig_num <- which(all_chunks == this_label)
+
+  if (fig_num > main_n) {
+    suffix <- paste0("figA", fig_num - main_n)
+  } else {
+    suffix <- paste0("fig", fig_num)
+  }
+
+  new_path <- paste0(options$fig.path, suffix, "_")
+
+  options$fig.path <- new_path
+  return(options)
+})
+
+rename_fig <- function(fig_path) {
+  filename <- basename(fig_path)
+
+  suffix <- strsplit(filename, "_")[[1]][1]
+  ext <- tools::file_ext(fig_path)
+
+  filename2 <- paste0(suffix, ".", ext)
+  fig_path2 <- file.path(dirname(fig_path), filename2)
+  file.rename(fig_path, fig_path2)
+
+  return(fig_path2)
+}
+
+knitr::opts_chunk$set(fig.process = rename_fig)
+```
+
 
 ```{r zenodo, cache = FALSE}
 source(here::here("R/zenodo.R"))
@@ -818,7 +862,7 @@ The explanation seems to be the aforementioned increase in interannual variabili
 @fig-extent-sd (@fig-extent-sd-osi) shows the interannual standard deviation of monthly sea-ice extent of the forecasts as a function of lead time compared with observations.
 +S1 standard deviation lies within the observed standard deviation regardless of lead time, while +S2 standard deviation is more than twice that of observations at zero lead time and only approaches the observed value at nine months lead time for most months.
 
-```{r fig-extent-rmse-month_build}
+```{r make-fig-extent-rmse-month_build}
 fig_extent_rmse_month <- hindast_extent_monthly |>
   _[, merge(.SD, monthly_extent, all = TRUE), by = .(model, lag)] |>
   _[
@@ -1978,6 +2022,7 @@ which_dataset <- "osi"
 
 
 ```{r, fig-extent-sd-osi, ref.label=I("fig-extent-sd")}
+
 ```
 
 
