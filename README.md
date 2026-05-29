@@ -1,6 +1,22 @@
 # Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Forecast Model
 
-This repository contains data, code and other source files associated with Evaluating the Importance of Initial Conditions for Antarctic Sea Ice Seasonal Predictability with a Fully Coupled Forecast Model
+This repository contains data, code and other source files associated with 
+
+Campitelli, Elio, Ariaan Purich, Julie Arblaster, Eun-Pa Lim, Matthew C. Wheeler, and Phillip Reid. 2026. “The Importance of Initial Conditions in Seasonal Predictions of Antarctic Sea Ice.” The Cryosphere 20(4): 2557–87. doi:10.5194/tc-20-2557-2026.
+
+```bibtex
+@Article{tc-20-2557-2026,
+    AUTHOR = {Campitelli, E. and Purich, A. and Arblaster, J. and Lim, E.-P. and Wheeler, M. C. and Reid, P.},
+    TITLE = {The importance of initial conditions in seasonal predictions of Antarctic sea ice},
+    JOURNAL = {The Cryosphere},
+    VOLUME = {20},
+    YEAR = {2026},
+    NUMBER = {4},
+    PAGES = {2557--2587},
+    URL = {https://tc.copernicus.org/articles/20/2557/2026/},
+    DOI = {10.5194/tc-20-2557-2026}
+}
+```
 
 First clone or download this repository with
 
